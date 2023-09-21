@@ -76,3 +76,74 @@ input:hover {
   padding: 10px;
   border-radius: 10px;
 }
+
+.PhoneInputCountryIconImg {
+  height: 50px;
+}
+
+.PhoneInput {
+  display: flex;
+  gap: 15px;
+}
+
+.PhoneInputInput {
+  border-radius: 10px;
+  width: 700px;
+  padding-left: 10px;
+}
+
+.PhoneInputCountry select {
+  width: 20px;
+  border: none;
+  cursor: pointer;
+  height: 20px;
+  outline: none;
+  margin-top: 20px;
+}
+
+.PhoneInputCountry {
+  display: flex;
+  flex-direction: row-reverse;
+  gap: 15px;
+}
+
+.checks_not_null, .checks_null, .check_password_true, .check_password_false, .empty_all_fields, .check_password_true_1, .check_password_false_1 {
+  display: none;
+  padding: 10px;
+  box-shadow: 0 0 10px bisque;
+  border-radius: 10px;
+  width: 300px;
+  text-align: center;
+}
+
+.continue, .continue_btn {
+  display: none;
+  cursor: pointer;
+  padding: 10px;
+  background: blue;
+  color: #FFF;
+  border-radius: 10px;
+  width: 300px;
+  text-align: center;
+  box-shadow: 0 0 10px blue;
+}
+
+.continue:hover, .continue_btn:hover {
+  box-shadow: none;
+}
+
+.loader {
+  display: none;
+}
+
+.checks_null, .empty_all_fields, .check_password_false_1 {
+  box-shadow: 1px 1px 10px #ff2e2e;
+}
+
+.none {
+  display: none;
+}
+
+.block {
+  display: block;
+}

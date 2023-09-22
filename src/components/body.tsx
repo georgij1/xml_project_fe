@@ -1,6 +1,8 @@
 function Body() {
     return(
-        <h1>Body</h1>
+        <div className="body">
+            <h1>Body</h1>
+        </div>
     )
 }
 

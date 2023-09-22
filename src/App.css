@@ -140,6 +140,42 @@ input:hover {
   box-shadow: 1px 1px 10px #ff2e2e;
 }
 
+.header {
+  display: flex;
+  padding: 20px;
+  justify-content: space-between;
+  background: antiquewhite;
+}
+
+.footer {
+  background: black;
+  color: #FFF;
+  padding: 20px;
+  position: fixed;
+  width: 100%;
+  bottom: 0;
+}
+
+.body {
+  height: 50vW;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.logout_btn {
+  padding: 10px;
+  background: red;
+  color: #FFF;
+  border-radius: 10px;
+  box-shadow: 0 0 10px red;
+  cursor: pointer;
+}
+
+.logout_btn:hover {
+  box-shadow: none;
+}
+
 .none {
   display: none;
 }

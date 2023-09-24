@@ -1,8 +1,7 @@
-import PhoneInput from 'react-phone-number-input'
 import React from "react";
 import {ClipLoader} from "react-spinners";
 
-export default function RegistrationForm() {
+export const RegistrationForm = () => {
     function open_auth_page() {
         window.open(`/auth`, '_self')
     }
@@ -73,10 +72,6 @@ export default function RegistrationForm() {
         }
     }
 
-    function setValue() {
-        console.log('setValue')
-    }
-
     function activate_loader() {
         // @ts-ignore
         document.querySelector('.loader').style.display = 'inline-block'
@@ -142,20 +137,13 @@ export default function RegistrationForm() {
             }
         })
             .then((response) => {
-                console.log(response)
-                console.log(response.status)
-
                 if (response.status === 200) {
                     window.open('/auth', '_self')
                 }
 
-                else if (response.status === 403) {
-                    distinctive_loader()
-                    alert('Такой пользователь уже существует')
-                }
-
                 else {
                     distinctive_loader()
+                    alert('Ошибка. Код ошибки ' + response.status)
                 }
             })
             .catch((err) => {
@@ -163,7 +151,6 @@ export default function RegistrationForm() {
             });
     }
 
-    let clip_loader_color = 'blue';
     return(
         <div className="form_auth_company">
             <h1>Регистрация</h1>
@@ -203,7 +190,7 @@ export default function RegistrationForm() {
             {/*@ts-ignore*/}
             <ClipLoader
                 style={{display: "none"}}
-                color={clip_loader_color}
+                color={'blue'}
                 // loading={loading}
                 // cssOverride={override}
                 size={150}

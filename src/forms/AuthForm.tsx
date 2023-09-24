@@ -1,7 +1,7 @@
 import {ClipLoader} from "react-spinners";
 import React from "react";
 
-export default function AuthForm() {
+export const AuthForm = () => {
     function open_reg_page() {
         window.open(`/registration`, '_self')
     }
@@ -83,6 +83,15 @@ export default function AuthForm() {
         document.querySelector('body').style.opacity='0.5'
     }
 
+    function distinctive_loader() {
+        // @ts-ignore
+        document.querySelector('.loader').style.display = 'none'
+        // @ts-ignore
+        document.querySelector('body').style.opacity = '1'
+        // @ts-ignore
+        document.querySelector('body').style.overflow = 'auto'
+    }
+
     function continue_btn() {
         activate_loader()
 
@@ -100,19 +109,19 @@ export default function AuthForm() {
                 'Content-type': 'application/json; charset=UTF-8'
             }
         })
-            .then((res) => {
-                console.log(res.status)
-
-                if (res.status === 200) {
-                    res.json().then(data => {
+            .then((response) => {
+                if (response.status === 200) {
+                    response.json().then(data => {
                         console.log(data.jwt)
+                        alert('Вы в системе')
                         localStorage.setItem('auth_token', data.jwt)
                         window.open("/home", '_self')
                     })
                 }
 
                 else {
-                    console.log('wrong')
+                    distinctive_loader()
+                    alert('Ошибка. Код ошибки ' + response.status)
                 }
             })
             .catch((err) => {

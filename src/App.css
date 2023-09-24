@@ -112,7 +112,7 @@ input:hover {
   padding: 10px;
   box-shadow: 0 0 10px bisque;
   border-radius: 10px;
-  width: 300px;
+  min-width: 119px;
   text-align: center;
 }
 
@@ -123,7 +123,7 @@ input:hover {
   background: blue;
   color: #FFF;
   border-radius: 10px;
-  width: 300px;
+  min-width: 119px;
   text-align: center;
   box-shadow: 0 0 10px blue;
 }
@@ -141,39 +141,129 @@ input:hover {
 }
 
 .header {
-  display: flex;
   padding: 20px;
-  justify-content: space-between;
-  background: antiquewhite;
+  background: #1F264A;
+}
+
+.header_1 {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+  color: #FFF;
+}
+
+.question {
+  rotate: 180deg;
+  border: 2px solid #FFF;
+  border-radius: 100%;
+  padding: 12px 7px;
+  height: 10px;
+  width: 20px;
+  display: flex;
+  cursor: pointer;
+  box-shadow: 0 0 10px;
+  align-items: center;
+  justify-content: center;
+}
+
+.question:hover, .down_line:hover {
+  box-shadow: none;
+  text-decoration: none;
+}
+
+.down_line {
+  text-decoration: 2px solid underline;
+  cursor: pointer;
+  display: flex;
+  gap: 10px;
+}
+
+.down_line_settings {
+  cursor: pointer;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.btn_enter_company {
+  padding: 10px;
+  background: beige;
+  border-radius: 10px;
+  box-shadow: 0 0 10px;
+  cursor: pointer;
+}
+
+.btn_enter_company:hover {
+  box-shadow: none;
+}
+
+.arrow {
+  rotate: 180deg;
+  height: 10px;
 }
 
 .footer {
   background: black;
   color: #FFF;
-  padding: 20px;
-  position: fixed;
+  padding: 20px 0;
   width: 100%;
-  bottom: 0;
+  text-align: center;
+  display: flex;
+  justify-content: center;
 }
 
 .body {
-  height: 50vW;
+  height: 159vW;
   display: flex;
   justify-content: center;
   align-items: center;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.text_registration_company {
+  text-align: center;
+}
+
+.link_reg_company {
+  width: max-content;
+  margin: auto;
 }
 
 .logout_btn {
   padding: 10px;
-  background: red;
-  color: #FFF;
-  border-radius: 10px;
-  box-shadow: 0 0 10px red;
   cursor: pointer;
 }
 
-.logout_btn:hover {
-  box-shadow: none;
+.burger_menu svg {
+  height: 50px;
+  width: 50px;
+}
+
+.footer div {
+  width: max-content;
+}
+
+.rotate_0_deg {
+  rotate: 0deg;
+}
+
+.NamePerson {
+  cursor: pointer;
+  text-decoration: 2px solid underline;
+}
+
+.NamePerson:hover {
+  text-decoration: none;
+}
+
+.header_768 {
+  display: none;
+}
+
+.header_320 {
+  display: flex;
+  justify-content: space-between;
 }
 
 .none {
@@ -182,4 +272,24 @@ input:hover {
 
 .block {
   display: block;
+}
+
+@media (min-width: 768px) {
+  .header_768 {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .header_320 {
+    display: none;
+  }
+
+  .body {
+    height: 50vW;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap: 30px;
+  }
 }

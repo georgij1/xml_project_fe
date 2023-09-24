@@ -1,7 +1,9 @@
-export default function Footer() {
+export const Footer = () => {
+    let data = new Date()
+    let now_date = data.getFullYear()
     return(
         <div className="footer">
-            <h1>Footer</h1>
+            <div>{now_date} г. Все права защищены &copy;</div>
         </div>
     )
 }

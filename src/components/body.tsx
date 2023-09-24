@@ -1,10 +1,12 @@
+import React from "react";
+
 export const Body = () => {
     function enter_company() {
-        alert('Вход в компанию')
+        window.open('/home/enter_company', '_self')
     }
 
     function reg_company() {
-        alert('Регистрация компании')
+        window.open('/home/reg_company', '_self')
     }
 
     return(

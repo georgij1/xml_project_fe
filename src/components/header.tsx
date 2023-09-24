@@ -4,68 +4,73 @@ export const Header = () => {
         window.open('/auth', '_self')
     }
 
-    function open_popup_menu_settings() {
-        // @ts-ignore
-        console.log(document.querySelector('.arrow'))
-        // @ts-ignore
-        document.querySelector('.arrow').classList.toggle('rotate_0_deg')
-        // @ts-ignore
-        console.log(document.querySelector('.arrow').classList.contains('rotate_0_deg'))
-    }
-
-    function support() {
-        alert('Помощь находиться в разработке')
-    }
-
     function open_profile_person() {
-        alert('Профиль находиться в разработке')
+        window.open('/home/profile', '_self')
     }
 
-    function open_components_file() {
-        alert('Открытие файла находиться в разработке')
+    function open_header() {
+        // @ts-ignore
+        document.querySelector('.open_header_320').classList.add('block')
+        // @ts-ignore
+        document.querySelector('.burger_menu').classList.add('none')
+        // @ts-ignore
+        document.querySelector('.close_menu').classList.add('block')
+        // @ts-ignore
+        document.querySelector('body').classList.add('body_no_scroll')
     }
 
-    function create_file() {
-        alert('Создание файла находиться в разработке')
+    function close_menu() {
+        // @ts-ignore
+        document.querySelector('.open_header_320').classList.remove('block')
+        // @ts-ignore
+        document.querySelector('.burger_menu').classList.remove('none')
+        // @ts-ignore
+        document.querySelector('.close_menu').classList.remove('block')
+        // @ts-ignore
+        document.querySelector('body').classList.remove('body_no_scroll')
+    }
+
+    function open_support() {
+        window.open('/home/support', '_self')
+    }
+
+    function open_settings() {
+        window.open('/home/settings', '_self')
+    }
+
+    function open_home_page() {
+        window.open('/', '_self')
     }
 
     return(
         <div className="header">
             <div className="header_320">
                 <div className="header_1">
-                    <div className="down_line">Logo</div>
-                    {/*<div className="down_line none">Создать</div>*/}
-                    {/*<div className="down_line none">Открыть</div>*/}
-                    {/*<div className="down_line_settings none">*/}
-                    {/*    <div>Настройки</div>*/}
-                    {/*    <div className="arrow">^</div>*/}
-                    {/*</div>*/}
-                    {/*<div className="question none">&iquest;</div>*/}
+                    <div className="logotype" onClick={open_home_page}></div>
                 </div>
-                {/*<div className="header_1 none">*/}
-                {/*    <p>NameCompany</p>*/}
-                {/*    <p onClick={logout} className="logout_btn">Выйти</p>*/}
-                {/*</div>*/}
-                <div className="burger_menu">
+                <div className="close_menu" onClick={close_menu}></div>
+                <div className="burger_menu" onClick={open_header}>
                     <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="100" height="100" viewBox="0 0 48 48">
                         <linearGradient id="EIPc0qTNCX0EujYwtxKaXa_MmupZtPbnw66_gr1" x1="12.066" x2="34.891" y1=".066" y2="22.891" gradientUnits="userSpaceOnUse"><stop offset=".237" stopColor="#3bc9f3"></stop><stop offset=".85" stop-color="#1591d8"></stop></linearGradient><path fill="url(#EIPc0qTNCX0EujYwtxKaXa_MmupZtPbnw66_gr1)" d="M43,15H5c-1.1,0-2-0.9-2-2v-2c0-1.1,0.9-2,2-2h38c1.1,0,2,0.9,2,2v2C45,14.1,44.1,15,43,15z"></path><linearGradient id="EIPc0qTNCX0EujYwtxKaXb_MmupZtPbnw66_gr2" x1="12.066" x2="34.891" y1="12.066" y2="34.891" gradientUnits="userSpaceOnUse"><stop offset=".237" stop-color="#3bc9f3"></stop><stop offset=".85" stop-color="#1591d8"></stop></linearGradient><path fill="url(#EIPc0qTNCX0EujYwtxKaXb_MmupZtPbnw66_gr2)" d="M43,27H5c-1.1,0-2-0.9-2-2v-2c0-1.1,0.9-2,2-2h38c1.1,0,2,0.9,2,2v2C45,26.1,44.1,27,43,27z"></path><linearGradient id="EIPc0qTNCX0EujYwtxKaXc_MmupZtPbnw66_gr3" x1="12.066" x2="34.891" y1="24.066" y2="46.891" gradientUnits="userSpaceOnUse"><stop offset=".237" stop-color="#3bc9f3"></stop><stop offset=".85" stop-color="#1591d8"></stop></linearGradient><path fill="url(#EIPc0qTNCX0EujYwtxKaXc_MmupZtPbnw66_gr3)" d="M43,39H5c-1.1,0-2-0.9-2-2v-2c0-1.1,0.9-2,2-2h38c1.1,0,2,0.9,2,2v2C45,38.1,44.1,39,43,39z"></path>
                     </svg>
                 </div>
             </div>
 
+            <div className="open_header_320">
+                <div className="btn_settings" onClick={open_settings}>Настройки</div>
+                <div className="btn_open_support" onClick={open_support}>Поддержка</div>
+                <div className="btn_open_profile" onClick={open_profile_person}>{localStorage.getItem('login')}</div>
+                <div onClick={logout} className="btn_logout">Выйти</div>
+            </div>
+
             <div className="header_768">
                 <div className="header_1">
-                    <div className="down_line">Logo</div>
-                    <div className="down_line" onClick={create_file}>Создать</div>
-                    <div className="down_line" onClick={open_components_file}>Открыть</div>
-                    <div className="down_line_settings" onClick={open_popup_menu_settings}>
-                        <div>Настройки</div>
-                        <div className="arrow">^</div>
-                    </div>
-                    <div className="question" onClick={support}>&iquest;</div>
+                    <div className="logotype" onClick={open_home_page}></div>
+                    <div className="down_line" onClick={open_settings}>Настройки</div>
+                    <div className="down_line" onClick={open_support}>Поддержка</div>
                 </div>
                 <div className="header_1">
-                    <div className="NamePerson" onClick={open_profile_person}>NamePerson</div>
+                    <div className="NamePerson" onClick={open_profile_person}>{localStorage.getItem('login')}</div>
                     <div onClick={logout} className="logout_btn">
                         <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <line y1="0.5" x2="15" y2="0.5" stroke="white"/>

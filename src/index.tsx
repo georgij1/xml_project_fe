@@ -2,7 +2,20 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import {createBrowserRouter, Navigate, RouterProvider} from "react-router-dom";
 import "./App.css";
-import {AuthForm, Header, Body, Footer, RegistrationForm} from "./components/export.components";
+import {
+    AuthForm,
+    Header,
+    Body,
+    Footer,
+    RegistrationForm,
+    EnterCompany,
+    RegCompany,
+    Header_enter_comp,
+    Profile,
+    SupportHome,
+    SettingsHome,
+    ClosePage
+} from "./components/export.components";
 
 if (!localStorage.getItem('auth_token')) {
     const router = createBrowserRouter([
@@ -34,8 +47,6 @@ else if (localStorage.getItem('auth_token')) {
     if (window.location.pathname === "/home") {
         // @ts-ignore
         document.querySelector('title').textContent = 'Домашняя страница'
-        // @ts-ignore
-        console.log(document.querySelector('title').textContent)
     }
 
     else {
@@ -43,6 +54,7 @@ else if (localStorage.getItem('auth_token')) {
         document.querySelector('title').textContent = 'Сервис по формированию заключений экспертизы в формате XML'
     }
 
+    // @ts-ignore
     const router = createBrowserRouter([
         {
             path: "/",
@@ -55,6 +67,45 @@ else if (localStorage.getItem('auth_token')) {
                 <Body/>
                 <Footer/>
             </div>,
+        },
+        {
+            path: "/home/enter_company",
+            element: <div>
+                <ClosePage/>
+                <EnterCompany/>
+                <Footer/>
+            </div>
+        },
+        {
+            path: "/home/reg_company",
+            element: <div>
+                <ClosePage/>
+                <RegCompany/>
+                <Footer/>
+            </div>
+        },
+        {
+            path: "/home/profile",
+            element: <div>
+                <Profile/>
+                <Footer/>
+            </div>
+        },
+        {
+            path: "/home/support",
+            element: <div>
+                <ClosePage/>
+                <SupportHome/>
+                <Footer/>
+            </div>
+        },
+        {
+            path: "/home/settings",
+            element: <div>
+                <ClosePage/>
+                <SettingsHome/>
+                <Footer/>
+            </div>
         }
     ]);
 

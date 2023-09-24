@@ -114,6 +114,7 @@ export const AuthForm = () => {
                     response.json().then(data => {
                         console.log(data.jwt)
                         alert('Вы в системе')
+                        localStorage.setItem('login', body.login)
                         localStorage.setItem('auth_token', data.jwt)
                         window.open("/home", '_self')
                     })

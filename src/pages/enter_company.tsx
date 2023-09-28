@@ -12,7 +12,7 @@ export const EnterCompany = () => {
                 <div className="enter_company_btn">Войти</div>
             </div>
 
-            <div className="text_registration_company" onClick={open_page_reg_company}>Если у вас ещё нет ни одной компании <div className="link_reg">зарегистрируйте её</div></div>
+            <div className="text_registration_company">Если у вас ещё нет ни одной компании <div className="link_reg" onClick={open_page_reg_company}>зарегистрируйте её</div></div>
         </div>
     )
 }

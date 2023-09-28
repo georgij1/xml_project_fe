@@ -8,29 +8,14 @@ export const RegistrationForm = () => {
 
     function registration() {
         // @ts-ignore
-        console.log("filed_first_name - ", document.querySelector('.first_name_field').value)
-        // @ts-ignore
-        console.log("filed_last_name - ", document.querySelector('.last_name_field').value)
-        // @ts-ignore
-        console.log("filed_second_name - ", document.querySelector('.second_name_field').value)
-        // @ts-ignore
         console.log("filed_login - ", document.querySelector('.login_field').value)
         // @ts-ignore
         console.log("filed_password - ", document.querySelector('.password_field').value)
         // @ts-ignore
-        console.log("filed_email - ", document.querySelector('.email_field').value)
+        console.log("filed_email - ", document.querySelector('.password_repeat_field').value)
 
         // checks on all fields
         if (
-            // @ts-ignore
-            document.querySelector('.first_name_field').value.length === 0
-            &&
-            // @ts-ignore
-            document.querySelector('.last_name_field').value.length === 0
-            &&
-            // @ts-ignore
-            document.querySelector('.second_name_field').value.length === 0
-            &&
             // @ts-ignore
             document.querySelector('.login_field').value.length === 0
             &&
@@ -38,7 +23,7 @@ export const RegistrationForm = () => {
             document.querySelector('.password_field').value.length === 0
             &&
             // @ts-ignore
-            document.querySelector('.email_field').value.length === 0
+            document.querySelector('.password_repeat_field').value.length === 0
         ) {
             console.log('fields is null')
             // @ts-ignore
@@ -56,13 +41,14 @@ export const RegistrationForm = () => {
         else if (
             // @ts-ignore
             document.querySelector('.password_field').value.length >= 6
+            &&
+            // @ts-ignore
+            document.querySelector('.password_repeat_field').value.length >= 6
         ) {
             // @ts-ignore
             document.querySelector('.check_password_true').classList.add('block')
             // @ts-ignore
             document.querySelector('.check_password_false').classList.remove('block')
-            // @ts-ignore
-            console.log(document.querySelector('.email_field').value.includes('@'))
             // @ts-ignore
             document.querySelector('.continue').classList.add('block')
         }
@@ -116,28 +102,23 @@ export const RegistrationForm = () => {
         activate_loader()
         let body = {
             // @ts-ignore
-            "firstName": document.querySelector('.first_name_field').value,
-            // @ts-ignore
-            "lastName": document.querySelector('.last_name_field').value,
-            // @ts-ignore
-            "secondName": document.querySelector('.second_name_field').value,
-            // @ts-ignore
             "login": document.querySelector('.login_field').value,
             // @ts-ignore
             "password": document.querySelector('.password_field').value,
             // @ts-ignore
-            "email": document.querySelector('.email_field').value
+            "RepeatPassword": document.querySelector('.password_repeat_field').value
         }
         console.log(body)
-        fetch(`http://10.3.9.83:8080/api/v1/auth/register`, {
+        fetch(`http://localhost:8080/api/user/auth/registration`, {
             method: 'POST',
             body: JSON.stringify(body),
-            headers: {
-                'Content-type': 'application/json; charset=UTF-8'
-            }
+            headers: new Headers({
+                'Content-Type': 'application/json'
+            }),
+            mode: 'cors'
         })
             .then((response) => {
-                if (response.status === 200) {
+                if (response.status === 303) {
                     window.open('/auth', '_self')
                 }
 
@@ -145,6 +126,9 @@ export const RegistrationForm = () => {
                     distinctive_loader()
                     alert('Ошибка. Код ошибки ' + response.status)
                 }
+
+                console.log(response.text())
+                console.log(response.status)
             })
             .catch((err) => {
                 console.log(err.message);
@@ -154,30 +138,22 @@ export const RegistrationForm = () => {
     return(
         <div className="form_auth_company">
             <h1>Регистрация</h1>
-            <div className="mini_form">
-                <label htmlFor="enter_your_first_name">Имя</label>
-                <input className="input_from_auth first_name_field" id="enter_your_first_name" placeholder="Введите своё имя..."/>
-            </div>
-            <div className="mini_form">
-                <label htmlFor="enter_your_last_name">Фамилия</label>
-                <input className="input_from_auth last_name_field" id="enter_your_last_name" placeholder="Введите свою фамилию..."/>
-            </div>
-            <div className="mini_form">
-                <label htmlFor="enter_your_second_name">Отчество</label>
-                <input className="input_from_auth second_name_field" id="enter_your_second_name" placeholder="Введите своё отчество..."/>
-            </div>
+
             <div className="mini_form">
                 <label htmlFor="enter_your_login">Логин</label>
                 <input className="input_from_auth login_field" id="enter_your_login" placeholder="Придумайте свой логин..."/>
             </div>
+
             <div className="mini_form">
                 <label htmlFor="enter_your_password">Пароль</label>
                 <input type="password" className="input_from_auth password_field" id="enter_your_password" placeholder="Придумайте свой пароль..."/>
             </div>
+
             <div className="mini_form">
-                <label htmlFor="enter_your_email">Email</label>
-                <input className="input_from_auth email_field" id="enter_your_email" placeholder="Введите свой email..."/>
+                <label htmlFor="enter_repeat_your_password">Повторение пароля</label>
+                <input type="password" className="input_from_auth password_repeat_field" id="enter_repeat_your_password" placeholder="Повторите свой придуманный пароль..."/>
             </div>
+
             <div className="btn_auth_company" onClick={registration}>Зарегистрироваться</div>
 
             <div className="reg">Если у вас есть аккаунта <div className="link_reg" onClick={open_auth_page}>авторизуйтесь</div></div>

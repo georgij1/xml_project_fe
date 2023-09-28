@@ -156,6 +156,7 @@ input:hover {
 
 .down_line:hover {
   text-decoration: none;
+  box-shadow: none;
 }
 
 .logotype {
@@ -163,6 +164,7 @@ input:hover {
   height: 50px;
   background: url("../public/img/logotype.png") no-repeat;
   background-size: 50px;
+  cursor: pointer;
 }
 
 .down_line {
@@ -258,6 +260,7 @@ input:hover {
 
 .NamePerson:hover {
   text-decoration: none;
+  box-shadow: none;
 }
 
 .enter_company_form {
@@ -484,6 +487,10 @@ input:hover {
 
 .block {
   display: block;
+}
+
+.null_value_input {
+  border: 2px solid red;
 }
 
 @media (min-width: 405px) {

@@ -10,7 +10,6 @@ import {
     RegistrationForm,
     EnterCompany,
     RegCompany,
-    Header_enter_comp,
     Profile,
     SupportHome,
     SettingsHome,
@@ -35,8 +34,7 @@ if (!localStorage.getItem('auth_token')) {
         }
     ]);
 
-    // @ts-ignore
-    ReactDOM.createRoot(document.getElementById("root")).render(
+    ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
         <React.StrictMode>
             <RouterProvider router={router} />
         </React.StrictMode>
@@ -45,8 +43,11 @@ if (!localStorage.getItem('auth_token')) {
 
 else if (localStorage.getItem('auth_token')) {
     if (window.location.pathname === "/home") {
-        // @ts-ignore
-        document.querySelector('title').textContent = 'Домашняя страница'
+        const a = document.querySelector('title')
+
+        if (a) {
+            a.textContent = 'Домашняя страница'
+        }
     }
 
     else {

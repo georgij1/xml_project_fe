@@ -99,23 +99,25 @@ export const AuthForm = () => {
             // @ts-ignore
             "login": document.querySelector('.login_field').value,
             // @ts-ignore
-            "password": document.querySelector('.password_field').value
+            "password": document.querySelector('.password_field').value,
         }
 
-        fetch(`http://10.3.9.83:8080/api/v1/auth/authenticate`, {
+        fetch(`http://localhost:8080/api/user/auth/login`, {
             method: 'POST',
             body: JSON.stringify(body),
             headers: {
                 'Content-type': 'application/json; charset=UTF-8'
-            }
+            },
+            mode: "cors"
         })
             .then((response) => {
+                console.log(response.status)
                 if (response.status === 200) {
-                    response.json().then(data => {
-                        console.log(data.jwt)
-                        alert('Вы в системе')
+                    console.log(response)
+                    response.text().then((jwt_token) => {
+                        console.log(jwt_token)
+                        localStorage.setItem('auth_token', jwt_token)
                         localStorage.setItem('login', body.login)
-                        localStorage.setItem('auth_token', data.jwt)
                         window.open("/home", '_self')
                     })
                 }

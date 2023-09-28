@@ -42,35 +42,6 @@ export const Header = () => {
         window.open('/', '_self')
     }
 
-    // const headers = {
-    //     'Authorization': `Bearer ${localStorage.getItem('auth_token')}`
-    // }
-
-    function try_server_request_jwt_token() {
-        let url = "http://localhost:8080/api/v1/users";
-        console.log(localStorage.getItem('auth_token'))
-        fetch(`${url}`, {
-            headers: {
-                // "Accept": "application/json",
-                "Authorization": `Bearer ${localStorage.getItem('auth_token')}`,
-                // // 'Content-Type': 'application/json',
-                // // 'Connection': 'keep-alive',
-                // 'Accept-Encoding': 'gzip, deflate, br',
-                // 'Cache-Control': 'no-cache'
-            },
-            // mode: "no-cors"
-        })
-        .then((resp) => resp.text())
-        .then(responseJson => {
-            console.log(responseJson)
-        })
-        .catch((error) => {
-            console.log(error)
-        })
-    }
-
-    try_server_request_jwt_token()
-
     return(
         <div className="header">
             <div className="header_320">

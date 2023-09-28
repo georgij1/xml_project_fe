@@ -290,6 +290,14 @@ input:hover {
   border-radius: 10px;
 }
 
+.input_owner_company {
+  cursor: no-drop;
+}
+
+.input_owner_company:hover {
+  box-shadow: 0 0 10px bisque;
+}
+
 .content_enter_company {
   height: max-content;
   display: flex;

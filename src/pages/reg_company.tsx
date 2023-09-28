@@ -106,12 +106,25 @@ export const RegCompany = () => {
                 console.log('continue reg')
                 // activate_loader()
 
+                let body = {
+                    // @ts-ignore
+                    "name_company": name_company.value,
+                    // @ts-ignore
+                    "password_company": password_company.value,
+                    // @ts-ignore
+                    "desc_company": textarea_desc_company.value,
+                    "owner_company": localStorage.getItem('login')
+                }
+
+                activate_loader()
+
                 // @ts-ignore
                 function try_server_request_jwt_token() {
                     let url = "http://localhost:8080/api/company/create";
                     console.log(localStorage.getItem('auth_token'))
                     fetch(`${url}`, {
                         method: 'POST',
+                        body: JSON.stringify(body),
                         headers: {
                             "Accept": "application/json",
                             "Authorization": `Bearer ${localStorage.getItem('auth_token')}`,
@@ -120,11 +133,21 @@ export const RegCompany = () => {
                             'Accept-Encoding': 'gzip, deflate, br',
                             'Cache-Control': 'no-cache'
                         },
-                        mode: "no-cors"
+                        mode: "cors"
                     })
-                        .then((resp) => resp.text())
-                        .then(responseJson => {
-                            console.log(responseJson)
+                        .then((resp) => {
+                            console.log(resp.text().then((event) => {console.log(event)}))
+                            console.log(resp.status)
+
+                            if (resp.status === 200) {
+                                distinctive_loader()
+                                window.open('/home/enter_company', '_self')
+                            }
+
+                            else {
+                                distinctive_loader()
+                                alert('Ошибка. Код ошибки: ' + resp.status)
+                            }
                         })
                         .catch((error) => {
                             console.log(error)
@@ -188,10 +211,18 @@ export const RegCompany = () => {
                     <label htmlFor="password_company">Пароль</label>
                     <input autoComplete='new-password' id="password_company" type="password" className="input_password_company" placeholder="Введите пароль от компании..."/>
                 </div>
+
                 <div>
                     <label htmlFor="desc_company">Описание</label>
                     <textarea id="desc_company" className="textarea_desc_company" placeholder="Введите описание компании..."/>
                 </div>
+
+                <div>
+                    <label htmlFor="owner_company">Админ</label>
+                    {/*@ts-ignore*/}
+                    <input autoComplete='new-password' id="owner_company" type="text" readOnly value={localStorage.getItem('login')} className="input_password_company input_owner_company" placeholder="Введите пароль от компании..."/>
+                </div>
+
                 <div className="create_company_btn" onClick={create_company}>Создать</div>
             </div>
             <div className="exists_company">Если у вас уже есть компания <div className="link_reg" onClick={open_auth_company}>Войдите в неё</div></div>

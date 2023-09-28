@@ -108,7 +108,7 @@ export const AuthForm = () => {
             headers: {
                 'Content-type': 'application/json; charset=UTF-8'
             },
-            mode: "cors"
+            mode: "no-cors"
         })
             .then((response) => {
                 console.log(response.status)

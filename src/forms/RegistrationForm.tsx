@@ -109,13 +109,13 @@ export const RegistrationForm = () => {
             "RepeatPassword": document.querySelector('.password_repeat_field').value
         }
         console.log(body)
-        fetch(`http://localhost:8080/api/user/auth/registration`, {
+        fetch(`http://10.3.9.83:8080/api/user/auth/registration`, {
             method: 'POST',
             body: JSON.stringify(body),
             headers: new Headers({
                 'Content-Type': 'application/json'
             }),
-            mode: 'cors'
+            mode: 'no-cors'
         })
             .then((response) => {
                 if (response.status === 303) {

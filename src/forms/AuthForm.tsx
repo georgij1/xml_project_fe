@@ -102,7 +102,7 @@ export const AuthForm = () => {
             "password": document.querySelector('.password_field').value,
         }
 
-        fetch(`http://localhost:8080/api/user/auth/login`, {
+        fetch(`http://10.3.9.83:8080/api/user/auth/login`, {
             method: 'POST',
             body: JSON.stringify(body),
             headers: {

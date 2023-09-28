@@ -115,7 +115,7 @@ export const RegistrationForm = () => {
             headers: new Headers({
                 'Content-Type': 'application/json'
             }),
-            mode: 'no-cors'
+            mode: 'cors'
         })
             .then((response) => {
                 if (response.status === 303) {

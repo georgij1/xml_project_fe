@@ -42,7 +42,7 @@ export const Header = () => {
         window.open('/', '_self')
     }
 
-    return(
+    return (
         <div className="header">
             <div className="header_320">
                 <div className="header_1">

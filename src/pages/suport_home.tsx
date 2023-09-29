@@ -1,5 +1,7 @@
 export const SupportHome = () => {
     return (
-        <h1>Support Home</h1>
+        <div>
+            <h1 className="title_support_page">Страница поддержки находится в разработке</h1>
+        </div>
     )
 }

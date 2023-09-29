@@ -475,6 +475,62 @@ input:hover {
   box-shadow: none;
 }
 
+.text_settings {
+  padding: 10px;
+}
+
+.settings_theme {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 10px;
+}
+
+select {
+  padding: 10px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px bisque;
+  border: 2px solid bisque;
+  outline: bisque;
+  cursor: pointer;
+}
+
+select:hover {
+  box-shadow: none;
+}
+
+.dark_theme_body {
+  background: black;
+  color: #FFF;
+}
+
+.btn_continue {
+  padding: 10px;
+  background: blue;
+  border-radius: 10px;
+  box-shadow: 0 0 10px blue;
+  cursor: pointer;
+  display: none;
+  width: 200px;
+  text-align: center;
+  margin: auto;
+  color: #FFF;
+}
+
+.btn_continue:hover {
+  box-shadow: none;
+}
+
+.btn_enter_company_dark {
+  color: black;
+  background: grey;
+  box-shadow: 0 0 10px beige;
+}
+
+.title_support_page {
+  text-align: center;
+}
+
 .form_create_company div {
   display: flex;
   flex-direction: column;

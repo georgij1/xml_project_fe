@@ -7,7 +7,10 @@ import {
     Header,
     Body,
     Footer,
-    RegistrationForm,
+    RegistrationForm
+    // @ts-ignore
+} from "./components/export.components.tsx";
+import {
     EnterCompany,
     RegCompany,
     Profile,
@@ -15,7 +18,8 @@ import {
     SettingsHome,
     ClosePage,
     MainPageCompany, CompanyHeader
-} from "./components/export.components";
+    // @ts-ignore
+} from "./pages/export.pages.tsx"
 
 if (!localStorage.getItem('auth_token')) {
     const router = createBrowserRouter([

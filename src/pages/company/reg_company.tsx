@@ -142,6 +142,9 @@ export const RegCompany = () => {
                             if (resp.status === 200) {
                                 distinctive_loader()
                                 window.open('/home/enter_company', '_self')
+                                resp.text().then((event) => {
+                                    console.log(event)
+                                })
                             }
 
                             else {

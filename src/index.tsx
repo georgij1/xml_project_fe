@@ -13,7 +13,8 @@ import {
     Profile,
     SupportHome,
     SettingsHome,
-    ClosePage
+    ClosePage,
+    MainPageCompany, CompanyHeader
 } from "./components/export.components";
 
 if (!localStorage.getItem('auth_token')) {
@@ -35,6 +36,26 @@ if (!localStorage.getItem('auth_token')) {
     ]);
 
     ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
+        <React.StrictMode>
+            <RouterProvider router={router} />
+        </React.StrictMode>
+    );
+}
+
+else if (localStorage.getItem('NameCompany') && localStorage.getItem('auth_token')) {
+    const router = createBrowserRouter([
+        {
+            path: "/home/company",
+            element: <div>
+                <CompanyHeader/>
+                <MainPageCompany/>
+                <Footer/>
+            </div>
+        }
+    ])
+
+    // @ts-ignore
+    ReactDOM.createRoot(document.getElementById("root")).render(
         <React.StrictMode>
             <RouterProvider router={router} />
         </React.StrictMode>

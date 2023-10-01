@@ -1,44 +1,44 @@
 export const Header = () => {
-    function logout() {
+    const logout = () => {
         localStorage.clear()
         window.open('/auth', '_self')
     }
 
-    function open_profile_person() {
+    const open_profile_person = () => {
         window.open('/home/profile', '_self')
     }
 
-    function open_header() {
-        // @ts-ignore
-        document.querySelector('.open_header_320').classList.add('block')
-        // @ts-ignore
-        document.querySelector('.burger_menu').classList.add('none')
-        // @ts-ignore
-        document.querySelector('.close_menu').classList.add('block')
-        // @ts-ignore
-        document.querySelector('body').classList.add('body_no_scroll')
+    const open_header = () => {
+        let open_header_320 = document.getElementsByName('.open_header_320')[0]
+        let burger_menu = document.getElementsByName('.burger_menu')[0]
+        let close_menu = document.getElementsByName('.close_menu')[0]
+        let body = document.getElementsByName('body')[0]
+        open_header_320.classList.add('block')
+        burger_menu.classList.add('none')
+        close_menu.classList.add('block')
+        body.classList.add('body_no_scroll')
     }
 
-    function close_menu() {
-        // @ts-ignore
-        document.querySelector('.open_header_320').classList.remove('block')
-        // @ts-ignore
-        document.querySelector('.burger_menu').classList.remove('none')
-        // @ts-ignore
-        document.querySelector('.close_menu').classList.remove('block')
-        // @ts-ignore
-        document.querySelector('body').classList.remove('body_no_scroll')
+    const close_menu = () => {
+        let open_header_320 = document.getElementsByName('.open_header_320')[0]
+        let burger_menu = document.getElementsByName('.burger_menu')[0]
+        let close_menu = document.getElementsByName('.close_menu')[0]
+        let body = document.getElementsByName('body')[0]
+        open_header_320.classList.remove('block')
+        burger_menu.classList.remove('none')
+        close_menu.classList.remove('block')
+        body.classList.remove('body_no_scroll')
     }
 
-    function open_support() {
+    const open_support = () => {
         window.open('/home/support', '_self')
     }
 
-    function open_settings() {
+    const open_settings = () => {
         window.open('/home/settings', '_self')
     }
 
-    function open_home_page() {
+    const open_home_page = () => {
         window.open('/', '_self')
     }
 

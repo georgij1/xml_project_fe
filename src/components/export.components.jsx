@@ -1,12 +1,8 @@
-// @ts-ignore
 export {AuthForm} from "../forms/AuthForm.tsx";
-// @ts-ignore
 export {Header} from "../components/header.tsx";
-// @ts-ignore
 export {Body} from "../components/body.tsx";
-// @ts-ignore
 export {Footer} from "../components/footer.tsx";
-// @ts-ignore
 export {RegistrationForm} from "../forms/RegistrationForm.tsx";
-// @ts-ignore
 export {Header_enter_comp} from "../components/header_enter_comp.tsx";
+export {UploadFile} from "./company/UploadFile.tsx";
+export {CreateFile} from "./company/CreateFile.tsx";

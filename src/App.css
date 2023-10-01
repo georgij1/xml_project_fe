@@ -134,6 +134,10 @@ input:hover {
 
 .loader {
   display: none;
+  top: 0;
+  right: 0;
+  left: 0;
+  bottom: 0;
 }
 
 .checks_null, .empty_all_fields, .check_password_false_1 {

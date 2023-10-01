@@ -2,11 +2,11 @@ import {ClipLoader} from "react-spinners";
 import React from "react";
 
 export const RegCompany = () => {
-    function open_auth_company() {
+    const open_auth_company = () => {
         window.open('/home/enter_company', '_self')
     }
 
-    function create_company() {
+    const create_company = () => {
         const name_company = document.querySelector('.input_name_company')
         const password_company = document.querySelector('.input_password_company')
         const textarea_desc_company = document.querySelector('.textarea_desc_company')
@@ -17,7 +17,7 @@ export const RegCompany = () => {
         console.log(password_company.value)
         // @ts-ignore
         console.log(textarea_desc_company.value)
-        // @ts-ignore
+
         if (
             // @ts-ignore
             name_company.value.length === 0
@@ -35,7 +35,6 @@ export const RegCompany = () => {
             }
         }
 
-        // @ts-ignore
         else if (
             // @ts-ignore
             name_company.value.length > 0
@@ -53,7 +52,6 @@ export const RegCompany = () => {
             }
         }
 
-        // @ts-ignore
         else if (
             // @ts-ignore
             name_company.value.length === 0
@@ -71,7 +69,6 @@ export const RegCompany = () => {
             }
         }
 
-        // @ts-ignore
         else if (
             // @ts-ignore
             name_company.value.length === 0
@@ -104,9 +101,9 @@ export const RegCompany = () => {
                 password_company.classList.remove('null_value_input')
                 textarea_desc_company.classList.remove('null_value_input')
                 console.log('continue reg')
-                // activate_loader()
+                activate_loader()
 
-                let body = {
+                const body = {
                     // @ts-ignore
                     "name_company": name_company.value,
                     // @ts-ignore
@@ -118,9 +115,8 @@ export const RegCompany = () => {
 
                 activate_loader()
 
-                // @ts-ignore
-                function try_server_request_jwt_token() {
-                    let url = "http://localhost:8080/api/company/create";
+                const try_server_request_jwt_token = () => {
+                    const url = "http://10.3.9.83:8080/api/company/create";
                     console.log(localStorage.getItem('auth_token'))
                     fetch(`${url}`, {
                         method: 'POST',
@@ -162,7 +158,7 @@ export const RegCompany = () => {
         }
     }
 
-    function activate_loader() {
+    const activate_loader = () => {
         // @ts-ignore
         document.querySelector('.loader').style.display = 'inline-block'
         // @ts-ignore
@@ -184,16 +180,12 @@ export const RegCompany = () => {
         // @ts-ignore
         document.querySelector('.loader').style.position = 'absolute'
         // @ts-ignore
-        document.querySelector('.loader').style.left = '40vW'
-        // @ts-ignore
-        document.querySelector('.loader').style.top = '30vW'
-        // @ts-ignore
         document.querySelector('body').style.overflow='hidden'
         // @ts-ignore
         document.querySelector('body').style.opacity='0.5'
     }
 
-    function distinctive_loader() {
+    const distinctive_loader = () => {
         // @ts-ignore
         document.querySelector('.loader').style.display = 'none'
         // @ts-ignore
@@ -202,7 +194,6 @@ export const RegCompany = () => {
         document.querySelector('body').style.overflow = 'auto'
     }
 
-    // @ts-ignore
     return (
         <div>
             <div className="form_create_company">
@@ -214,27 +205,21 @@ export const RegCompany = () => {
                     <label htmlFor="password_company">Пароль</label>
                     <input autoComplete='new-password' id="password_company" type="password" className="input_password_company" placeholder="Введите пароль от компании..."/>
                 </div>
-
                 <div>
                     <label htmlFor="desc_company">Описание</label>
                     <textarea id="desc_company" className="textarea_desc_company" placeholder="Введите описание компании..."/>
                 </div>
-
                 <div>
                     <label htmlFor="owner_company">Админ</label>
                     {/*@ts-ignore*/}
                     <input autoComplete='new-password' id="owner_company" type="text" readOnly value={localStorage.getItem('login')} className="input_password_company input_owner_company" placeholder="Введите пароль от компании..."/>
                 </div>
-
                 <div className="create_company_btn" onClick={create_company}>Создать</div>
             </div>
             <div className="exists_company">Если у вас уже есть компания <div className="link_reg" onClick={open_auth_company}>Войдите в неё</div></div>
-            {/*@ts-ignore*/}
             <ClipLoader
                 style={{display: "none"}}
                 color={'blue'}
-                // loading={loading}
-                // cssOverride={override}
                 size={150}
                 aria-label="Loading Spinner"
                 data-testid="loader"

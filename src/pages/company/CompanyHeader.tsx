@@ -1,7 +1,7 @@
 import React from "react";
 
 export const CompanyHeader = () => {
-    function logout_company() {
+    const logout_company = () => {
         localStorage.removeItem('NameCompany')
         window.history.back()
     }
@@ -12,18 +12,18 @@ export const CompanyHeader = () => {
     }
 
     const close_menu = () => {
-        //     @ts-ignore
+        // @ts-ignore
         document.querySelector('.burger_menu').classList.remove('none')
-        //     @ts-ignore
+        // @ts-ignore
         document.querySelector('.close_menu').classList.remove('block')
         // @ts-ignore
         document.querySelector('.open_header_320').classList.remove('block')
     }
 
     const open_header = () => {
-    //     @ts-ignore
+        // @ts-ignore
         document.querySelector('.burger_menu').classList.add('none')
-    //     @ts-ignore
+        // @ts-ignore
         document.querySelector('.close_menu').classList.add('block')
         // @ts-ignore
         document.querySelector('.open_header_320').classList.add('block')

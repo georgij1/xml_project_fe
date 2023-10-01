@@ -1,7 +1,7 @@
 import React from "react";
 
 interface profile_props {
-    name?: string;
+    name: string;
 }
 
 export class Profile extends React.Component<profile_props> {
@@ -10,9 +10,9 @@ export class Profile extends React.Component<profile_props> {
     }
 
     render() {
-        let {name} = this.props;
+        const {name} = this.props;
 
-        function change_info() {
+        const change_info = () => {
             // @ts-ignore
             document.querySelector('.form_change_info').classList.add('block')
             // @ts-ignore
@@ -23,7 +23,7 @@ export class Profile extends React.Component<profile_props> {
             document.querySelector('.btn_change_info').classList.add('none')
         }
 
-        function close_edit_profile() {
+        const close_edit_profile = () => {
             // @ts-ignore
             document.querySelector('.form_change_info').classList.remove('block')
             // @ts-ignore

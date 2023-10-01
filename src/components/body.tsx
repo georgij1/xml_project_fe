@@ -1,13 +1,15 @@
 import React from "react";
 
 export const Body = () => {
-    function enter_company() {
+    const enter_company = () => {
         window.open('/home/enter_company', '_self')
     }
 
-    function reg_company() {
+    const reg_company = () => {
         window.open('/home/reg_company', '_self')
     }
+
+    let body = document.getElementsByTagName('body')[0]
 
     if (localStorage.getItem('dark_theme')) {
         // @ts-ignore
@@ -22,8 +24,9 @@ export const Body = () => {
     }
 
     else {
-        // @ts-ignore
-        document.querySelector('body').classList.remove('dark_theme_body')
+        if (document.querySelector('body')) {
+            body.classList.remove('dark_theme_body')
+        }
 
         return(
             <div className="body">

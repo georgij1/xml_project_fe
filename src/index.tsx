@@ -1,15 +1,20 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import {createBrowserRouter, Navigate, RouterProvider} from "react-router-dom";
-import "./App.css";
+// @ts-ignore
+import {
+    createBrowserRouter,
+    Navigate,
+    RouterProvider
+} from "react-router-dom";
 import {
     AuthForm,
     Header,
     Body,
     Footer,
-    RegistrationForm
+    RegistrationForm,
+    UploadFile, CreateFile
     // @ts-ignore
-} from "./components/export.components.tsx";
+} from "./components/export.components.jsx";
 import {
     EnterCompany,
     RegCompany,
@@ -19,7 +24,8 @@ import {
     ClosePage,
     MainPageCompany, CompanyHeader
     // @ts-ignore
-} from "./pages/export.pages.tsx"
+} from "./pages/export.pages.jsx"
+import "./App.css"
 
 if (!localStorage.getItem('auth_token')) {
     const router = createBrowserRouter([
@@ -49,17 +55,36 @@ if (!localStorage.getItem('auth_token')) {
 else if (localStorage.getItem('NameCompany') && localStorage.getItem('auth_token')) {
     const router = createBrowserRouter([
         {
+            path: "/",
+            element: <Navigate to="/home/company" replace={true}/>
+        },
+
+        {
             path: "/home/company",
             element: <div>
                 <CompanyHeader/>
                 <MainPageCompany/>
                 <Footer/>
             </div>
+        },
+
+        {
+            path: "/home/company/upload/file",
+            element: <div>
+                <ClosePage/>
+                <UploadFile/>
+            </div>
+        },
+        {
+            path: "/home/company/create/file",
+            element: <div>
+                <ClosePage/>
+                <CreateFile/>
+            </div>
         }
     ])
 
-    // @ts-ignore
-    ReactDOM.createRoot(document.getElementById("root")).render(
+    ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
         <React.StrictMode>
             <RouterProvider router={router} />
         </React.StrictMode>
@@ -67,20 +92,18 @@ else if (localStorage.getItem('NameCompany') && localStorage.getItem('auth_token
 }
 
 else if (localStorage.getItem('auth_token')) {
-    if (window.location.pathname === "/home") {
-        const a = document.querySelector('title')
+    let title = document.querySelector('title')
 
-        if (a) {
-            a.textContent = 'Домашняя страница'
-        }
+    if (window.location.pathname === "/home") {
+        // @ts-ignore
+        title.textContent = 'Домашняя страница'
     }
 
     else {
         // @ts-ignore
-        document.querySelector('title').textContent = 'Сервис по формированию заключений экспертизы в формате XML'
+        title.textContent = 'Сервис по формированию заключений экспертизы в формате XML'
     }
 
-    // @ts-ignore
     const router = createBrowserRouter([
         {
             path: "/",
@@ -135,8 +158,7 @@ else if (localStorage.getItem('auth_token')) {
         }
     ]);
 
-    // @ts-ignore
-    ReactDOM.createRoot(document.getElementById("root")).render(
+    ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
         <React.StrictMode>
             <RouterProvider router={router} />
         </React.StrictMode>
@@ -155,8 +177,7 @@ else {
         }
     ]);
 
-    // @ts-ignore
-    ReactDOM.createRoot(document.getElementById("root")).render(
+    ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
         <React.StrictMode>
             <RouterProvider router={router} />
         </React.StrictMode>

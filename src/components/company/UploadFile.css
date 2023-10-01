@@ -1,0 +1,105 @@
+.btn_upload_file {
+    padding: 10px;
+    background: blue;
+    width: 200px;
+    text-align: center;
+    color: #FFF;
+    border-radius: 10px;
+    box-shadow: 0 0 10px blue;
+    margin: 40vh auto auto;
+    cursor: pointer;
+    display: block;
+}
+
+.btn_upload_file:hover {
+    box-shadow: none;
+}
+
+.success {
+    width: 40px;
+    height: 40px;
+    background: url("/public/img/icon_success.png") no-repeat;
+    background-size: 40px;
+}
+
+.title_check {
+    min-width: 191px;
+}
+
+.continue_btn {
+    width: 200px;
+    margin: 30px auto;
+}
+
+.error {
+    width: 40px;
+    height: 40px;
+    background: url("/public/img/icon_errror.png") no-repeat;
+    background-size: 40px;
+}
+
+.cancel_btn {
+    display: none;
+    text-align: center;
+    background: red;
+    height: 38px;
+    width: 220px;
+    color: #FFF;
+    margin: 30px auto;
+    border-radius: 10px;
+    box-shadow: 0 0 10px red;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+
+.cancel_btn:hover {
+    box-shadow: none;
+}
+
+.check_type_file {
+    display: none;
+    gap: 10px;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    background: aliceblue;
+    margin: 20px auto auto;
+    width: 244px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px bisque;
+}
+
+.input_file {
+    display: none;
+}
+
+.none {
+    display: none;
+}
+
+.block {
+    display: block;
+}
+
+.flex {
+    display: flex;
+}
+
+@media (min-width: 768px) {
+    .check_type_file {
+        width: 80%;
+        justify-content: start;
+    }
+
+    .flex_768 {
+        display: flex;
+        position: fixed;
+        width: 100%;
+        bottom: 0;
+        background: aliceblue;
+        border-top-left-radius: 20px;
+        border-top-right-radius: 20px;
+        box-shadow: 0 0 10px lightblue;
+    }
+}

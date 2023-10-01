@@ -1,0 +1,25 @@
+.body_page_company {
+    padding-top: 111px;
+    text-align: center;
+}
+
+.tools_header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 10px;
+    gap: 30px;
+}
+
+.btn_create_file, .open_file_btn {
+    padding: 10px;
+    box-shadow: 0 0 10px bisque;
+    border-radius: 10px;
+    cursor: pointer;
+    border: 2px solid bisque;
+    background: #FFF;
+}
+
+.btn_create_file:hover, .btn_open_file:hover {
+    box-shadow: none;
+}

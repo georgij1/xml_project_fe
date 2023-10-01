@@ -2,11 +2,11 @@ import React from "react";
 import {ClipLoader} from "react-spinners";
 
 export const RegistrationForm = () => {
-    function open_auth_page() {
+    const open_auth_page = () => {
         window.open(`/auth`, '_self')
     }
 
-    function registration() {
+    const registration = () => {
         // @ts-ignore
         console.log("filed_login - ", document.querySelector('.login_field').value)
         // @ts-ignore
@@ -14,7 +14,6 @@ export const RegistrationForm = () => {
         // @ts-ignore
         console.log("filed_email - ", document.querySelector('.password_repeat_field').value)
 
-        // checks on all fields
         if (
             // @ts-ignore
             document.querySelector('.login_field').value.length === 0
@@ -58,7 +57,7 @@ export const RegistrationForm = () => {
         }
     }
 
-    function activate_loader() {
+    const activate_loader = () => {
         // @ts-ignore
         document.querySelector('.loader').style.display = 'inline-block'
         // @ts-ignore
@@ -89,7 +88,7 @@ export const RegistrationForm = () => {
         document.querySelector('body').style.opacity='0.5'
     }
 
-    function distinctive_loader() {
+    const distinctive_loader = () => {
         // @ts-ignore
         document.querySelector('.loader').style.display = 'none'
         // @ts-ignore
@@ -98,9 +97,9 @@ export const RegistrationForm = () => {
         document.querySelector('body').style.overflow = 'auto'
     }
 
-    function continue_registration() {
+    const continue_registration = () => {
         activate_loader()
-        let body = {
+        const body = {
             // @ts-ignore
             "login": document.querySelector('.login_field').value,
             // @ts-ignore
@@ -163,12 +162,9 @@ export const RegistrationForm = () => {
             <div className="check_password_true">Проверка на длину пароля пройдена</div>
             <div className="check_password_false">Проверка на длину пароля не пройдена</div>
             <div className="continue" onClick={continue_registration}>Продолжить</div>
-            {/*@ts-ignore*/}
             <ClipLoader
                 style={{display: "none"}}
                 color={'blue'}
-                // loading={loading}
-                // cssOverride={override}
                 size={150}
                 aria-label="Loading Spinner"
                 data-testid="loader"

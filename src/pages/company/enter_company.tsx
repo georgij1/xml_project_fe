@@ -2,11 +2,11 @@ import {ClipLoader} from "react-spinners";
 import React from "react";
 
 export const EnterCompany = () => {
-    function open_page_reg_company() {
+    const open_page_reg_company = () => {
         window.open('/home/reg_company', '_self')
     }
 
-    function activate_loader() {
+    const activate_loader = () => {
         // @ts-ignore
         document.querySelector('.loader').style.display = 'inline-block'
         // @ts-ignore
@@ -28,16 +28,12 @@ export const EnterCompany = () => {
         // @ts-ignore
         document.querySelector('.loader').style.position = 'absolute'
         // @ts-ignore
-        document.querySelector('.loader').style.left = '40vW'
-        // @ts-ignore
-        document.querySelector('.loader').style.top = '30vW'
-        // @ts-ignore
         document.querySelector('body').style.overflow='hidden'
         // @ts-ignore
         document.querySelector('body').style.opacity='0.5'
     }
 
-    function distinctive_loader() {
+    const distinctive_loader = () => {
         // @ts-ignore
         document.querySelector('.loader').style.display = 'none'
         // @ts-ignore
@@ -46,7 +42,7 @@ export const EnterCompany = () => {
         document.querySelector('body').style.overflow = 'auto'
     }
 
-    function enter_company() {
+    const enter_company = () => {
         // @ts-ignore
         console.log(document.querySelector('.input_name_company').value)
         // @ts-ignore
@@ -73,14 +69,14 @@ export const EnterCompany = () => {
             console.log('continue auth')
             activate_loader()
 
-            let body = {
+            const body = {
                 // @ts-ignore
                 "NameCompany": document.querySelector('.input_name_company').value,
                 // @ts-ignore
                 "PasswordCompany": document.querySelector('.input_password_company').value
             }
 
-            let url = "http://localhost:8080/api/company/auth";
+            const url = "http://10.3.9.83:8080/api/company/auth";
             console.log(localStorage.getItem('auth_token'))
             fetch(`${url}`, {
                 method: 'POST',
@@ -128,12 +124,9 @@ export const EnterCompany = () => {
             </div>
 
             <div className="text_registration_company">Если у вас ещё нет ни одной компании <div className="link_reg" onClick={open_page_reg_company}>зарегистрируйте её</div></div>
-            {/*@ts-ignore*/}
             <ClipLoader
                 style={{display: "none"}}
                 color={'blue'}
-                // loading={loading}
-                // cssOverride={override}
                 size={150}
                 aria-label="Loading Spinner"
                 data-testid="loader"

@@ -1,21 +1,28 @@
 export const SettingsHome = () => {
-    function light_theme() {
+    const light_theme = () => {
         localStorage.removeItem('dark_theme')
     }
 
-    function dark_theme() {
+    const dark_theme = () => {
         localStorage.setItem('dark_theme', String(true))
     }
 
     const select_theme = () => {
-        // @ts-ignore
-        console.log(document.querySelector('select').selectedOptions[0].textContent)
-        // @ts-ignore
-        document.querySelector('.btn_continue').classList.add('block')
+        if (document.querySelector('select')) {
+            // @ts-ignore
+            console.log(document.querySelector('select').selectedOptions[0].textContent)
+        }
 
-        // @ts-ignore
-        if (document.querySelector('select').selectedOptions[0].textContent === "Тёмная тема") {
-            dark_theme()
+        if (document.querySelector('.btn_continue')) {
+            // @ts-ignore
+            document.querySelector('.btn_continue').classList.add('block')
+        }
+
+        if (document.querySelector('select')) {
+            // @ts-ignore
+            if (document.querySelector('select').selectedOptions[0].textContent === "Тёмная тема") {
+                dark_theme()
+            }
         }
 
         else {
@@ -32,8 +39,10 @@ export const SettingsHome = () => {
     }
 
     if (localStorage.getItem('dark_theme')) {
-        // @ts-ignore
-        document.querySelector('body').classList.add('dark_theme_body')
+        if (document.querySelector('body')) {
+            // @ts-ignore
+            document.querySelector('body').classList.add('dark_theme_body')
+        }
 
         return (
             <div className="dark_theme_body">
@@ -43,16 +52,14 @@ export const SettingsHome = () => {
                     <label htmlFor="setting_theme">Тёмная тема</label>
                     <select id="setting_theme" onClick={select_theme}>
                         <option>Светла тема</option>
-                        {/*@ts-ignore*/}
-                        <option selected="selected">Тёмная тема</option>
+                        <option selected>Тёмная тема</option>
                     </select>
                 </div>
 
                 <div className="settings_theme">
                     <label htmlFor="setting_push_active">В сети (уведомление)</label>
                     <select id="setting_push_active" onClick={select_active_push}>
-                        {/*@ts-ignore*/}
-                        <option selected="selected">1 час</option>
+                        <option selected>1 час</option>
                         <option>2 часа</option>
                         <option>3 часа</option>
                         <option>4 часа</option>
@@ -85,9 +92,12 @@ export const SettingsHome = () => {
     }
 
     else {
-        // @ts-ignore
-        document.querySelector('body').classList.remove('dark_theme_body')
+        if (document.querySelector('body')) {
+            // @ts-ignore
+            document.querySelector('body').classList.remove('dark_theme_body')
+        }
 
+        // @ts-ignore
         return(
             <div>
                 <h1 className="text_settings">Настройки</h1>
@@ -95,7 +105,6 @@ export const SettingsHome = () => {
                 <div className="settings_theme">
                     <label htmlFor="setting_theme">Тёмная тема</label>
                     <select id="setting_theme" onClick={select_theme}>
-                        {/*@ts-ignore*/}
                         <option defaultValue="selected">Светла тема</option>
                         <option>Тёмная тема</option>
                     </select>
@@ -104,8 +113,7 @@ export const SettingsHome = () => {
                 <div className="settings_theme">
                     <label htmlFor="setting_push_active">В сети (уведомление)</label>
                     <select id="setting_push_active" onClick={select_active_push}>
-                        {/*@ts-ignore*/}
-                        <option selected="selected">1 час</option>
+                        <option selected>1 час</option>
                         <option>2 часа</option>
                         <option>3 часа</option>
                         <option>4 часа</option>

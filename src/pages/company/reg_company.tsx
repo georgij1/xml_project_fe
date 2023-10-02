@@ -115,45 +115,43 @@ export const RegCompany = () => {
 
                 activate_loader()
 
-                const try_server_request_jwt_token = () => {
-                    const url = "http://10.3.9.83:8080/api/company/create";
-                    console.log(localStorage.getItem('auth_token'))
-                    fetch(`${url}`, {
-                        method: 'POST',
-                        body: JSON.stringify(body),
-                        headers: {
-                            "Accept": "application/json",
-                            "Authorization": `Bearer ${localStorage.getItem('auth_token')}`,
-                            'Content-Type': 'application/json',
-                            'Connection': 'keep-alive',
-                            'Accept-Encoding': 'gzip, deflate, br',
-                            'Cache-Control': 'no-cache'
-                        },
-                        mode: "cors"
+                const url = "http://10.3.9.83:8080/api/company/create";
+
+                console.log(localStorage.getItem('auth_token'))
+
+                fetch(`${url}`, {
+                    method: 'POST',
+                    body: JSON.stringify(body),
+                    headers: {
+                        "Accept": "application/json",
+                        "Authorization": `Bearer ${localStorage.getItem('auth_token')}`,
+                        'Content-Type': 'application/json',
+                        'Connection': 'keep-alive',
+                        'Accept-Encoding': 'gzip, deflate, br',
+                        'Cache-Control': 'no-cache'
+                    },
+                    mode: "cors"
+                })
+                    .then((resp) => {
+                        console.log(resp.text().then((event) => {console.log(event)}))
+                        console.log(resp.status)
+
+                        if (resp.status === 200) {
+                            distinctive_loader()
+                            window.open('/home/enter_company', '_self')
+                            resp.text().then((event) => {
+                                console.log(event)
+                            })
+                        }
+
+                        else {
+                            distinctive_loader()
+                            alert('Ошибка. Код ошибки: ' + resp.status)
+                        }
                     })
-                        .then((resp) => {
-                            console.log(resp.text().then((event) => {console.log(event)}))
-                            console.log(resp.status)
-
-                            if (resp.status === 200) {
-                                distinctive_loader()
-                                window.open('/home/enter_company', '_self')
-                                resp.text().then((event) => {
-                                    console.log(event)
-                                })
-                            }
-
-                            else {
-                                distinctive_loader()
-                                alert('Ошибка. Код ошибки: ' + resp.status)
-                            }
-                        })
-                        .catch((error) => {
-                            console.log(error)
-                        })
-                }
-
-                try_server_request_jwt_token()
+                    .catch((error) => {
+                        console.log(error)
+                    })
             }
         }
     }

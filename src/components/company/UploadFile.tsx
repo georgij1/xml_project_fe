@@ -101,15 +101,70 @@ export const UploadFile: React.FunctionComponent = () => {
                 distinctive_loader()
             }
         });
+
+        [].forEach.call(files, file => {
+            const ContinueUploadFile = () => {
+                activate_loader()
+                const date = new Date()
+                const form_data = new FormData()
+                const now_date = date.getHours() + ':' + date.getMinutes() + ':' + date.getUTCSeconds()
+                form_data.append("file", file)
+                form_data.append("name_company", "a")
+                form_data.append("time_stamp", now_date.toString())
+
+                let body = {
+                    "file": form_data.get("file"),
+                    "name_company": localStorage.getItem('NameCompany'),
+                    "time_stamp": form_data.get("time_stamp"),
+                }
+
+                console.log(body)
+
+                const url = 'http://localhost:8080/api/company/file/upload'
+                fetch(`${url}`, {
+                    method: 'POST',
+                    body: form_data,
+                    headers: {
+                        "Accept": "*/*",
+                        "Authorization": `Bearer ${localStorage.getItem('auth_token')}`,
+                        'Content-Type': 'multipart/form-data; boundary=<calculated when request is sent>',
+                        'Content-Length': '<calculated when request is sent>',
+                        'Connection': 'keep-alive',
+                        'Accept-Encoding': 'gzip, deflate, br',
+                        'Cache-Control': 'no-cache'
+                    },
+                    mode: "no-cors"
+                })
+                    .then((resp) => {
+                        console.log(resp.text().then((event) => {console.log(event)}))
+                        console.log(resp.status)
+
+                        if (resp.status === 200) {
+                            distinctive_loader()
+                            window.open('/home/company', '_self')
+                            resp.text().then((event) => {
+                                console.log(event)
+                            })
+                        }
+
+                        else {
+                            distinctive_loader()
+                            alert('Ошибка. Код ошибки: ' + resp.status)
+                        }
+                    })
+                    .catch((error) => {
+                        console.log(error)
+                    })
+            }
+            // @ts-ignore
+            document.querySelector('.continue_btn').addEventListener('click', () => {
+                ContinueUploadFile()
+            })
+        })
     }
 
     const cancel_btn = () => {
         window.location.reload()
-    }
-
-    const ContinueUploadFile = () => {
-        activate_loader()
-        // distinctive_loader()
     }
 
     return(
@@ -117,9 +172,10 @@ export const UploadFile: React.FunctionComponent = () => {
             <label htmlFor="choose_file" className={"btn_upload_file " + ChooseFile}>Выбрать файл</label>
 
             <input type="file"
-                   className="input_file"
-                   id="choose_file"
+                className="input_file"
+                id="choose_file"
                 onChangeCapture={handleChangeFile}
+                name="file"
             />
 
             <div className="checks">
@@ -149,7 +205,7 @@ export const UploadFile: React.FunctionComponent = () => {
                 </div>
 
                 <div className="flex_768">
-                    <div className={"continue_btn " + ClassesContinue} onClick={ContinueUploadFile}>Продолжить</div>
+                    <div className={"continue_btn " + ClassesContinue}>Продолжить</div>
                     <div className={"cancel_btn " + CancelBtn} onClick={cancel_btn}>Отмена</div>
                 </div>
             </div>

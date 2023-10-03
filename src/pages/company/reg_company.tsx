@@ -100,8 +100,6 @@ export const RegCompany = () => {
                 name_company.classList.remove('null_value_input')
                 password_company.classList.remove('null_value_input')
                 textarea_desc_company.classList.remove('null_value_input')
-                console.log('continue reg')
-                activate_loader()
 
                 const body = {
                     // @ts-ignore

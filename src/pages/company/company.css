@@ -20,6 +20,6 @@
     background: #FFF;
 }
 
-.btn_create_file:hover, .btn_open_file:hover {
+.btn_create_file:hover, .open_file_btn:hover {
     box-shadow: none;
 }

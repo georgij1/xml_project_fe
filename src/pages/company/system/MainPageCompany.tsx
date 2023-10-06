@@ -1,6 +1,6 @@
 import React from "react";
 import "../company.css"
-import {ListFiles} from "../../../components/company/ListFiles";
+import {ListFiles} from "../../../components/company/ListFiles/ListFiles";
 
 export const MainPageCompany = () => {
     return (

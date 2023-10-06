@@ -75,7 +75,7 @@ export const UploadFile: React.FunctionComponent = () => {
             }
 
             // @ts-ignore
-            if (file["type"].includes('xml')) {
+            if (file["type"].includes('msword')) {
                 console.log('file is xml')
                 setClasses('flex')
                 setNameFile(data_file.name)
@@ -85,6 +85,55 @@ export const UploadFile: React.FunctionComponent = () => {
                 setSize(data_file.size)
                 setType(data_file.type)
                 distinctive_loader()
+
+                const ContinueUploadFile = () => {
+                    activate_loader()
+                    const date = new Date()
+                    const form_data = new FormData()
+                    const now_date = date.getHours() + ':' + date.getMinutes() + ':' + date.getUTCSeconds()
+                    form_data.append("file", file)
+                    form_data.append("name_company", "a")
+                    form_data.append("time_stamp", now_date.toString())
+
+                    fetch(`http://localhost:8080/api/company/file/upload`, {
+                        method: 'POST',
+                        body: form_data,
+                        headers: {
+                            "Accept": "*/*",
+                            "Authorization": `Bearer ${localStorage.getItem('auth_token')}`,
+                            'Content-Type': 'multipart/form-data; boundary=<calculated when request is sent>',
+                            'Connection': 'keep-alive',
+                            'Accept-Encoding': 'gzip, deflate, br',
+                            'Cache-Control': 'no-cache'
+                        },
+                        mode: "no-cors"
+                    })
+                        .then((resp) => {
+                            console.log(resp.body)
+                            console.log(resp.status)
+
+                            if (resp.status === 0 || 200) {
+                                distinctive_loader()
+                                window.open('/home/company', '_self')
+                                resp.text().then((event) => {
+                                    console.log(event)
+                                })
+                            }
+
+                            else {
+                                distinctive_loader()
+                                alert('Ошибка. Код ошибки: ' + resp.status)
+                            }
+                        })
+                        .catch((error) => {
+                            console.log(error)
+                        })
+                }
+
+                // @ts-ignore
+                document.querySelector('.continue_btn').addEventListener('click', () => {
+                    ContinueUploadFile()
+                })
             }
 
             else {
@@ -101,66 +150,6 @@ export const UploadFile: React.FunctionComponent = () => {
                 distinctive_loader()
             }
         });
-
-        [].forEach.call(files, file => {
-            const ContinueUploadFile = () => {
-                activate_loader()
-                const date = new Date()
-                const form_data = new FormData()
-                const now_date = date.getHours() + ':' + date.getMinutes() + ':' + date.getUTCSeconds()
-                form_data.append("file", file)
-                form_data.append("name_company", "a")
-                form_data.append("time_stamp", now_date.toString())
-
-                let body = {
-                    "file": form_data.get("file"),
-                    "name_company": localStorage.getItem('NameCompany'),
-                    "time_stamp": form_data.get("time_stamp"),
-                }
-
-                console.log(body)
-
-                const url = 'http://localhost:8080/api/company/file/upload'
-                fetch(`${url}`, {
-                    method: 'POST',
-                    body: form_data,
-                    headers: {
-                        "Accept": "*/*",
-                        "Authorization": `Bearer ${localStorage.getItem('auth_token')}`,
-                        'Content-Type': 'multipart/form-data; boundary=<calculated when request is sent>',
-                        'Content-Length': '<calculated when request is sent>',
-                        'Connection': 'keep-alive',
-                        'Accept-Encoding': 'gzip, deflate, br',
-                        'Cache-Control': 'no-cache'
-                    },
-                    mode: "no-cors"
-                })
-                    .then((resp) => {
-                        console.log(resp.text().then((event) => {console.log(event)}))
-                        console.log(resp.status)
-
-                        if (resp.status === 200) {
-                            distinctive_loader()
-                            window.open('/home/company', '_self')
-                            resp.text().then((event) => {
-                                console.log(event)
-                            })
-                        }
-
-                        else {
-                            distinctive_loader()
-                            alert('Ошибка. Код ошибки: ' + resp.status)
-                        }
-                    })
-                    .catch((error) => {
-                        console.log(error)
-                    })
-            }
-            // @ts-ignore
-            document.querySelector('.continue_btn').addEventListener('click', () => {
-                ContinueUploadFile()
-            })
-        })
     }
 
     const cancel_btn = () => {

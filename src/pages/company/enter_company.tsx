@@ -76,7 +76,7 @@ export const EnterCompany = () => {
                 "PasswordCompany": document.querySelector('.input_password_company').value
             }
 
-            const url = "http://10.3.9.83:8080/api/company/auth";
+            const url = "http://localhost:8080/api/company/auth";
             console.log(localStorage.getItem('auth_token'))
             fetch(`${url}`, {
                 method: 'POST',

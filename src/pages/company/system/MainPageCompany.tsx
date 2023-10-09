@@ -1,12 +1,13 @@
 import React from "react";
 import "../company.css"
-import {ListFiles} from "../../../components/company/ListFiles/ListFiles";
+// @ts-ignore
+import {ListFiles} from '../../../components/company/ListFiles/ListFiles.tsx';
 
 export const MainPageCompany = () => {
     return (
         <div className="body_page_company">
             <div>
-                <h1>NameCompany - {localStorage.getItem('NameCompany')}</h1>
+                <h1 className="text-3xl font-bold underline">NameCompany - {localStorage.getItem('NameCompany')}</h1>
             </div>
             <div className="tools_header">
                 <div className="open_file_btn" onClick={() => {window.open('/home/company/upload/file', '_self')}}>Загрузить файл</div>

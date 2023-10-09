@@ -12,7 +12,8 @@ import {
     Body,
     Footer,
     RegistrationForm,
-    UploadFile, CreateFile
+    UploadFile, CreateFile,
+    ReadFile
     // @ts-ignore
 } from "./components/export.components.jsx";
 import {
@@ -80,6 +81,13 @@ else if (localStorage.getItem('NameCompany') && localStorage.getItem('auth_token
             element: <div>
                 <ClosePage/>
                 <CreateFile/>
+            </div>
+        },
+        {
+            path: "/home/company/look/file",
+            element: <div>
+                <ClosePage/>
+                <ReadFile/>
             </div>
         }
     ])

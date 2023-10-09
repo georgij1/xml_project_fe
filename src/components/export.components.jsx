@@ -6,3 +6,4 @@ export {RegistrationForm} from "../forms/RegistrationForm.tsx";
 export {Header_enter_comp} from "../components/header_enter_comp.tsx";
 export {UploadFile} from "./company/UploadFiles/UploadFile.tsx";
 export {CreateFile} from "./company/CreateFile/CreateFile.tsx";
+export {ReadFile} from "../components/company/LookFile/ReadFile";

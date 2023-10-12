@@ -27,6 +27,7 @@ import {
     // @ts-ignore
 } from "./pages/export.pages.jsx"
 import "./App.css"
+import {ListFiles} from "./components/company/ListFiles/ListFiles";
 
 if (!localStorage.getItem('auth_token')) {
     const router = createBrowserRouter([
@@ -65,6 +66,7 @@ else if (localStorage.getItem('NameCompany') && localStorage.getItem('auth_token
             element: <div>
                 <CompanyHeader/>
                 <MainPageCompany/>
+                <ListFiles/>
                 <Footer/>
             </div>
         },

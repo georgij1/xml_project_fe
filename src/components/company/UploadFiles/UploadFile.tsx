@@ -1,6 +1,7 @@
 import "./UploadFile.css"
 import React, {useState} from "react";
 import {ClipLoader} from "react-spinners";
+import {Logout} from "../../message/Logout";
 
 export const UploadFile: React.FunctionComponent = () => {
     const [classes, setClasses] = useState<string>('')
@@ -75,7 +76,7 @@ export const UploadFile: React.FunctionComponent = () => {
             }
 
             // @ts-ignore
-            if (file["type"].includes('msword')) {
+            if (file["name"].includes('doc')) {
                 console.log('file is xml')
                 setClasses('flex')
                 setNameFile(data_file.name)
@@ -88,14 +89,14 @@ export const UploadFile: React.FunctionComponent = () => {
 
                 const ContinueUploadFile = () => {
                     activate_loader()
-                    const date = new Date()
                     const form_data = new FormData()
-                    const now_date = date.getHours() + ':' + date.getMinutes() + ':' + date.getUTCSeconds()
-                    form_data.append("file", file)
-                    form_data.append("name_company", "a")
-                    form_data.append("time_stamp", now_date.toString())
+                    form_data.append("files", file)
+                    form_data.append("NameCompany", `${localStorage.getItem('NameCompany')}`)
+                    form_data.append("Author", `${localStorage.getItem('login')}`)
+                    // eslint-disable-next-line no-useless-concat
+                    form_data.append("TimeStamp", `${new Date().getHours()}:`+`${new Date().getMinutes()}:`+`${new Date().getSeconds()}`)
 
-                    fetch(`http://localhost:8080/api/company/file/upload`, {
+                    fetch(`http://localhost:8080/file/upload`, {
                         method: 'POST',
                         body: form_data,
                         headers: {
@@ -115,9 +116,6 @@ export const UploadFile: React.FunctionComponent = () => {
                             if (resp.status === 0 || 200) {
                                 distinctive_loader()
                                 window.open('/home/company', '_self')
-                                resp.text().then((event) => {
-                                    console.log(event)
-                                })
                             }
 
                             else {
@@ -158,6 +156,7 @@ export const UploadFile: React.FunctionComponent = () => {
 
     return(
         <div>
+            <Logout/>
             <label htmlFor="choose_file" className={"btn_upload_file " + ChooseFile}>Выбрать файл</label>
 
             <input type="file"

@@ -12,8 +12,7 @@ import {
     Body,
     Footer,
     RegistrationForm,
-    UploadFile, CreateFile,
-    ReadFile
+    UploadFile, CreateFile
     // @ts-ignore
 } from "./components/export.components.jsx";
 import {
@@ -23,7 +22,8 @@ import {
     SupportHome,
     SettingsHome,
     ClosePage,
-    MainPageCompany, CompanyHeader
+    CompanyHeader,
+    NotFound
     // @ts-ignore
 } from "./pages/export.pages.jsx"
 import "./App.css"
@@ -43,6 +43,12 @@ if (!localStorage.getItem('auth_token')) {
             path: "/registration",
             element: <div>
                 <RegistrationForm/>
+            </div>
+        },
+        {
+            path: "*",
+            element: <div>
+                <NotFound/>
             </div>
         }
     ]);
@@ -65,7 +71,6 @@ else if (localStorage.getItem('NameCompany') && localStorage.getItem('auth_token
             path: "/home/company",
             element: <div>
                 <CompanyHeader/>
-                <MainPageCompany/>
                 <ListFiles/>
                 <Footer/>
             </div>
@@ -86,10 +91,32 @@ else if (localStorage.getItem('NameCompany') && localStorage.getItem('auth_token
             </div>
         },
         {
-            path: "/home/company/look/file",
+            path: "/home/company/settings",
             element: <div>
                 <ClosePage/>
-                <ReadFile/>
+                <SettingsHome/>
+                <Footer/>
+            </div>
+        },
+        {
+            path: "/home/company/support",
+            element: <div>
+                <ClosePage/>
+                <SupportHome/>
+                <Footer/>
+            </div>
+        },
+        {
+            path: "*",
+            element: <div>
+                <NotFound/>
+            </div>
+        },
+        {
+            path: "/home/company/profile",
+            element: <div>
+                <Profile/>
+                <Footer/>
             </div>
         }
     ])
@@ -165,6 +192,12 @@ else if (localStorage.getItem('auth_token')) {
                 <SettingsHome/>
                 <Footer/>
             </div>
+        },
+        {
+            path: "*",
+            element: <div>
+                <NotFound/>
+            </div>
         }
     ]);
 
@@ -184,6 +217,12 @@ else {
         {
             path: "/error",
             element: <div>В системе произошла ошибка</div>,
+        },
+        {
+            path: "*",
+            element: <div>
+                <NotFound/>
+            </div>
         }
     ]);
 

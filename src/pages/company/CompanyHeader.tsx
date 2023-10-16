@@ -7,8 +7,7 @@ export const CompanyHeader = () => {
     }
 
     const open_home_page = () => {
-        console.log('click on open home page')
-        alert('Страница находится в разработке')
+        window.open(`/home/company`, '_self')
     }
 
     const close_menu = () => {
@@ -30,28 +29,23 @@ export const CompanyHeader = () => {
     }
 
     const open_settings = () => {
-        console.log('open settings')
-        alert('Страница находится в разработке')
+        window.open(`/home/company/settings`, '_self')
     }
 
     const open_support = () => {
-        console.log('open support')
-        alert('Страница находится в разработке')
+        window.open(`/home/company/support`, '_self')
     }
 
     const open_profile_person = () => {
-        console.log('click on open profile person')
-        alert('Страница находится в разработке')
+        window.open(`/home/company/profile`, '_self')
     }
 
     const create_xml_file = () => {
-        console.log('create_xml_file')
-        alert('Страница находится в разработке')
+        window.open(`/home/company/create/file`, '_self')
     }
 
     const open_xml_file = () => {
-        console.log('open_xml_file')
-        alert('Страница находится в разработке')
+        window.open(`/home/company/upload/file`, '_self')
     }
 
     return (

@@ -1,16 +1,19 @@
 import "./ListFiles.css";
 import React, {useEffect, useState} from "react";
+import {Logout} from "../../message/Logout";
 
-export const ListFiles: React.FunctionComponent = () => {
-    const body = {
-        "NameCompany": localStorage.getItem('NameCompany'),
+export const ListFiles = () => {
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    let body = {
+        "NameCompany":localStorage.getItem('NameCompany')
     }
 
     const [files, setFiles] = useState([])
 
     useEffect(() => {
-        fetch(`http://localhost:8080/api/company/files/list/get`, {
+        fetch(`http://localhost:8080/file/list`, {
             method: 'POST',
+            // @ts-ignore
             body: JSON.stringify(body),
             headers: {
                 "Accept": "application/json",
@@ -19,77 +22,49 @@ export const ListFiles: React.FunctionComponent = () => {
                 'Connection': 'keep-alive',
                 'Accept-Encoding': 'gzip, deflate, br',
                 'Cache-Control': 'no-cache'
-            },
-            mode: "cors"
+            }
         })
             .then((resp) => {
-                resp.json().then((event) => {
-                    setFiles(event)
-                    // (Object.keys(event) as (keyof typeof event)[]).forEach((key, index) => {
-                    //     console.log(key)
-                    //     setFiles(event[key])
-                    //
-                    //     // content_tbody=`
-                    //     //     <tr class="bg-slate-200 shadow-slate-100 not_active">
-                    //     //       <td>${(event[key].id_image)}</td>
-                    //     //       <td>${(event[key].image_name)}</td>
-                    //     //       <td>${(event[key].type)}</td>
-                    //     //       <td>${(event[key].data)}</td>
-                    //     //       <td>${(event[key].time_stamp)}</td>
-                    //     //       <td>${(event[key].name_company)}</td>
-                    //     //     </tr>
-                    //     // `
-                    //
-                    //     // @ts-ignore
-                    //     for (let i of document.querySelectorAll('.not_active')) {
-                    //         i.addEventListener('click', () => {
-                    //             localStorage.setItem('id_image', event[key].id_image)
-                    //             localStorage.setItem('image_name', event[key].image_name)
-                    //             localStorage.setItem('type', event[key].type)
-                    //             localStorage.setItem('data', event[key].data)
-                    //             localStorage.setItem('time_stamp', event[key].time_stamp)
-                    //             localStorage.setItem('name_company', event[key].name_company)
-                    //
-                    //             window.open(`/home/company/look/file`, '_self')
-                    //         })
-                    //     }
-                    // });
+                resp.json().then(e => {
+                    // setFiles(e)
+                    console.log(e)
+                    setFiles(e)
                 })
+            })
+            .catch((error) => {
+                console.log(error)
             })
     }, [])
 
-    console.log(files)
-
     return (
-        <div>
+        <div className="pt-24">
+            <Logout/>
+            <div className="flex items-center m-5 gap-x-10">
+                <div className="border-2 border-bisque; shadow-lg shadow-cyan-500/50 cursor-pointer p-2 rounded hover:shadow-none">Выбрать</div>
+                <input type="time" className="shadow-lg shadow-cyan-500/50 cursor-pointer p-2 rounded hover:shadow-none"/>
+                <input placeholder="Введите название файла..." className="shadow-lg shadow-cyan-500/50 cursor-pointer p-2 rounded hover:shadow-none"/>
+            </div>
             <table className="md:table-fixed">
                 <thead>
                 <tr className="bg-slate-500">
-                    <th>id_image</th>
-                    <th>image_name</th>
-                    <th>type</th>
-                    <th>data</th>
-                    <th>time_stamp</th>
-                    <th>name_company</th>
+                    <th className="hover:bg-white cursor-pointer">Имя</th>
+                    <th className="hover:bg-white cursor-pointer">Время</th>
+                    <th className="hover:bg-white cursor-pointer">Автор</th>
+                    <th className="hover:bg-white cursor-pointer">Компания</th>
                 </tr>
                 </thead>
                 <tbody>
+                {/*@ts-ignore*/}
                     {
                         files.map(file => (
-                            <tr className="bg-slate-200 shadow-slate-100 not_active" onClick={() => {
-                                localStorage.setItem('id_image', file["id_image"])
-                                localStorage.setItem('image_name', file["image_name"])
-                                localStorage.setItem('type', file["type"])
-                                localStorage.setItem('data', file["data"])
-                                localStorage.setItem('time_stamp', file["time_stamp"])
-                                localStorage.setItem('name_company', file["name_company"])
-                                window.open(`/home/company/look/file`, '_self')
+                            <tr className="bg-slate-200 shadow-slate-100 not_active" onClick={(event) => {
+                                // @ts-ignore
+                                // eslint-disable-next-line no-useless-concat
+                                window.open("http://localhost:8080/file/download/"+`${localStorage.getItem('NameCompany')}`+"/"+`${event.currentTarget.querySelector('td').textContent}`)
                             }}>
-                                <td key={file["id"]}>{file["id_image"]}</td>
                                 <td key={file["id"]}>{file["image_name"]}</td>
-                                <td key={file["id"]}>{file["type"]}</td>
-                                <td key={file["id"]}>{file["data"]}</td>
                                 <td key={file["id"]}>{file["time_stamp"]}</td>
+                                <td key={file["id"]}>{file["author"]}</td>
                                 <td key={file["id"]}>{file["name_company"]}</td>
                             </tr>
                         ))

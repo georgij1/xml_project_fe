@@ -1,3 +1,6 @@
+import {Logout} from "../components/message/Logout";
+import React from "react";
+
 export const SettingsHome = () => {
     const light_theme = () => {
         localStorage.removeItem('dark_theme')
@@ -20,13 +23,16 @@ export const SettingsHome = () => {
 
         if (document.querySelector('select')) {
             // @ts-ignore
+            console.log(document.querySelector('select').selectedOptions[0].textContent)
+
+            // @ts-ignore
             if (document.querySelector('select').selectedOptions[0].textContent === "Тёмная тема") {
                 dark_theme()
             }
-        }
 
-        else {
-            light_theme()
+            else {
+                light_theme()
+            }
         }
     }
 
@@ -34,8 +40,13 @@ export const SettingsHome = () => {
         window.location.reload()
     }
 
-    const select_active_push = () => {
-        alert('Находится в разработке')
+    // @ts-ignore
+    const select_active_push = (event) => {
+        console.log("choose value - ",event.currentTarget.value)
+        let date = new Date()
+        let str_time = date.getHours()+':'+date.getMinutes()+':'+date.getSeconds()
+        console.log(str_time)
+        localStorage.setItem('MessageLogout', event.currentTarget.value)
     }
 
     if (localStorage.getItem('dark_theme')) {
@@ -46,11 +57,12 @@ export const SettingsHome = () => {
 
         return (
             <div className="dark_theme_body">
+                <Logout/>
                 <h1 className="text_settings">Настройки</h1>
 
                 <div className="settings_theme">
                     <label htmlFor="setting_theme">Тёмная тема</label>
-                    <select id="setting_theme" onClick={select_theme}>
+                    <select id="setting_theme" onChange={select_theme}>
                         <option>Светла тема</option>
                         <option selected>Тёмная тема</option>
                     </select>
@@ -58,7 +70,7 @@ export const SettingsHome = () => {
 
                 <div className="settings_theme">
                     <label htmlFor="setting_push_active">В сети (уведомление)</label>
-                    <select id="setting_push_active" onClick={select_active_push}>
+                    <select id="setting_push_active" onChange={(event)=>select_active_push(event)}>
                         <option selected>1 час</option>
                         <option>2 часа</option>
                         <option>3 часа</option>
@@ -97,9 +109,10 @@ export const SettingsHome = () => {
             document.querySelector('body').classList.remove('dark_theme_body')
         }
 
-        // @ts-ignore
         return(
             <div>
+                <Logout/>
+
                 <h1 className="text_settings">Настройки</h1>
 
                 <div className="settings_theme">
@@ -112,7 +125,7 @@ export const SettingsHome = () => {
 
                 <div className="settings_theme">
                     <label htmlFor="setting_push_active">В сети (уведомление)</label>
-                    <select id="setting_push_active" onClick={select_active_push}>
+                    <select id="setting_push_active" onChange={(event)=>select_active_push(event)}>
                         <option selected>1 час</option>
                         <option>2 часа</option>
                         <option>3 часа</option>

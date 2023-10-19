@@ -12,7 +12,6 @@ export const SettingsHome: React.FunctionComponent = () => {
     const select_active_push = (event:any) => localStorage.setItem('MessageLogout', event.currentTarget.value+':00')
     if (localStorage.getItem('dark_theme')) {
         document.body.classList.add('dark_theme_body')
-
         return (
             <div className="dark_theme_body">
                 <Logout/>
@@ -22,11 +21,12 @@ export const SettingsHome: React.FunctionComponent = () => {
                     shadow-cyan-500/50 cursor-pointer p-2 rounded hover:shadow-none"
                             onChange={(e)=> {
                                 setBtnContinueClass('block')
+                                console.log(e.currentTarget.value)
                                 if (e.currentTarget.value === "Тёмная тема") dark_theme()
                                 else light_theme()
                             }}>
-                        <option defaultValue="selected">Светла тема</option>
                         <option>Тёмная тема</option>
+                        <option>Светла тема</option>
                     </select>
                 </div>
                 <div className="settings_theme">
@@ -50,22 +50,22 @@ export const SettingsHome: React.FunctionComponent = () => {
             </div>
         )
     }
+
     else {
         document.body.classList.remove('dark_theme_body')
-
         return(
             <>
                 <Logout/>
                 <div className="settings_theme">
                     <label className="w-max	cursor-pointer" htmlFor="setting_theme">Тема</label>
-                    <select id="setting_theme" className="border-cyan-500/50 border-solid border-2 shadow-lg
+                    <select id="setting_theme" className="border-slate-500/50 border-solid border-2 shadow-lg
                     shadow-cyan-500/50 cursor-pointer p-2 rounded hover:shadow-none"
                         onChange={(e)=> {
                             setBtnContinueClass('block')
                             if (e.currentTarget.value === "Тёмная тема") dark_theme()
                             else light_theme()
                         }}>
-                        <option defaultValue="selected">Светла тема</option>
+                        <option>Светла тема</option>
                         <option>Тёмная тема</option>
                     </select>
                 </div>

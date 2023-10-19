@@ -124,7 +124,7 @@ export const Logout = () => {
         setMenu(false)
     }
 
-    if (localStorage.getItem('dark_theme')) {
+    if (localStorage.getItem('theme')) {
         return (
             <>
                 {
@@ -152,15 +152,27 @@ export const Logout = () => {
 
     else {
         return (
-            <div>
-                <div className="fixed bottom-10 right-20 mr-32 bg-slate-500 z-50 p-5
-            rounded-xl cursor-pointer shadow-lg shadow-cyan-500/50
-            hover:shadow-none" onClick={close_timer_logout}>Закрыть</div>
-                <div className="fixed bottom-10 right-5 bg-slate-800 z-50 rounded-xl">
-                    <div onClick={logout} className="p-5 bg-red-400 m-5 rounded-xl cursor-pointer shadow-lg shadow-cyan-500/50 hover:shadow-none">Выйти</div>
-                    <div className="p-5 bg-slate-400 m-5 rounded-xl cursor-pointer shadow-lg shadow-cyan-500/50 hover:shadow-none">{''+time}</div>
-                </div>
-            </div>
+            <>
+                {
+                    menu ? <>
+                        <div>
+                            <div className="fixed bottom-10 right-5 bg-slate-500 z-50 p-5
+                            rounded-xl cursor-pointer shadow-lg shadow-cyan-500/50
+                            hover:shadow-none" onClick={open_timer_logout}>Открыть</div>
+                        </div>
+                    </> : <>
+                        <div>
+                            <div className="fixed bottom-10 right-20 mr-32 bg-slate-500 z-50 p-5
+                            rounded-xl cursor-pointer shadow-lg shadow-cyan-500/50
+                            hover:shadow-none" onClick={close_timer_logout}>Закрыть</div>
+                            <div className="fixed bottom-10 right-5 bg-slate-800 z-50 rounded-xl">
+                                <div onClick={logout} className="p-5 bg-red-400 m-5 rounded-xl cursor-pointer shadow-lg shadow-cyan-500/50 hover:shadow-none">Выйти</div>
+                                <div className="p-5 bg-slate-400 m-5 rounded-xl cursor-pointer shadow-lg shadow-cyan-500/50 hover:shadow-none">{''+time}</div>
+                            </div>
+                        </div>
+                    </>
+                }
+            </>
         )
     }
 }

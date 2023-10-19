@@ -89,40 +89,51 @@ export const ListFiles = () => {
 
     else {
         return (
-            <div className="pt-24">
+            <>
                 <Logout/>
-                <div className="flex items-center m-5 gap-x-10">
-                    <div className="border-2 border-bisque; shadow-lg shadow-cyan-500/50 cursor-pointer p-2 rounded hover:shadow-none">Выбрать</div>
-                    <input type="time" className="shadow-lg shadow-cyan-500/50 cursor-pointer p-2 rounded hover:shadow-none"/>
-                    <input placeholder="Введите название файла..." className="shadow-lg shadow-cyan-500/50 cursor-pointer p-2 rounded hover:shadow-none"/>
-                </div>
-                <table className="md:table-fixed">
-                    <thead>
-                    <tr className="bg-slate-500">
-                        <th className="hover:bg-white cursor-pointer">Имя</th>
-                        <th className="hover:bg-white cursor-pointer">Время</th>
-                        <th className="hover:bg-white cursor-pointer">Автор</th>
-                        <th className="hover:bg-white cursor-pointer">Компания</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {
-                        files.map(file => (
-                            <tr className="bg-slate-200 shadow-slate-100 not_active" onClick={(event) => {
-                                // @ts-ignore
-                                // eslint-disable-next-line no-useless-concat
-                                window.open("http://localhost:8080/file/download/"+`${localStorage.getItem('NameCompany')}`+"/"+`${event.currentTarget.querySelector('td').textContent}`)
-                            }}>
-                                <td key={file["id"]}>{file["image_name"]}</td>
-                                <td key={file["id"]}>{file["time_stamp"]}</td>
-                                <td key={file["id"]}>{file["author"]}</td>
-                                <td key={file["id"]}>{file["name_company"]}</td>
-                            </tr>
-                        ))
-                    }
-                    </tbody>
-                </table>
-            </div>
+                {
+                    foundFile ? <>
+                        <div className="pt-24">
+                            <Logout/>
+                            <div className="flex items-center m-5 gap-x-10">
+                                <div className="border-2 border-bisque; shadow-lg shadow-cyan-500/50 cursor-pointer p-2 rounded hover:shadow-none">Выбрать</div>
+                                <input type="time" className="shadow-lg shadow-cyan-500/50 cursor-pointer p-2 rounded hover:shadow-none"/>
+                                <input placeholder="Введите название файла..." className="shadow-lg shadow-cyan-500/50 cursor-pointer p-2 rounded hover:shadow-none"/>
+                            </div>
+                            <table className="md:table-fixed">
+                                <thead>
+                                <tr className="bg-slate-500">
+                                    <th className="hover:bg-white cursor-pointer">Имя</th>
+                                    <th className="hover:bg-white cursor-pointer">Время</th>
+                                    <th className="hover:bg-white cursor-pointer">Автор</th>
+                                    <th className="hover:bg-white cursor-pointer">Компания</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {
+                                    files.map(file => (
+                                        <tr className="bg-slate-200 shadow-slate-100 not_active" onClick={(event) => {
+                                            // @ts-ignore
+                                            // eslint-disable-next-line no-useless-concat
+                                            window.open("http://localhost:8080/file/download/"+`${localStorage.getItem('NameCompany')}`+"/"+`${event.currentTarget.querySelector('td').textContent}`)
+                                        }}>
+                                            <td key={file["id"]}>{file["image_name"]}</td>
+                                            <td key={file["id"]}>{file["time_stamp"]}</td>
+                                            <td key={file["id"]}>{file["author"]}</td>
+                                            <td key={file["id"]}>{file["name_company"]}</td>
+                                        </tr>
+                                    ))
+                                }
+                                </tbody>
+                            </table>
+                        </div>
+                    </> : <>
+                        <div className="pt-24 h-screen inline-flex flex-col justify-center m-auto w-full items-center">
+                            <div className="text-center">Нет данных</div>
+                        </div>
+                    </>
+                }
+            </>
         )
     }
 }

@@ -12,9 +12,17 @@
   justify-content: start;
 }
 
-label {
+.dark_line_header {
   cursor: pointer;
-  width: max-content;
+  padding: 10px;
+  border-radius: 10px;
+  background: black;
+  color: #FFF;
+  box-shadow: 0 0 10px black;
+}
+
+.dark_line_header:hover {
+  box-shadow: none;
 }
 
 input {
@@ -473,28 +481,11 @@ input:hover {
   box-shadow: none;
 }
 
-.text_settings {
-  padding: 10px;
-}
-
 .settings_theme {
   display: flex;
   flex-direction: column;
   gap: 10px;
   padding: 10px;
-}
-
-select {
-  padding: 10px;
-  border-radius: 10px;
-  box-shadow: 0 0 10px bisque;
-  border: 2px solid bisque;
-  outline: bisque;
-  cursor: pointer;
-}
-
-select:hover {
-  box-shadow: none;
 }
 
 .dark_theme_body {
@@ -509,10 +500,13 @@ select:hover {
   box-shadow: 0 0 10px blue;
   cursor: pointer;
   display: none;
-  width: 200px;
   text-align: center;
-  margin: auto;
   color: #FFF;
+  position: fixed;
+  bottom: 10px;
+  z-index: 9998;
+  margin: auto;
+  width: 100%;
 }
 
 .btn_continue:hover {
@@ -525,8 +519,9 @@ select:hover {
   box-shadow: 0 0 10px beige;
 }
 
-.title_support_page {
-  text-align: center;
+.input_date {
+  padding: 10px;
+  border-radius: 10px;
 }
 
 .form_create_company div {

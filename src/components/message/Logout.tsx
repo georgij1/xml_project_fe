@@ -4,14 +4,14 @@ import {useState} from "react";
 export const Logout = () => {
     const [time, setTime] = useState('')
 
-    const choose_time='22:00:00'
+    const choose_time=localStorage.getItem('MessageLogout')
 
     // @ts-ignore
     const interval = (countDown) => {
         const x = setInterval(() => {
             const now = new Date().getTime()
             const distance = countDown-now
-            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60 * 60));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
             const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
             const seconds = Math.floor((distance % (1000 * 60)) / 1000);
             setTime(`${hours+"h "+minutes + "m "+seconds+"s "}`)

@@ -121,6 +121,7 @@ else if (localStorage.getItem('NameCompany') && localStorage.getItem('auth_token
         }
     ])
 
+
     ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
         <React.StrictMode>
             <RouterProvider router={router} />

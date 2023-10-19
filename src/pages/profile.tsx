@@ -34,27 +34,57 @@ export class Profile extends React.Component<profile_props> {
             document.querySelector('.btn_change_info').classList.remove('none')
         }
 
-        return (
-            <div className="profile">
-                <div className="btn_close_profile" onClick={() => {window.history.back()}}></div>
+        if (localStorage.getItem('dark_theme')) {
+            document.body.classList.add('dark_theme_body')
 
-                <div className="info">
-                    <div>Имя: {name}</div>
-                </div>
+            return (
+                <div className="profile">
+                    <div className="btn_close_profile" onClick={() => {window.history.back()}}></div>
 
-                <div className="btn_change_info" onClick={change_info}>Изменить</div>
-
-                <div className="form_change_info">
-                    <div className="btn_close_profile" onClick={close_edit_profile}></div>
-
-                    <div>
-                        <label htmlFor="enter_new_login">Логин</label>
-                        <input id="enter_new_login" className="edit_profile_input" placeholder="Введите новый логин..." value={name}/>
+                    <div className="bg-slate-600 items-center gap-5 p-5 rounded-lg flex">
+                        <div>Имя: {name}</div>
                     </div>
 
-                    <div className="btn_change_info_success">Изменить</div>
+                    <div className="btn_change_info" onClick={change_info}>Изменить</div>
+
+                    <div className="form_change_info">
+                        <div className="btn_close_profile" onClick={close_edit_profile}></div>
+
+                        <div>
+                            <label htmlFor="enter_new_login">Логин</label>
+                            <input id="enter_new_login" className="edit_profile_input" placeholder="Введите новый логин..." value={name}/>
+                        </div>
+
+                        <div className="btn_change_info_success">Изменить</div>
+                    </div>
                 </div>
-            </div>
-        );
+            );
+        }
+
+        else {
+            document.body.classList.remove('dark_theme_body')
+            return (
+                <div className="profile">
+                    <div className="btn_close_profile" onClick={() => {window.history.back()}}></div>
+
+                    <div className="info">
+                        <div>Имя: {name}</div>
+                    </div>
+
+                    <div className="btn_change_info" onClick={change_info}>Изменить</div>
+
+                    <div className="form_change_info">
+                        <div className="btn_close_profile" onClick={close_edit_profile}></div>
+
+                        <div>
+                            <label htmlFor="enter_new_login">Логин</label>
+                            <input id="enter_new_login" className="edit_profile_input" placeholder="Введите новый логин..." value={name}/>
+                        </div>
+
+                        <div className="btn_change_info_success">Изменить</div>
+                    </div>
+                </div>
+            );
+        }
     }
 }

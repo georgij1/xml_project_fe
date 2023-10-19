@@ -3,6 +3,7 @@ import {useState} from "react";
 
 export const Logout = () => {
     const [time, setTime] = useState('')
+    const [menu, setMenu] = useState<boolean>(false)
 
     const choose_time=localStorage.getItem('MessageLogout')
 
@@ -18,6 +19,7 @@ export const Logout = () => {
             if (distance < 0) {
                 clearInterval(x);
                 setTime('Время вышло')
+                setTimeout(() => logout(), 10000)
             }
         }, 1000)
     }
@@ -110,14 +112,55 @@ export const Logout = () => {
 
     count_call()
 
-    const logout = () => {
-        console.log('logout company')
+    const logout = () => window.open(`/logout`, '_self')
+
+    const close_timer_logout = () => {
+        console.log('click close timer logout')
+        setMenu(true)
     }
 
-    return(
-        <div className="message">
-            <h1 onClick={logout}>Выйти</h1>
-            <h1>{''+time}</h1>
-        </div>
-    )
+    const open_timer_logout = () => {
+        console.log('click open timer logout')
+        setMenu(false)
+    }
+
+    if (localStorage.getItem('dark_theme')) {
+        return (
+            <>
+                {
+                    menu ? <>
+                        <div>
+                            <div className="fixed bottom-10 right-5 bg-slate-500 z-50 p-5
+                            rounded-xl cursor-pointer shadow-lg shadow-cyan-500/50
+                            hover:shadow-none" onClick={open_timer_logout}>Открыть</div>
+                        </div>
+                    </> : <>
+                        <div>
+                            <div className="fixed bottom-10 right-20 mr-32 bg-slate-500 z-50 p-5
+                            rounded-xl cursor-pointer shadow-lg shadow-cyan-500/50
+                            hover:shadow-none" onClick={close_timer_logout}>Закрыть</div>
+                            <div className="fixed bottom-10 right-5 bg-slate-800 z-50 rounded-xl">
+                                <div onClick={logout} className="p-5 bg-red-400 m-5 rounded-xl cursor-pointer shadow-lg shadow-cyan-500/50 hover:shadow-none">Выйти</div>
+                                <div className="p-5 bg-slate-400 m-5 rounded-xl cursor-pointer shadow-lg shadow-cyan-500/50 hover:shadow-none">{''+time}</div>
+                            </div>
+                        </div>
+                    </>
+                }
+            </>
+        )
+    }
+
+    else {
+        return (
+            <div>
+                <div className="fixed bottom-10 right-20 mr-32 bg-slate-500 z-50 p-5
+            rounded-xl cursor-pointer shadow-lg shadow-cyan-500/50
+            hover:shadow-none" onClick={close_timer_logout}>Закрыть</div>
+                <div className="fixed bottom-10 right-5 bg-slate-800 z-50 rounded-xl">
+                    <div onClick={logout} className="p-5 bg-red-400 m-5 rounded-xl cursor-pointer shadow-lg shadow-cyan-500/50 hover:shadow-none">Выйти</div>
+                    <div className="p-5 bg-slate-400 m-5 rounded-xl cursor-pointer shadow-lg shadow-cyan-500/50 hover:shadow-none">{''+time}</div>
+                </div>
+            </div>
+        )
+    }
 }

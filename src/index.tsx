@@ -49,6 +49,7 @@ if (!localStorage.getItem('auth_token')) {
             path: "*",
             element: <div>
                 <NotFound/>
+                <Footer/>
             </div>
         }
     ]);
@@ -81,6 +82,7 @@ else if (localStorage.getItem('NameCompany') && localStorage.getItem('auth_token
             element: <div>
                 <ClosePage/>
                 <UploadFile/>
+                <Footer/>
             </div>
         },
         {
@@ -88,6 +90,7 @@ else if (localStorage.getItem('NameCompany') && localStorage.getItem('auth_token
             element: <div>
                 <ClosePage/>
                 <CreateFile/>
+                <Footer/>
             </div>
         },
         {
@@ -110,6 +113,7 @@ else if (localStorage.getItem('NameCompany') && localStorage.getItem('auth_token
             path: "*",
             element: <div>
                 <NotFound/>
+                <Footer/>
             </div>
         },
         {
@@ -198,6 +202,7 @@ else if (localStorage.getItem('auth_token')) {
             path: "*",
             element: <div>
                 <NotFound/>
+                <Footer/>
             </div>
         }
     ]);
@@ -223,6 +228,7 @@ else {
             path: "*",
             element: <div>
                 <NotFound/>
+                <Footer/>
             </div>
         }
     ]);

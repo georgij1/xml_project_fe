@@ -195,7 +195,7 @@ export const UploadFile: React.FunctionComponent = () => {
                         <div className="title_check">{type}</div>
                     </div>
 
-                    <div className="fixed flex bottom-0 bg-slate-600 w-full rounded-t-xl">
+                    <div className="fixed flex bottom-0 bg-slate-600 w-full rounded-t-xl z-10">
                         <div className={"continue_btn " + ClassesContinue}>Продолжить</div>
                         <div className={"cancel_btn " + CancelBtn} onClick={cancel_btn}>Отмена</div>
                     </div>

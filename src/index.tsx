@@ -12,7 +12,8 @@ import {
     Body,
     Footer,
     RegistrationForm,
-    UploadFile, CreateFile
+    UploadFile, CreateFile,
+    ListFiles
     // @ts-ignore
 } from "./components/export.components.jsx";
 import {
@@ -27,7 +28,6 @@ import {
     // @ts-ignore
 } from "./pages/export.pages.jsx"
 import "./App.css"
-import {ListFiles} from "./components/company/ListFiles/ListFiles";
 
 if (!localStorage.getItem('auth_token')) {
     const router = createBrowserRouter([

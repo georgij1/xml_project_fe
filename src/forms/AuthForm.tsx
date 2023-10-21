@@ -98,7 +98,6 @@ export const AuthForm = () => {
             .then((response) => {
                 console.log(response.status)
                 if (response.status === 200) {
-                    console.log(response)
                     response.text().then((jwt_token) => {
                         console.log(jwt_token)
                         localStorage.setItem('auth_token', jwt_token)

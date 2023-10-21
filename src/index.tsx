@@ -1,11 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-// @ts-ignore
-import {
-    createBrowserRouter,
-    Navigate,
-    RouterProvider
-} from "react-router-dom";
+import {createBrowserRouter, Navigate, RouterProvider} from "react-router-dom";
 import {
     AuthForm,
     Header,
@@ -14,7 +9,6 @@ import {
     RegistrationForm,
     UploadFile, CreateFile,
     ListFiles
-    // @ts-ignore
 } from "./components/export.components.jsx";
 import {
     EnterCompany,
@@ -24,12 +18,14 @@ import {
     SettingsHome,
     ClosePage,
     CompanyHeader,
-    NotFound
-    // @ts-ignore
+    NotFound, BodyLogout
 } from "./pages/export.pages.jsx"
 import "./App.css"
+import {Title} from "./components/company/Title"
 
 if (!localStorage.getItem('auth_token')) {
+    new Title().title_all_page()
+
     const router = createBrowserRouter([
         {
             path: "/",
@@ -62,7 +58,18 @@ if (!localStorage.getItem('auth_token')) {
 }
 
 else if (localStorage.getItem('NameCompany') && localStorage.getItem('auth_token')) {
+    new Title().title_all_page()
+
     const router = createBrowserRouter([
+        {
+            path: "/logout",
+            element: <div>
+                <ClosePage/>
+                <BodyLogout/>
+                <Footer/>
+            </div>
+        },
+
         {
             path: "/",
             element: <Navigate to="/home/company" replace={true}/>
@@ -134,19 +141,17 @@ else if (localStorage.getItem('NameCompany') && localStorage.getItem('auth_token
 }
 
 else if (localStorage.getItem('auth_token')) {
-    let title = document.querySelector('title')
-
-    if (window.location.pathname === "/home") {
-        // @ts-ignore
-        title.textContent = 'Домашняя страница'
-    }
-
-    else {
-        // @ts-ignore
-        title.textContent = 'Сервис по формированию заключений экспертизы в формате XML'
-    }
+    new Title().title_all_page()
 
     const router = createBrowserRouter([
+        {
+            path: "/logout",
+            element: <div>
+                <ClosePage/>
+                <BodyLogout/>
+                <Footer/>
+            </div>
+        },
         {
             path: "/",
             element: <Navigate to="/home" replace={true}/>
@@ -215,6 +220,8 @@ else if (localStorage.getItem('auth_token')) {
 }
 
 else {
+    new Title().title_all_page()
+
     const router = createBrowserRouter([
         {
             path: "/",
@@ -228,6 +235,14 @@ else {
             path: "*",
             element: <div>
                 <NotFound/>
+                <Footer/>
+            </div>
+        },
+        {
+            path: "/logout",
+            element: <div>
+                <ClosePage/>
+                <BodyLogout/>
                 <Footer/>
             </div>
         }

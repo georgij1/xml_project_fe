@@ -12,28 +12,61 @@ export const Logout = () => {
             const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
             const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
             const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-            setTime(`${hours+"h "+minutes + "m "+seconds+"s "}`)
-            if (distance < 0) {
-                clearInterval(x);
-                setTime('Время вышло')
-                setTimeout(() => logout(), 10000)
+
+            if (isNaN(hours && minutes && seconds)) {
+                setTime(`Настройки`)
+            }
+
+            else {
+                setTime(`${hours+"h "+minutes + "m "+seconds+"s "}`)
+                if (distance < 0) {
+                    clearInterval(x);
+                    setTime('Время вышло')
+                    setTimeout(() => logout(), 10000)
+                }
             }
         }, 1000)
     }
 
     const count_call = () => {
-        if (new Date().getMonth()+1===1) interval(new Date("January"+new Date().getDate()+", "+new Date().getFullYear()+" "+choose_time).getTime())
-        else if (new Date().getMonth()+1===2) interval(new Date("February"+ new Date().getDate()+", "+new Date().getFullYear()+" "+choose_time).getTime())
-        else if (new Date().getMonth()+1===3) interval(new Date("March"+ new Date().getDate()+", "+new Date().getFullYear()+" "+choose_time).getTime())
-        else if (new Date().getMonth()+1===4) interval(new Date("April"+ new Date().getDate()+", "+new Date().getFullYear()+" "+choose_time).getTime())
-        else if (new Date().getMonth()+1===5) interval(new Date("May"+ new Date().getDate()+", "+new Date().getFullYear()+" "+choose_time).getTime())
-        else if (new Date().getMonth()+1===6) interval(new Date("June"+ new Date().getDate()+", "+new Date().getFullYear()+" "+choose_time).getTime())
-        else if (new Date().getMonth()+1===7) interval(new Date("July"+ new Date().getDate()+", "+new Date().getFullYear()+" "+choose_time).getTime())
-        else if (new Date().getMonth()+1===8) interval(new Date("August"+ new Date().getDate()+", "+new Date().getFullYear()+" "+choose_time).getTime())
-        else if (new Date().getMonth()+1===9) interval(new Date("September"+ new Date().getDate()+", "+new Date().getFullYear()+" "+choose_time).getTime())
-        else if (new Date().getMonth()+1===10) interval(new Date("October"+ new Date().getDate()+", "+new Date().getFullYear()+" "+choose_time).getTime())
-        else if (new Date().getMonth()+1===11) interval(new Date("November"+ new Date().getDate()+", "+new Date().getFullYear()+" "+choose_time).getTime())
-        else if (new Date().getMonth()+1===11) interval(new Date("December"+ new Date().getDate()+", "+new Date().getFullYear()+" "+choose_time).getTime())
+        switch (new Date().getMonth()+1) {
+            case 1:
+                interval(new Date("January"+new Date().getDate()+", "+new Date().getFullYear()+" "+choose_time).getTime())
+                break
+            case 2:
+                interval(new Date("February"+ new Date().getDate()+", "+new Date().getFullYear()+" "+choose_time).getTime());
+                break
+            case 3:
+                interval(new Date("March"+ new Date().getDate()+", "+new Date().getFullYear()+" "+choose_time).getTime())
+                break
+            case 4:
+                interval(new Date("April"+ new Date().getDate()+", "+new Date().getFullYear()+" "+choose_time).getTime())
+                break
+            case 5:
+                interval(new Date("May"+ new Date().getDate()+", "+new Date().getFullYear()+" "+choose_time).getTime())
+                break
+            case 6:
+                interval(new Date("June"+ new Date().getDate()+", "+new Date().getFullYear()+" "+choose_time).getTime())
+                break
+            case 7:
+                interval(new Date("July"+ new Date().getDate()+", "+new Date().getFullYear()+" "+choose_time).getTime())
+                break
+            case 8:
+                interval(new Date("August"+ new Date().getDate()+", "+new Date().getFullYear()+" "+choose_time).getTime())
+                break
+            case 9:
+                interval(new Date("September"+ new Date().getDate()+", "+new Date().getFullYear()+" "+choose_time).getTime())
+                break
+            case 10:
+                interval(new Date("October"+ new Date().getDate()+", "+new Date().getFullYear()+" "+choose_time).getTime())
+                break
+            case 11:
+                interval(new Date("November"+ new Date().getDate()+", "+new Date().getFullYear()+" "+choose_time).getTime())
+                break
+            case 12:
+                interval(new Date("December"+ new Date().getDate()+", "+new Date().getFullYear()+" "+choose_time).getTime())
+                break
+        }
     }
 
     count_call()
@@ -67,7 +100,11 @@ export const Logout = () => {
                             hover:shadow-none" onClick={close_timer_logout}>Закрыть</div>
                             <div className="fixed bottom-10 right-5 bg-slate-800 z-50 rounded-xl">
                                 <div onClick={logout} className="p-5 bg-red-400 m-5 rounded-xl cursor-pointer shadow-lg shadow-cyan-500/50 hover:shadow-none">Выйти</div>
-                                <div className="p-5 bg-slate-400 m-5 rounded-xl cursor-pointer shadow-lg shadow-cyan-500/50 hover:shadow-none">{''+time}</div>
+                                <div className="p-5 bg-slate-400 m-5 rounded-xl cursor-pointer
+                                shadow-lg shadow-cyan-500/50 hover:shadow-none"
+                                onClick={(e) => {
+                                    console.log(e.currentTarget)}
+                                }>{''+time}</div>
                             </div>
                         </div>
                     </>
@@ -93,7 +130,18 @@ export const Logout = () => {
                             hover:shadow-none text-white" onClick={close_timer_logout}>Закрыть</div>
                             <div className="fixed bottom-10 right-5 bg-slate-800 z-50 rounded-xl text-white">
                                 <div onClick={logout} className=" text-white p-5 bg-red-400 m-5 rounded-xl cursor-pointer shadow-lg shadow-cyan-500/50 hover:shadow-none">Выйти</div>
-                                <div className=" text-white p-5 bg-slate-400 m-5 rounded-xl cursor-pointer shadow-lg shadow-cyan-500/50 hover:shadow-none">{''+time}</div>
+                                <div className=" text-white p-5 bg-slate-400 m-5 rounded-xl cursor-pointer
+                                shadow-lg shadow-cyan-500/50 hover:shadow-none"
+                                onClick={(e) => {
+                                    if (e.currentTarget.textContent === "Настройки" && window.location.pathname.includes('company')) {
+                                        window.open('/home/company/settings', '_self')
+                                    }
+
+                                    else {
+                                        window.open('/home/settings', '_self')
+                                    }
+                                }
+                                }>{''+time}</div>
                             </div>
                         </div>
                     </>

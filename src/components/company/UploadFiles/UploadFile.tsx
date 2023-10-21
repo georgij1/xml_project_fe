@@ -229,32 +229,32 @@ export const UploadFile: React.FunctionComponent = () => {
                 />
 
                 <div className="checks">
-                    <div className={"check_type_file " + classes}>
+                    <div className={"hidden bg-white shadow-black shadow-2xl m-10 items-center gap-5 p-5 rounded-lg " + classes}>
                         <div className="success"></div>
                         <div className="title_check">Файл является валидным</div>
                     </div>
 
-                    <div className={"check_type_file " + classes}>
+                    <div className={"hidden bg-white shadow-black shadow-2xl m-10 items-center gap-5 p-5 rounded-lg " + classes}>
                         <div className="success"></div>
                         <div className="title_check">Имя файла {nameFile}</div>
                     </div>
 
-                    <div className={"check_type_file " + classes}>
+                    <div className={"hidden bg-white shadow-black shadow-2xl m-10 items-center gap-5 p-5 rounded-lg " + classes}>
                         <div className="success"></div>
                         <div className="title_check">Размер файла: {size}</div>
                     </div>
 
-                    <div className={"check_type_file " + classes}>
+                    <div className={"hidden bg-white shadow-black shadow-2xl m-10 items-center gap-5 p-5 rounded-lg " + classes}>
                         <div className="success"></div>
                         <div className="title_check">Тип файла: {type}</div>
                     </div>
 
-                    <div className={"check_type_file " + classes_type_false_file}>
+                    <div className={"hidden bg-white shadow-black shadow-2xl m-10 items-center gap-5 p-5 rounded-lg " + classes_type_false_file}>
                         <div className="error"></div>
                         <div className="title_check">{type}</div>
                     </div>
 
-                    <div className="flex_768">
+                    <div className="fixed flex bottom-0 bg-white shadow-black shadow-2xl w-full rounded-t-xl z-10">
                         <div className={"continue_btn " + ClassesContinue}>Продолжить</div>
                         <div className={"cancel_btn " + CancelBtn} onClick={cancel_btn}>Отмена</div>
                     </div>

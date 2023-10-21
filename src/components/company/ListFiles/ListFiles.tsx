@@ -39,7 +39,7 @@ export const ListFiles = () => {
             })
     }, [body])
 
-    if (localStorage.getItem('theme')) {
+    if (localStorage.getItem('dark_theme')) {
         document.body.classList.add('dark_theme_body')
         return (
             <>

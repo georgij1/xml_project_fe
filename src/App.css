@@ -214,8 +214,6 @@ input:hover {
   text-align: center;
   display: flex;
   justify-content: center;
-  position: fixed;
-  bottom: 0;
 }
 
 .body {

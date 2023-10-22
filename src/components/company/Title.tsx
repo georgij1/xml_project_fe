@@ -1,5 +1,3 @@
-import {Messages} from "../message/Message";
-
 export class Title {
     title_all_page() {
         if (window.location.pathname === "/home") {

@@ -323,7 +323,7 @@ export const ListFiles = () => {
 
     const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.checked) {
-            const newSelected = rows.map((n) => n.id);
+            const newSelected = files.map((n) => n["id_image"]);
             setSelected(newSelected);
             return;
         }
@@ -376,7 +376,7 @@ export const ListFiles = () => {
         [order, orderBy, page, rowsPerPage],
     );
 
-    console.log(files.map((file) => (file["image_name"])))
+    console.log(files.length)
 
     return (
         <Box sx={{ width: '100%' }} className="pt-24">
@@ -389,14 +389,14 @@ export const ListFiles = () => {
                         aria-labelledby="tableTitle"
                         size={dense ? 'small' : 'medium'}
                     >
-                        {/* <EnhancedTableHead
+                        <EnhancedTableHead
                             numSelected={selected.length}
                             order={order}
                             orderBy={orderBy}
                             onSelectAllClick={handleSelectAllClick}
                             onRequestSort={handleRequestSort}
-                            rowCount={rows.length}
-                        /> */}
+                            rowCount={files.length}
+                        />
                         <TableBody>
                             {visibleRows.map((row, index) => {
                                 const labelId = `enhanced-table-checkbox-${index}`;

@@ -4,20 +4,18 @@ import {Logout} from "../../message/Logout";
 import {
     alpha,
     Box,
-    Button,
     Checkbox, FormControlLabel, IconButton, Paper, Switch, Table, TableBody,
     TableCell, TableContainer,
     TableHead, TablePagination,
     TableRow,
-    TableSortLabel,
     Toolbar,
     Tooltip,
     Typography
 } from "@mui/material";
-import { visuallyHidden } from '@mui/utils';
 import DeleteIcon from '@mui/icons-material/Delete';
 import FilterListIcon from '@mui/icons-material/FilterList';
-import {FolderZip, NoteAdd, OpenInBrowser, SaveAs} from "@mui/icons-material";
+import {CloudUpload, FolderZip, NoteAdd, OpenInBrowser, SaveAs} from "@mui/icons-material";
+import Modal from '@mui/material/Modal';
 
 export const ListFiles = () => {
     interface Data {
@@ -117,6 +115,8 @@ export const ListFiles = () => {
         orderBy: string;
         rowCount: number;
     }
+
+    const [contentFile, setContentFile] = useState([])
     
     function EnhancedTableHead(props: EnhancedTableProps) {
         const { onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort } =
@@ -141,25 +141,7 @@ export const ListFiles = () => {
                         />
                     </TableCell>
                     {headCells.map((headCell) => (
-                        <TableCell
-                            key={headCell.id}
-                            align={headCell.numeric ? 'right' : 'left'}
-                            padding={headCell.disablePadding ? 'none' : 'normal'}
-                            sortDirection={orderBy === headCell.id ? order : false}
-                        >
-                            <TableSortLabel
-                                active={orderBy === headCell.id}
-                                direction={orderBy === headCell.id ? order : 'asc'}
-                                onClick={createSortHandler(headCell.id)}
-                            >
-                                {headCell.label}
-                                {orderBy === headCell.id ? (
-                                    <Box component="span" sx={visuallyHidden}>
-                                        {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
-                                    </Box>
-                                ) : null}
-                            </TableSortLabel>
-                        </TableCell>
+                        <TableCell>{headCell.label}</TableCell>
                     ))}
                 </TableRow>
             </TableHead>
@@ -216,7 +198,32 @@ export const ListFiles = () => {
                             </IconButton>
                         </Tooltip>
     
-                        <Tooltip title="Открыть в браузере">
+                        <Tooltip title="Открыть в браузере" onClick={() => {
+                            selected.map((id) => {
+                                setOpen(true)
+                                fetch(`http://localhost:8080/file/read/${localStorage.getItem('NameCompany')}/${id}`, {
+                                    method: 'GET',
+                                    headers: {
+                                        "Accept": "application/json",
+                                        "Authorization": `Bearer ${localStorage.getItem('auth_token')}`,
+                                        'Content-Type': 'application/json',
+                                        'Connection': 'keep-alive',
+                                        'Accept-Encoding': 'gzip, deflate, br',
+                                        'Cache-Control': 'no-cache'
+                                    }
+                                })
+                                    .then((response) => response.json())
+                                    .then((data) => {
+                                        data.forEach((item: any) => {
+                                            console.log(item)
+                                            setContentFile(data)
+                                        })
+                                    })
+                                    .catch((error) => {
+                                        console.log(error)
+                                    })
+                            })
+                        }}>
                             <IconButton>
                                 <OpenInBrowser />
                             </IconButton>
@@ -255,9 +262,15 @@ export const ListFiles = () => {
                             </IconButton>
                         </Tooltip>
     
-                        <Tooltip title="Создать">
+                        <Tooltip title="Создать" onClick={() => {window.open(`/home/company/create/file`, '_self')}}>
                             <IconButton>
                                 <NoteAdd />
+                            </IconButton>
+                        </Tooltip>
+
+                        <Tooltip title="Загрузить" onClick={() => {window.open(`/home/company/upload/file`, '_self')}}>
+                            <IconButton>
+                                <CloudUpload />
                             </IconButton>
                         </Tooltip>
                     </>
@@ -295,7 +308,6 @@ export const ListFiles = () => {
                     data.forEach((item: any) => {
                         rows.push(createData(item["id"], item["image_name"], item["author"], item["time_stamp"]))
                         setFoundFile(true)
-                        console.log(rows);
                         setFiles(data)
                     })
                 }
@@ -376,7 +388,29 @@ export const ListFiles = () => {
         [order, orderBy, page, rowsPerPage],
     );
 
-    console.log(files.length)
+    const [openFile, setOpenFile] = useState<boolean>(false)
+
+    const [open, setOpen] = React.useState(false);
+    const handleOpen = () => setOpen(false);
+    const handleClose = () => {
+        setOpen(false)
+        setOpenFile(false)
+    };
+
+    const style = {
+        position: 'absolute' as 'absolute',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        width: 400,
+        bgcolor: 'background.paper',
+        border: '2px solid blue',
+        boxShadow: 24,
+        p: 4,
+        overflow: 'scroll',
+        height: '90vh',
+        borderRadius: '10px'
+      };
 
     return (
         <Box sx={{ width: '100%' }} className="pt-24">
@@ -404,10 +438,8 @@ export const ListFiles = () => {
                                 let all_id : any = []
 
                                 files.map((file) => {
-                                    console.log(file["id_image"])
                                     const id_image = file["id_image"]
                                     all_id.push(id_image)
-                                    console.log(all_id)
                                 })
                                 
                                 return (
@@ -426,11 +458,11 @@ export const ListFiles = () => {
                                                     sx={{ cursor: 'pointer' }}
                                                     >
                                                         <TableCell padding="checkbox">
-                                                            <Checkbox color="primary" checked={isSelected(file["id_image"])} inputProps={{'aria-labelledby': labelId,}}/>
+                                                            <Checkbox color="primary" checked={isSelected(file["id_image"])} inputProps={{'aria-labelledby': labelId}}/>
                                                         </TableCell>
-                                                        <TableCell component="th" scope="row" padding="none">{file["image_name"]}</TableCell>
-                                                        <TableCell align="right">{file["author"]}</TableCell>
-                                                        <TableCell align="right">{file["time_stamp"]}</TableCell>
+                                                        <TableCell component="th" scope="row" padding="none" style={{textAlign:"start"}}>{file["image_name"]}</TableCell>
+                                                        <TableCell align="right" style={{textAlign:"start"}}>{file["author"]}</TableCell>
+                                                        <TableCell align="right" style={{textAlign:"start"}}>{file["time_stamp"]}</TableCell>
                                                     </TableRow>
                                                 </>
                                             ))
@@ -464,6 +496,20 @@ export const ListFiles = () => {
                 control={<Switch checked={dense} onChange={handleChangeDense} />}
                 label="Уменьшить отступ"
             />
+                <Modal
+                open={open}
+                onClose={handleClose}
+                aria-labelledby="modal-modal-title"
+                aria-describedby="modal-modal-description">
+                <Box sx={style}>
+                    <Typography id="modal-modal-title" variant="h6" component="h2">
+                    Word файл
+                    </Typography>
+                    <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+                    {contentFile}
+                    </Typography>
+                </Box>
+                </Modal>
         </Box>
     )
 }

@@ -14,8 +14,16 @@ import {
 } from "@mui/material";
 import DeleteIcon from '@mui/icons-material/Delete';
 import FilterListIcon from '@mui/icons-material/FilterList';
-import {CloudUpload, FolderZip, NoteAdd, OpenInBrowser, SaveAs} from "@mui/icons-material";
+import {CloudUpload, FolderZip, NoteAdd, OpenInBrowser} from "@mui/icons-material";
 import Modal from '@mui/material/Modal';
+import Button from '@mui/material/Button';
+import ButtonGroup from '@mui/material/ButtonGroup';
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import ClickAwayListener from '@mui/material/ClickAwayListener';
+import Grow from '@mui/material/Grow';
+import Popper from '@mui/material/Popper';
+import MenuItem from '@mui/material/MenuItem';
+import MenuList from '@mui/material/MenuList';
 
 export const ListFiles = () => {
     interface Data {
@@ -119,12 +127,11 @@ export const ListFiles = () => {
     const [contentFile, setContentFile] = useState([])
     
     function EnhancedTableHead(props: EnhancedTableProps) {
-        const { onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort } =
-            props;
-        const createSortHandler =
-            (property: keyof Data) => (event: React.MouseEvent<unknown>) => {
-                onRequestSort(event, property);
-            };
+        const { onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort } = props;
+        
+        const createSortHandler = (property: keyof Data) => (event: React.MouseEvent<unknown>) => {
+            onRequestSort(event, property);
+        };
     
         return (
             <TableHead>
@@ -154,7 +161,99 @@ export const ListFiles = () => {
     
     function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
         const { numSelected } = props;
+
+        const options = ['Сохранить как', 'Сохранить как PDF', 'Сохранить как XML', 'Сохранить как Word файл'];
     
+        const [open, setOpen_1] = React.useState(false);
+        const anchorRef = React.useRef<HTMLDivElement>(null);
+        const [selectedIndex, setSelectedIndex] = React.useState(1);
+
+        const handleClick = () => {
+            console.info(`You clicked ${options[selectedIndex]}`);
+            if (options[selectedIndex] === "Сохранить как PDF") {
+                setOpenPDFFile(true)
+                selected.map((id) => {
+                    fetch(`http://localhost:8080/file/read/PDF/${localStorage.getItem('NameCompany')}/${id}`, {
+                        method: 'GET',
+                        headers: {
+                            "Accept": "application/json",
+                            "Authorization": `Bearer ${localStorage.getItem('auth_token')}`,
+                            'Content-Type': 'application/json',
+                            'Connection': 'keep-alive',
+                            'Accept-Encoding': 'gzip, deflate, br',
+                            'Cache-Control': 'no-cache'
+                        }
+                    })
+                        .then((response) => response.json())
+                        .then((data) => setContentFile(data))
+                        .catch((error) => console.log(error))
+                })
+            }
+
+            else if (options[selectedIndex] === "Сохранить как XML") {
+                setOpenXMLFile(true)
+                selected.map((id) => {
+                    fetch(`http://localhost:8080/file/read/XML/${localStorage.getItem('NameCompany')}/${id}`, {
+                        method: 'GET',
+                        headers: {
+                            "Accept": "application/json",
+                            "Authorization": `Bearer ${localStorage.getItem('auth_token')}`,
+                            'Content-Type': 'application/json',
+                            'Connection': 'keep-alive',
+                            'Accept-Encoding': 'gzip, deflate, br',
+                            'Cache-Control': 'no-cache'
+                        }
+                    })
+                        .then((response) => response.json())
+                        .then((data) => setContentFile(data))
+                        .catch((error) => console.log(error))
+                })
+            }
+
+            else if (options[selectedIndex] === "Сохранить как Word файл") {
+                setOpenWordFile(true)
+                selected.map((id) => {
+                    fetch(`http://localhost:8080/file/read/${localStorage.getItem('NameCompany')}/${id}`, {
+                        method: 'GET',
+                        headers: {
+                            "Accept": "application/json",
+                            "Authorization": `Bearer ${localStorage.getItem('auth_token')}`,
+                            'Content-Type': 'application/json',
+                            'Connection': 'keep-alive',
+                            'Accept-Encoding': 'gzip, deflate, br',
+                            'Cache-Control': 'no-cache'
+                        }
+                    })
+                        .then((response) => response.json())
+                        .then((data) => setContentFile(data))
+                        .catch((error) => console.log(error))
+                })
+            }
+        };
+
+        const handleMenuItemClick = (
+            event: React.MouseEvent<HTMLLIElement, MouseEvent>,
+            index: number,
+        ) => {
+            setSelectedIndex(index);
+            setOpen_1(false);
+        };
+
+        const handleToggle = () => {
+            setOpen_1((prevOpen) => !prevOpen);
+        };
+
+        const handleClose = (event: Event) => {
+            if (
+            anchorRef.current &&
+            anchorRef.current.contains(event.target as HTMLElement)
+            ) {
+            return;
+            }
+
+            setOpen_1(false);
+        };
+
         return (
             <Toolbar
                 sx={{
@@ -192,7 +291,9 @@ export const ListFiles = () => {
                 )}
                 {numSelected > 0 ? (
                     <> {numSelected === 1 ? <>
-                        <Tooltip title="Собрать пакет документов">
+                        <Tooltip title="Собрать пакет документов" onClick={() => {
+                            console.info('create packet of document')
+                        }}>
                             <IconButton>
                                 <FolderZip />
                             </IconButton>
@@ -214,14 +315,9 @@ export const ListFiles = () => {
                                 })
                                     .then((response) => response.json())
                                     .then((data) => {
-                                        data.forEach((item: any) => {
-                                            console.log(item)
-                                            setContentFile(data)
-                                        })
+                                        setContentFile(data)
                                     })
-                                    .catch((error) => {
-                                        console.log(error)
-                                    })
+                                    .catch((error) => console.log(error))
                             })
                         }}>
                             <IconButton>
@@ -229,25 +325,106 @@ export const ListFiles = () => {
                             </IconButton>
                         </Tooltip>
     
-                        <Tooltip title="Сохранить как">
+                        <>
                             <IconButton>
-                                <SaveAs />
+                                <React.Fragment>
+                                    <ButtonGroup variant="contained" ref={anchorRef} aria-label="split button">
+                                        <Button onClick={handleClick} style={{textTransform:'none'}}>{options[selectedIndex]}</Button>
+                                        <Button
+                                        size="small"
+                                        aria-controls={open ? 'split-button-menu' : undefined}
+                                        aria-expanded={open ? 'true' : undefined}
+                                        aria-label="select merge strategy"
+                                        aria-haspopup="menu"
+                                        onClick={handleToggle}
+                                        >
+                                        <ArrowDropDownIcon />
+                                        </Button>
+                                    </ButtonGroup>
+                                    <Popper
+                                        sx={{
+                                        zIndex: 1,
+                                        }}
+                                        open={open}
+                                        anchorEl={anchorRef.current}
+                                        role={undefined}
+                                        transition
+                                        disablePortal
+                                    >
+                                        {({ TransitionProps, placement }) => (
+                                        <Grow
+                                            {...TransitionProps}
+                                            style={{
+                                            transformOrigin:
+                                                placement === 'bottom' ? 'center top' : 'center bottom',
+                                            }}
+                                        >
+                                            <Paper>
+                                            <ClickAwayListener onClickAway={handleClose}>
+                                                <MenuList id="split-button-menu" autoFocusItem>
+                                                {options.map((option, index) => (
+                                                    <MenuItem
+                                                    key={option}
+                                                    disabled={index==0}
+                                                    selected={index === selectedIndex}
+                                                    onClick={(event) => handleMenuItemClick(event, index)}
+                                                    >
+                                                    {option}
+                                                    </MenuItem>
+                                                ))}
+                                                </MenuList>
+                                            </ClickAwayListener>
+                                            </Paper>
+                                        </Grow>
+                                        )}
+                                    </Popper>
+                                </React.Fragment>
                             </IconButton>
-                        </Tooltip>
+                        </>
     
-                        <Tooltip title="Удалить">
+                        <Tooltip title="Удалить" onClick={() => {
+                            selected.map(select => {
+                                fetch(`http://localhost:8080/file/delete/file/${localStorage.getItem('NameCompany')}/${select}`, {
+                                    method: 'DELETE',
+                                    headers: {
+                                        "Accept": "*/*",
+                                        "Authorization": `Bearer ${localStorage.getItem('auth_token')}`,
+                                        'Content-Type': 'multipart/form-data; boundary=<calculated when request is sent>',
+                                        'Connection': 'keep-alive',
+                                        'Accept-Encoding': 'gzip, deflate, br',
+                                        'Cache-Control': 'no-cache'
+                                    }
+                                })
+                                .then((resp) => {
+                                    resp.text().then(ev => {
+                                        console.log(ev)
+                                    })
+                                    console.log(resp.status)
+                                    if (resp.status) {
+                                        window.location.reload()
+                                    }
+                                })
+                                .catch((error) => {
+                                    console.log(error)
+                                })
+                            })
+                        }}>
                             <IconButton>
                                 <DeleteIcon />
                             </IconButton>
                         </Tooltip>
                     </> : <>
-                        <Tooltip title="Собрать пакет документов">
+                        <Tooltip title="Собрать пакет документов" onClick={() => {
+                            console.info('create packet of document')
+                        }}>
                             <IconButton>
                                 <FolderZip />
                             </IconButton>
                         </Tooltip>
     
-                        <Tooltip title="Удалить">
+                        <Tooltip title="Удалить" onClick={() => {
+                            console.info('delete')
+                        }}>
                             <IconButton>
                                 <DeleteIcon />
                             </IconButton>
@@ -279,7 +456,6 @@ export const ListFiles = () => {
         );
     }
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     let body = {
         "NameCompany": localStorage.getItem('NameCompany')
     }
@@ -388,14 +564,32 @@ export const ListFiles = () => {
         [order, orderBy, page, rowsPerPage],
     );
 
-    const [openFile, setOpenFile] = useState<boolean>(false)
-
     const [open, setOpen] = React.useState(false);
-    const handleOpen = () => setOpen(false);
+    const [openPDFFile, setOpenPDFFile] = React.useState(false);
+    const [openXMLFile, setOpenXMLFile] = React.useState(false);
+    const [openWordFile, setOpenWordFile] = React.useState(false);
+    let FilterContentFile = contentFile.filter((item: any) => {
+        return item !== contentFile[0]
+    })
+
     const handleClose = () => {
         setOpen(false)
-        setOpenFile(false)
+        setContentFile([])
+        FilterContentFile = []
+        console.log(FilterContentFile, open)
     };
+    
+    const handleClosePDF = () => {
+        setOpenPDFFile(false)
+    }
+
+    const handleCloseXMLFile = () => {
+        setOpenXMLFile(false)
+    }
+
+    const handleCloseWordFile = () => {
+        setOpenWordFile(false)
+    }
 
     const style = {
         position: 'absolute' as 'absolute',
@@ -410,11 +604,11 @@ export const ListFiles = () => {
         overflow: 'scroll',
         height: '90vh',
         borderRadius: '10px'
-      };
+    };
 
     return (
         <Box sx={{ width: '100%' }} className="pt-24">
-            <Logout/>
+            {/* <Logout/> */}
             <Paper sx={{ width: '100%', mb: 2 }}>
                 <EnhancedTableToolbar numSelected={selected.length} />
                 <TableContainer>
@@ -434,37 +628,27 @@ export const ListFiles = () => {
                         <TableBody>
                             {visibleRows.map((row, index) => {
                                 const labelId = `enhanced-table-checkbox-${index}`;
-
-                                let all_id : any = []
-
-                                files.map((file) => {
-                                    const id_image = file["id_image"]
-                                    all_id.push(id_image)
-                                })
                                 
                                 return (
                                         <>
                                         {
                                             files.map((file) => (
-                                                <>
-                                                    <TableRow
-                                                    hover
-                                                    onClick={(event) => handleClick(event, parseInt(file["id_image"]))}
-                                                    role="checkbox"
-                                                    aria-checked={file["id_image"]}
-                                                    tabIndex={-1}
-                                                    key={parseInt(file["id_image"])}
-                                                    selected={file["id_image"]}
-                                                    sx={{ cursor: 'pointer' }}
-                                                    >
-                                                        <TableCell padding="checkbox">
-                                                            <Checkbox color="primary" checked={isSelected(file["id_image"])} inputProps={{'aria-labelledby': labelId}}/>
-                                                        </TableCell>
-                                                        <TableCell component="th" scope="row" padding="none" style={{textAlign:"start"}}>{file["image_name"]}</TableCell>
-                                                        <TableCell align="right" style={{textAlign:"start"}}>{file["author"]}</TableCell>
-                                                        <TableCell align="right" style={{textAlign:"start"}}>{file["time_stamp"]}</TableCell>
-                                                    </TableRow>
-                                                </>
+                                                <TableRow
+                                                hover
+                                                onClick={(event) => handleClick(event, parseInt(file["id_image"]))}
+                                                aria-checked={file["id_image"]}
+                                                tabIndex={-1}
+                                                key={parseInt(file["id_image"])}
+                                                selected={file["id_image"]}
+                                                sx={{ cursor: 'pointer' }}
+                                                >
+                                                    <TableCell padding="checkbox">
+                                                        <Checkbox color="primary" checked={isSelected(file["id_image"])} inputProps={{'aria-labelledby': labelId}}/>
+                                                    </TableCell>
+                                                    <TableCell component="th" scope="row" padding="none" style={{textAlign:"start"}}>{file["image_name"]}</TableCell>
+                                                    <TableCell align="right" style={{textAlign:"start"}}>{file["author"]}</TableCell>
+                                                    <TableCell align="right" style={{textAlign:"start"}}>{file["time_stamp"]}</TableCell>
+                                                </TableRow>
                                             ))
                                         }
                                         </>
@@ -496,20 +680,80 @@ export const ListFiles = () => {
                 control={<Switch checked={dense} onChange={handleChangeDense} />}
                 label="Уменьшить отступ"
             />
-                <Modal
-                open={open}
-                onClose={handleClose}
-                aria-labelledby="modal-modal-title"
-                aria-describedby="modal-modal-description">
-                <Box sx={style}>
+            <Modal
+            open={open}
+            onClose={handleClose}
+            aria-labelledby="modal-modal-title"
+            aria-describedby="modal-modal-description">
+            <Box sx={style}>
+                <Typography id="modal-modal-description" sx={{ mt: 2 }}>
                     <Typography id="modal-modal-title" variant="h6" component="h2">
-                    Word файл
+                        {contentFile[0]}
                     </Typography>
-                    <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-                    {contentFile}
+                    {FilterContentFile.map((item: any) => (
+                            <Typography id="modal-modal-description" sx={{ mt: 2 }}>                            
+                                {item}
+                            </Typography>       
+                        ))
+                    }
+                </Typography>
+            </Box>
+            </Modal>
+
+            <Modal
+            open={openPDFFile}
+            onClose={handleClosePDF}
+            aria-labelledby="modal-modal-title"
+            aria-describedby="modal-modal-description">
+            <Box sx={style}>
+                {contentFile.map((item: any) => (
+                <Typography id="modal-modal-title" variant="h6" component="h2">
+                {item["name_file"]}
+                </Typography>
+                ))}
+                <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+                {contentFile.map((item: any) => (
+                        <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+                            {item["content_file"]}
+                        </Typography>       
+                    ))
+                }
+                </Typography>
+            </Box>
+            </Modal>
+
+            <Modal
+            open={openXMLFile}
+            onClose={handleCloseXMLFile}
+            aria-labelledby="modal-modal-title"
+            aria-describedby="modal-modal-description">
+            <Box sx={style}>
+                <Typography id="modal-modal-title" variant="h6" component="h2">
+                XML файл
+                </Typography>
+                <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+                {contentFile}
+                </Typography>
+            </Box>
+            </Modal>
+
+            <Modal
+            open={openWordFile}
+            onClose={handleCloseWordFile}
+            aria-labelledby="modal-modal-title"
+            aria-describedby="modal-modal-description">
+            <Box sx={style}>
+                    <Typography id="modal-modal-title" variant="h6" component="h2">
+                        {contentFile[0]}
                     </Typography>
-                </Box>
-                </Modal>
+                    {FilterContentFile.map((item: any) => (
+                            <Typography id="modal-modal-description" sx={{ mt: 2 }}>                            
+                                {item}
+                            </Typography>       
+                        ))
+                    }
+            </Box>
+            </Modal>
         </Box>
     )
 }

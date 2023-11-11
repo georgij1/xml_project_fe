@@ -729,18 +729,19 @@ export const ListFiles = () => {
             aria-describedby="modal-modal-description">
             <Box sx={style}>
                 <Typography id="modal-modal-title" variant="h6" component="h2">
-                {contentFile.map((item: any) => (
+                {/* {contentFile.map((item: any) => (
                         <Typography id="modal-modal-description" sx={{ mt: 2 }}>
                             {item["name_file"]}
                         </Typography>       
                     ))
-                }
+                } */}
+                XML file
                 </Typography>
                 <Typography id="modal-modal-description" sx={{ mt: 2 }}>
                 {contentFile.map((item: any) => (
                         <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-                            {item["content_file"]}
-                        </Typography>       
+                            {item}
+                        </Typography>
                     ))
                 }
                 </Typography>

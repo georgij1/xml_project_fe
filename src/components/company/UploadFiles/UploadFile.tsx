@@ -115,7 +115,7 @@ export const UploadFile: React.FunctionComponent = () => {
 
                             if (resp.status === 0 || 200) {
                                 distinctive_loader()
-                                window.open('/home/company', '_self')
+                                // window.open('/home/company', '_self')
                             }
 
                             else {
@@ -159,7 +159,7 @@ export const UploadFile: React.FunctionComponent = () => {
 
         return(
             <div>
-                <Logout/>
+                {/* <Logout/> */}
                 <label htmlFor="choose_file" className={"btn_upload_file " + ChooseFile}>Выбрать файл</label>
 
                 <input type="file"
@@ -218,7 +218,7 @@ export const UploadFile: React.FunctionComponent = () => {
 
         return(
             <div>
-                <Logout/>
+                {/* <Logout/> */}
                 <label htmlFor="choose_file" className={"btn_upload_file " + ChooseFile}>Выбрать файл</label>
 
                 <input type="file"

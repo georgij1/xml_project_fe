@@ -193,7 +193,7 @@ export const ListFiles = () => {
             else if (options[selectedIndex] === "Сохранить как XML") {
                 setOpenXMLFile(true)
                 selected.map((id) => {
-                    fetch(`http://localhost:8080/file/read/XML/${localStorage.getItem('NameCompany')}/${id}`, {
+                    fetch(`http://10.3.9.83:8080/file/read/XML/${localStorage.getItem('NameCompany')}/${id}`, {
                         method: 'GET',
                         headers: {
                             "Accept": "application/json",

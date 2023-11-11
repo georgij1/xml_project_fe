@@ -115,7 +115,7 @@ export const UploadFile: React.FunctionComponent = () => {
 
                             if (resp.status === 0 || 200) {
                                 distinctive_loader()
-                                // window.open('/home/company', '_self')
+                                window.open('/home/company', '_self')
                             }
 
                             else {

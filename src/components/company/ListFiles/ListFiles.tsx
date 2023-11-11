@@ -173,7 +173,7 @@ export const ListFiles = () => {
             if (options[selectedIndex] === "Сохранить как PDF") {
                 setOpenPDFFile(true)
                 selected.map((id) => {
-                    fetch(`http://localhost:8080/file/read/PDF/${localStorage.getItem('NameCompany')}/${id}`, {
+                    fetch(`http://10.3.9.83:8080/file/read/PDF/${localStorage.getItem('NameCompany')}/${id}`, {
                         method: 'GET',
                         headers: {
                             "Accept": "application/json",
@@ -213,7 +213,7 @@ export const ListFiles = () => {
             else if (options[selectedIndex] === "Сохранить как Word файл") {
                 setOpenWordFile(true)
                 selected.map((id) => {
-                    fetch(`http://localhost:8080/file/read/${localStorage.getItem('NameCompany')}/${id}`, {
+                    fetch(`http://10.3.9.83:8080/file/read/${localStorage.getItem('NameCompany')}/${id}`, {
                         method: 'GET',
                         headers: {
                             "Accept": "application/json",
@@ -302,7 +302,7 @@ export const ListFiles = () => {
                         <Tooltip title="Открыть в браузере" onClick={() => {
                             selected.map((id) => {
                                 setOpen(true)
-                                fetch(`http://localhost:8080/file/read/${localStorage.getItem('NameCompany')}/${id}`, {
+                                fetch(`http://10.3.9.83:8080/file/read/${localStorage.getItem('NameCompany')}/${id}`, {
                                     method: 'GET',
                                     headers: {
                                         "Accept": "application/json",
@@ -384,7 +384,7 @@ export const ListFiles = () => {
     
                         <Tooltip title="Удалить" onClick={() => {
                             selected.map(select => {
-                                fetch(`http://localhost:8080/file/delete/file/${localStorage.getItem('NameCompany')}/${select}`, {
+                                fetch(`http://10.3.9.83:8080/file/delete/file/${localStorage.getItem('NameCompany')}/${select}`, {
                                     method: 'DELETE',
                                     headers: {
                                         "Accept": "*/*",
@@ -465,7 +465,7 @@ export const ListFiles = () => {
     const [foundFile, setFoundFile] = useState<boolean>(false)
 
     useEffect(() => {
-        fetch(`http://localhost:8080/file/list`, {
+        fetch(`http://10.3.9.83:8080/file/list`, {
             method: 'POST',
             // @ts-ignore
             body: JSON.stringify(body),

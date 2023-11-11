@@ -96,7 +96,7 @@ export const UploadFile: React.FunctionComponent = () => {
                     // eslint-disable-next-line no-useless-concat
                     form_data.append("TimeStamp", `${new Date().getHours()}:`+`${new Date().getMinutes()}:`+`${new Date().getSeconds()}`)
 
-                    fetch(`http://localhost:8080/file/upload`, {
+                    fetch(`http://10.3.9.83:8080/file/upload`, {
                         method: 'POST',
                         body: form_data,
                         headers: {

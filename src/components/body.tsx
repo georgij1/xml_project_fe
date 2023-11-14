@@ -1,27 +1,51 @@
+import { Box, Button } from "@mui/material";
 import React from "react";
+import useMediaQuery from '@mui/material/useMediaQuery';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+import CssBaseline from '@mui/material/CssBaseline';
 import {Logout} from "./message/Logout";
 
 export const Body = () => {
     const enter_company = () => window.open('/home/enter_company', '_self')
     const reg_company = () => window.open('/home/reg_company', '_self')
-    if (localStorage.getItem('dark_theme')) {
-        document.body.classList.add('dark_theme_body')
-        return(
-            <div className="body">
-                <Logout/>
-                <div className="btn_enter_company btn_enter_company_dark" onClick={enter_company}>Войти в компанию</div>
-                <div className="text_registration_company">Если вы ещё не регистрировали компанию в системе <p className="link_reg link_reg_company" onClick={reg_company}>зарегистрируйте её</p></div>
-            </div>
-        )
+
+    const styleBtnEnterCompany = {
+        "display": "block",
+        "margin": "auto"
     }
-    else {
-        document.body.classList.remove('dark_theme_body')
-        return(
-            <div className="body">
-                <Logout/>
-                <div className="btn_enter_company" onClick={enter_company}>Войти в компанию</div>
-                <div className="text_registration_company">Если вы ещё не регистрировали компанию в системе <p className="link_reg link_reg_company" onClick={reg_company}>зарегистрируйте её</p></div>
-            </div>
-        )
+    
+    const styleBtnRegCompany = {
+        "display": "block",
+        "margin": "30px auto"
     }
+
+    const prefersDarkMode = useMediaQuery('(prefers-color-scheme: ' + localStorage.getItem("dark_theme") + ')');
+
+    const theme = React.useMemo(
+      () =>
+        createTheme({
+          palette: {
+            mode: prefersDarkMode ? 'dark' : 'light',
+          },
+        }),
+      [prefersDarkMode],
+    );
+
+    const style = {
+        "margin-top": "35vh",
+        "display": "flex",
+        "flex-direction": "column",
+        "justifyContent": "center",
+    }
+    
+    return(
+        <Box sx={style}>
+            <ThemeProvider theme={theme}>
+                <CssBaseline />
+                <Button variant="contained" sx={styleBtnEnterCompany} onClick={enter_company}>Войти в компанию</Button>
+                <Button variant="contained" sx={styleBtnRegCompany} onClick={reg_company}>зарегистрируйте её</Button>
+                <Logout/>
+            </ThemeProvider>
+        </Box>
+    )
 }

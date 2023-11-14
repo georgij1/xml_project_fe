@@ -1,31 +1,26 @@
-import React from "react";
+import * as React from 'react';
+import AppBar from '@mui/material/AppBar';
+import Box from '@mui/material/Box';
+import Toolbar from '@mui/material/Toolbar';
+import IconButton from '@mui/material/IconButton';
+import Typography from '@mui/material/Typography';
+import Menu from '@mui/material/Menu';
+import MenuIcon from '@mui/icons-material/Menu';
+import Container from '@mui/material/Container';
+import Avatar from '@mui/material/Avatar';
+import Button from '@mui/material/Button';
+import Tooltip from '@mui/material/Tooltip';
+import MenuItem from '@mui/material/MenuItem';
+import Stack from '@mui/material/Stack';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+import CssBaseline from '@mui/material/CssBaseline';
+import { LogoCompany, LogoIcon } from './../../assets';
 
 export const CompanyHeader = () => {
     const logout_company = () => {
         localStorage.removeItem('NameCompany')
-        window.history.back()
-    }
-
-    const open_home_page = () => {
-        window.open(`/home/company`, '_self')
-    }
-
-    const close_menu = () => {
-        // @ts-ignore
-        document.querySelector('.burger_menu').classList.remove('none')
-        // @ts-ignore
-        document.querySelector('.close_menu').classList.remove('block')
-        // @ts-ignore
-        document.querySelector('.open_header_320').classList.remove('block')
-    }
-
-    const open_header = () => {
-        // @ts-ignore
-        document.querySelector('.burger_menu').classList.add('none')
-        // @ts-ignore
-        document.querySelector('.close_menu').classList.add('block')
-        // @ts-ignore
-        document.querySelector('.open_header_320').classList.add('block')
+        window.open('/', '_self')
     }
 
     const open_settings = () => {
@@ -37,124 +32,249 @@ export const CompanyHeader = () => {
     }
 
     const open_profile_person = () => {
-        window.open(`/home/company/profile`, '_self')
+        window.open(`/home/company/user/profile`, '_self')
     }
 
-    const create_xml_file = () => {
+    const create_file = () => {
         window.open(`/home/company/create/file`, '_self')
     }
 
-    const open_xml_file = () => {
+    const open_upload_file = () => {
         window.open(`/home/company/upload/file`, '_self')
     }
 
-    if (localStorage.getItem('theme')) {
-        document.body.classList.add('dark_theme_body')
-
-        return (
-            <div>
-                <div className="header">
-                    <div className="header_320">
-                        <div className="header_1">
-                            <div className="logotype" onClick={open_home_page}></div>
-                        </div>
-                        <div className="close_menu" onClick={close_menu}></div>
-                        <div className="burger_menu" onClick={open_header}>
-                            <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="100" height="100" viewBox="0 0 48 48">
-                                <linearGradient id="EIPc0qTNCX0EujYwtxKaXa_MmupZtPbnw66_gr1" x1="12.066" x2="34.891" y1=".066" y2="22.891" gradientUnits="userSpaceOnUse"><stop offset=".237" stopColor="#3bc9f3"></stop><stop offset=".85" stopColor="#1591d8"></stop></linearGradient><path fill="url(#EIPc0qTNCX0EujYwtxKaXa_MmupZtPbnw66_gr1)" d="M43,15H5c-1.1,0-2-0.9-2-2v-2c0-1.1,0.9-2,2-2h38c1.1,0,2,0.9,2,2v2C45,14.1,44.1,15,43,15z"></path><linearGradient id="EIPc0qTNCX0EujYwtxKaXb_MmupZtPbnw66_gr2" x1="12.066" x2="34.891" y1="12.066" y2="34.891" gradientUnits="userSpaceOnUse"><stop offset=".237" stopColor="#3bc9f3"></stop><stop offset=".85" stopColor="#1591d8"></stop></linearGradient><path fill="url(#EIPc0qTNCX0EujYwtxKaXb_MmupZtPbnw66_gr2)" d="M43,27H5c-1.1,0-2-0.9-2-2v-2c0-1.1,0.9-2,2-2h38c1.1,0,2,0.9,2,2v2C45,26.1,44.1,27,43,27z"></path><linearGradient id="EIPc0qTNCX0EujYwtxKaXc_MmupZtPbnw66_gr3" x1="12.066" x2="34.891" y1="24.066" y2="46.891" gradientUnits="userSpaceOnUse"><stop offset=".237" stopColor="#3bc9f3"></stop><stop offset=".85" stopColor="#1591d8"></stop></linearGradient><path fill="url(#EIPc0qTNCX0EujYwtxKaXc_MmupZtPbnw66_gr3)" d="M43,39H5c-1.1,0-2-0.9-2-2v-2c0-1.1,0.9-2,2-2h38c1.1,0,2,0.9,2,2v2C45,38.1,44.1,39,43,39z"></path>
-                            </svg>
-                        </div>
-                    </div>
-
-                    <div className="open_header_320">
-                        <div className="dark_line_header" onClick={create_xml_file}>Создать</div>
-                        <div className="dark_line_header" onClick={open_xml_file}>Открыть</div>
-                        <div className="dark_line_header" onClick={open_settings}>Настройки</div>
-                        <div className="dark_line_header" onClick={open_support}>Поддержка</div>
-                        <div className="dark_line_header" onClick={open_profile_person}>{localStorage.getItem('login')}</div>
-                        <div className="dark_line_header" onClick={open_profile_person}>{localStorage.getItem('NameCompany')}</div>
-                        <div onClick={logout_company} className="btn_logout">Выйти</div>
-                    </div>
-
-                    <div className="header_768">
-                        <div className="header_1">
-                            <div className="logotype" onClick={open_home_page}></div>
-                            <div className="dark_line_header" onClick={create_xml_file}>Создать</div>
-                            <div className="dark_line_header" onClick={open_xml_file}>Открыть</div>
-                            <div className="dark_line_header" onClick={open_settings}>Настройки</div>
-                            <div className="dark_line_header" onClick={open_support}>Поддержка</div>
-                        </div>
-                        <div className="header_1">
-                            <div className="dark_line_header" onClick={open_profile_person}>{localStorage.getItem('login')}</div>
-                            <div className="dark_line_header" onClick={open_profile_person}>{localStorage.getItem('NameCompany')}</div>
-                            <div onClick={logout_company} className="logout_btn">
-                                <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <line y1="0.5" x2="15" y2="0.5" stroke="white"/>
-                                    <line x1="0.5" y1="1" x2="0.5" y2="15" stroke="white"/>
-                                    <line y1="14.5" x2="15" y2="14.5" stroke="white"/>
-                                    <path d="M13.3536 8.35355C13.5488 8.15829 13.5488 7.84171 13.3536 7.64645L10.1716 4.46447C9.97631 4.2692 9.65973 4.2692 9.46447 4.46447C9.2692 4.65973 9.2692 4.97631 9.46447 5.17157L12.2929 8L9.46447 10.8284C9.2692 11.0237 9.2692 11.3403 9.46447 11.5355C9.65973 11.7308 9.97631 11.7308 10.1716 11.5355L13.3536 8.35355ZM3 8.5H13V7.5H3V8.5Z" fill="white"/>
-                                    <line x1="14.5" y1="1" x2="14.5" y2="4" stroke="white"/>
-                                    <line x1="14.5" y1="11" x2="14.5" y2="14" stroke="white"/>
-                                </svg>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        )
+    const open_exit_account = () => {
+        window.open(`/home/logout`, '_self')
     }
 
-    else {
-        document.body.classList.remove('dark_theme_body')
-
-        return (
-            <div>
-                <div className="header">
-                    <div className="header_320">
-                        <div className="header_1">
-                            <div className="logotype" onClick={open_home_page}></div>
-                        </div>
-                        <div className="close_menu" onClick={close_menu}></div>
-                        <div className="burger_menu" onClick={open_header}>
-                            <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="100" height="100" viewBox="0 0 48 48">
-                                <linearGradient id="EIPc0qTNCX0EujYwtxKaXa_MmupZtPbnw66_gr1" x1="12.066" x2="34.891" y1=".066" y2="22.891" gradientUnits="userSpaceOnUse"><stop offset=".237" stopColor="#3bc9f3"></stop><stop offset=".85" stopColor="#1591d8"></stop></linearGradient><path fill="url(#EIPc0qTNCX0EujYwtxKaXa_MmupZtPbnw66_gr1)" d="M43,15H5c-1.1,0-2-0.9-2-2v-2c0-1.1,0.9-2,2-2h38c1.1,0,2,0.9,2,2v2C45,14.1,44.1,15,43,15z"></path><linearGradient id="EIPc0qTNCX0EujYwtxKaXb_MmupZtPbnw66_gr2" x1="12.066" x2="34.891" y1="12.066" y2="34.891" gradientUnits="userSpaceOnUse"><stop offset=".237" stopColor="#3bc9f3"></stop><stop offset=".85" stopColor="#1591d8"></stop></linearGradient><path fill="url(#EIPc0qTNCX0EujYwtxKaXb_MmupZtPbnw66_gr2)" d="M43,27H5c-1.1,0-2-0.9-2-2v-2c0-1.1,0.9-2,2-2h38c1.1,0,2,0.9,2,2v2C45,26.1,44.1,27,43,27z"></path><linearGradient id="EIPc0qTNCX0EujYwtxKaXc_MmupZtPbnw66_gr3" x1="12.066" x2="34.891" y1="24.066" y2="46.891" gradientUnits="userSpaceOnUse"><stop offset=".237" stopColor="#3bc9f3"></stop><stop offset=".85" stopColor="#1591d8"></stop></linearGradient><path fill="url(#EIPc0qTNCX0EujYwtxKaXc_MmupZtPbnw66_gr3)" d="M43,39H5c-1.1,0-2-0.9-2-2v-2c0-1.1,0.9-2,2-2h38c1.1,0,2,0.9,2,2v2C45,38.1,44.1,39,43,39z"></path>
-                            </svg>
-                        </div>
-                    </div>
-
-                    <div className="open_header_320">
-                        <div className="btn_settings" onClick={create_xml_file}>Создать</div>
-                        <div className="btn_settings" onClick={open_xml_file}>Открыть</div>
-                        <div className="btn_settings" onClick={open_settings}>Настройки</div>
-                        <div className="btn_open_support" onClick={open_support}>Поддержка</div>
-                        <div className="btn_open_profile" onClick={open_profile_person}>{localStorage.getItem('login')}</div>
-                        <div onClick={logout_company} className="btn_logout">Выйти</div>
-                    </div>
-
-                    <div className="header_768">
-                        <div className="header_1">
-                            <div className="logotype" onClick={open_home_page}></div>
-                            <div className="down_line" onClick={create_xml_file}>Создать</div>
-                            <div className="down_line" onClick={open_xml_file}>Открыть</div>
-                            <div className="down_line" onClick={open_settings}>Настройки</div>
-                            <div className="down_line" onClick={open_support}>Поддержка</div>
-                        </div>
-                        <div className="header_1">
-                            <div className="NamePerson" onClick={open_profile_person}>{localStorage.getItem('login')}</div>
-                            <div onClick={logout_company} className="logout_btn">
-                                <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <line y1="0.5" x2="15" y2="0.5" stroke="white"/>
-                                    <line x1="0.5" y1="1" x2="0.5" y2="15" stroke="white"/>
-                                    <line y1="14.5" x2="15" y2="14.5" stroke="white"/>
-                                    <path d="M13.3536 8.35355C13.5488 8.15829 13.5488 7.84171 13.3536 7.64645L10.1716 4.46447C9.97631 4.2692 9.65973 4.2692 9.46447 4.46447C9.2692 4.65973 9.2692 4.97631 9.46447 5.17157L12.2929 8L9.46447 10.8284C9.2692 11.0237 9.2692 11.3403 9.46447 11.5355C9.65973 11.7308 9.97631 11.7308 10.1716 11.5355L13.3536 8.35355ZM3 8.5H13V7.5H3V8.5Z" fill="white"/>
-                                    <line x1="14.5" y1="1" x2="14.5" y2="4" stroke="white"/>
-                                    <line x1="14.5" y1="11" x2="14.5" y2="14" stroke="white"/>
-                                </svg>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        )
+    const profile_company_func = () => {
+        window.open(`/home/company/company/profile`, '_self')
     }
+
+    const pages = ['Создать', 'Открыть', 'Настройки', 'Поддержка']
+
+    const profile_user = ['Аккаунт пользователя', 'Выйти из аккаунта']
+
+    const profile_company = ['Профиль компании', 'Выйти из компании']
+
+    const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
+    const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
+    const [anchorElCompany, setAnchorElCompany] = React.useState<null | HTMLElement>(null);
+
+    const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
+        setAnchorElNav(event.currentTarget);
+    }
+
+    const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
+        setAnchorElUser(event.currentTarget);
+    }
+
+    const handleOpenCompanyMenu = (event: React.MouseEvent<HTMLElement>) => {
+        setAnchorElCompany(event.currentTarget);
+    }
+
+    const handleCloseNavMenu = () => {
+        setAnchorElNav(null);
+    }
+
+    const handleCloseUserMenu = () => {
+        setAnchorElUser(null);
+    }
+    
+    const handleCloseCompanyMenu = () => {
+        setAnchorElCompany(null);
+    }
+
+    const login = localStorage.getItem('login')
+
+    const handleClickTab = (event: any) => {
+        if (event.currentTarget.textContent === 'Создать') {
+            create_file()
+        } if (event.currentTarget.textContent === 'Открыть') {
+            open_upload_file()
+        } if (event.currentTarget.textContent === 'Настройки') {
+            open_settings()
+        } if (event.currentTarget.textContent === 'Поддержка') {
+            open_support()
+        } if (event.currentTarget.textContent === 'Аккаунт пользователя') {
+            open_profile_person()
+        } if (event.currentTarget.textContent === 'Выйти из аккаунта') {
+            open_exit_account()
+        } if (event.currentTarget.textContent === 'Профиль компании') {
+            profile_company_func()
+        } if (event.currentTarget.textContent === 'Выйти из компании') {
+            logout_company()
+        }
+    }
+
+    const prefersDarkMode = useMediaQuery('(prefers-color-scheme: ' + localStorage.getItem("dark_theme") + ')');
+
+    const theme = React.useMemo(
+        () =>
+        createTheme({
+            palette: {
+            mode: prefersDarkMode ? 'dark' : 'light',
+            },
+        }),
+        [prefersDarkMode],
+    );
+
+    return (
+        <ThemeProvider theme={theme}>
+            <CssBaseline />
+            <AppBar position="static">
+                <Container maxWidth="xl">
+                    <Toolbar disableGutters>
+                        <Typography
+                            variant="h6"
+                            noWrap
+                            component="a"
+                            href="/"
+                            sx={{
+                                mr: 2,
+                                display: { xs: 'none', md: 'flex' },
+                                fontFamily: 'monospace',
+                                fontWeight: 700,
+                                letterSpacing: '.3rem',
+                                color: 'inherit',
+                                textDecoration: 'none',
+                            }}
+                        >
+                            <IconButton disableRipple onClick={handleOpenNavMenu} sx={{ p: 0 }}>
+                                <LogoIcon />
+                            </IconButton>
+                        </Typography>
+
+                        <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
+                            <IconButton
+                                size="large"
+                                aria-label="account of current user"
+                                aria-controls="menu-appbar"
+                                aria-haspopup="true"
+                                onClick={handleOpenNavMenu}
+                                color="inherit"
+                            >
+                                <MenuIcon />
+                            </IconButton>
+                            <Menu
+                                id="menu-appbar"
+                                anchorEl={anchorElNav}
+                                anchorOrigin={{
+                                    vertical: 'bottom',
+                                    horizontal: 'left',
+                                }}
+                                keepMounted
+                                transformOrigin={{
+                                    vertical: 'top',
+                                    horizontal: 'left',
+                                }}
+                                open={Boolean(anchorElNav)}
+                                onClose={handleCloseNavMenu}
+                                sx={{
+                                    display: { xs: 'block', md: 'none' },
+                                }}
+                            >
+                                {pages.map((page) => (
+                                    <MenuItem key={page} onClick={handleCloseNavMenu}>
+                                        <Typography textAlign="center" onClick={(event) => handleClickTab(event)}>{page}</Typography>
+                                    </MenuItem>
+                                ))}
+                            </Menu>
+                        </Box>
+                        <Typography
+                            variant="h5"
+                            noWrap
+                            component="a"
+                            href="/"
+                            sx={{
+                                mr: 2,
+                                display: { xs: 'flex', md: 'none' },
+                                flexGrow: 1,
+                                fontFamily: 'monospace',
+                                fontWeight: 700,
+                                letterSpacing: '.3rem',
+                                color: 'inherit',
+                                textDecoration: 'none',
+                            }}
+                        >
+                            XML
+                        </Typography>
+                        <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
+                            {pages.map((page) => (
+                                <Button
+                                    key={page}
+                                    onClick={handleCloseNavMenu}
+                                    sx={{ my: 2, color: 'white', display: 'block' }}
+                                >
+                                    <div onClick={(event) => handleClickTab(event)}>{page}</div>
+                                </Button>
+                            ))}
+                        </Box>
+
+                        <Box sx={{ flexGrow: 0 }}>
+                            <Stack direction="row" spacing={2}>
+                                <Tooltip title="Пользователь">
+                                    <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                                        <Avatar alt={login+""} src="/static/images/avatar/2.jpg" />
+                                    </IconButton>
+                                </Tooltip>
+
+                                <Tooltip title="Компания">
+                                    <IconButton disableRipple onClick={handleOpenCompanyMenu} sx={{ p: 0 }}>
+                                        <LogoCompany />
+                                    </IconButton>
+                                </Tooltip>
+                            </Stack>
+
+                            <Menu
+                                sx={{ mt: '45px' }}
+                                id="menu-appbar"
+                                anchorEl={anchorElUser}
+                                anchorOrigin={{
+                                    vertical: 'top',
+                                    horizontal: 'right',
+                                }}
+                                keepMounted
+                                transformOrigin={{
+                                    vertical: 'top',
+                                    horizontal: 'right',
+                                }}
+                                open={Boolean(anchorElUser)}
+                                onClose={handleCloseUserMenu}
+                            >
+                                {profile_user.map((profile_user) => (
+                                    <MenuItem key={profile_user} onClick={handleCloseUserMenu}>
+                                        <Typography textAlign="center" onClick={(event) => handleClickTab(event)}>{profile_user}</Typography>
+                                    </MenuItem>
+                                ))}
+                            </Menu>
+                            
+                            <Menu
+                                sx={{ mt: '45px' }}
+                                id="menu-appbar"
+                                anchorEl={anchorElCompany}
+                                anchorOrigin={{
+                                    vertical: 'top',
+                                    horizontal: 'right',
+                                }}
+                                keepMounted
+                                transformOrigin={{
+                                    vertical: 'top',
+                                    horizontal: 'right',
+                                }}
+                                open={Boolean(anchorElCompany)}
+                                onClose={handleCloseCompanyMenu}
+                            >
+                                {profile_company.map((profile_company) => (
+                                    <MenuItem key={profile_company} onClick={handleCloseCompanyMenu}>
+                                        <Typography textAlign="center" onClick={(event) => handleClickTab(event)}>{profile_company}</Typography>
+                                    </MenuItem>
+                                ))}
+                            </Menu>
+                        </Box>
+                    </Toolbar>
+                </Container>
+            </AppBar>
+        </ThemeProvider>
+    );
 }

@@ -4,7 +4,7 @@ import {Logout} from "../../message/Logout";
 import {
     alpha,
     Box,
-    Checkbox, FormControlLabel, IconButton, Paper, Switch, Table, TableBody,
+    Checkbox, IconButton, Paper, Table, TableBody,
     TableCell, TableContainer,
     TableHead, TablePagination,
     TableRow,
@@ -13,7 +13,6 @@ import {
     Typography
 } from "@mui/material";
 import DeleteIcon from '@mui/icons-material/Delete';
-import FilterListIcon from '@mui/icons-material/FilterList';
 import {CloudUpload, FolderZip, NoteAdd, OpenInBrowser} from "@mui/icons-material";
 import Modal from '@mui/material/Modal';
 import Button from '@mui/material/Button';
@@ -24,6 +23,9 @@ import Grow from '@mui/material/Grow';
 import Popper from '@mui/material/Popper';
 import MenuItem from '@mui/material/MenuItem';
 import MenuList from '@mui/material/MenuList';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+import CssBaseline from '@mui/material/CssBaseline';
 
 export const ListFiles = () => {
     interface Data {
@@ -162,7 +164,7 @@ export const ListFiles = () => {
     function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
         const { numSelected } = props;
 
-        const options = ['Сохранить как', 'Сохранить как PDF', 'Сохранить как XML', 'Сохранить как Word файл'];
+        const options = ['Просмотр', 'Просмотреть как PDF', 'Просмотреть как XML', 'Просмотреть как Word файл'];
     
         const [open, setOpen_1] = React.useState(false);
         const anchorRef = React.useRef<HTMLDivElement>(null);
@@ -170,7 +172,7 @@ export const ListFiles = () => {
 
         const handleClick = () => {
             console.info(`You clicked ${options[selectedIndex]}`);
-            if (options[selectedIndex] === "Сохранить как PDF") {
+            if (options[selectedIndex] === "Просмотреть как PDF") {
                 setOpenPDFFile(true)
                 selected.map((id) => {
                     fetch(`http://10.3.9.83:8080/file/read/PDF/${localStorage.getItem('NameCompany')}/${id}`, {
@@ -184,13 +186,16 @@ export const ListFiles = () => {
                             'Cache-Control': 'no-cache'
                         }
                     })
-                        .then((response) => response.json())
-                        .then((data) => setContentFile(data))
+                        .then((response) => {
+                            console.log(response.json())
+                            console.log(localStorage.getItem)
+                        })
+                        // .then((data) => setContentFile(data))
                         .catch((error) => console.log(error))
                 })
             }
 
-            else if (options[selectedIndex] === "Сохранить как XML") {
+            else if (options[selectedIndex] === "Просмотреть как XML") {
                 setOpenXMLFile(true)
                 selected.map((id) => {
                     fetch(`http://10.3.9.83:8080/file/read/XML/${localStorage.getItem('NameCompany')}/${id}`, {
@@ -210,7 +215,7 @@ export const ListFiles = () => {
                 })
             }
 
-            else if (options[selectedIndex] === "Сохранить как Word файл") {
+            else if (options[selectedIndex] === "Просмотреть как Word файл") {
                 setOpenWordFile(true)
                 selected.map((id) => {
                     fetch(`http://10.3.9.83:8080/file/read/${localStorage.getItem('NameCompany')}/${id}`, {
@@ -432,13 +437,7 @@ export const ListFiles = () => {
                     </>}
                     </>
                 ) : (
-                    <>
-                        <Tooltip title="Фильтровать">
-                            <IconButton>
-                                <FilterListIcon />
-                            </IconButton>
-                        </Tooltip>
-    
+                    <>    
                         <Tooltip title="Создать" onClick={() => {window.open(`/home/company/create/file`, '_self')}}>
                             <IconButton>
                                 <NoteAdd />
@@ -576,11 +575,12 @@ export const ListFiles = () => {
         setOpen(false)
         setContentFile([])
         FilterContentFile = []
-        console.log(FilterContentFile, open)
-    };
+    }
     
     const handleClosePDF = () => {
         setOpenPDFFile(false)
+        setContentFile([])
+        FilterContentFile = []
     }
 
     const handleCloseXMLFile = () => {
@@ -604,11 +604,25 @@ export const ListFiles = () => {
         overflow: 'scroll',
         height: '90vh',
         borderRadius: '10px'
-    };
+    }
+
+    const prefersDarkMode = useMediaQuery('(prefers-color-scheme: ' + localStorage.getItem("dark_theme") + ')');
+
+    const theme = React.useMemo(
+      () =>
+        createTheme({
+          palette: {
+            mode: prefersDarkMode ? 'dark' : 'light',
+          },
+        }),
+      [prefersDarkMode],
+    );
 
     return (
-        <Box sx={{ width: '100%' }} className="pt-24">
-            {/* <Logout/> */}
+        <Box sx={{ width: '100%' }}>
+            <Logout/>
+            <ThemeProvider theme={theme}>
+            <CssBaseline />
             <Paper sx={{ width: '100%', mb: 2 }}>
                 <EnhancedTableToolbar numSelected={selected.length} />
                 <TableContainer>
@@ -674,12 +688,10 @@ export const ListFiles = () => {
                     page={page}
                     onPageChange={handleChangePage}
                     onRowsPerPageChange={handleChangeRowsPerPage}
+                    labelRowsPerPage="Строк на странице:"
+                    labelDisplayedRows={({ from, to, count }) => `${from}–${to} из ${count}`}
                 />
             </Paper>
-            <FormControlLabel
-                control={<Switch checked={dense} onChange={handleChangeDense} />}
-                label="Уменьшить отступ"
-            />
             <Modal
             open={open}
             onClose={handleClose}
@@ -729,12 +741,6 @@ export const ListFiles = () => {
             aria-describedby="modal-modal-description">
             <Box sx={style}>
                 <Typography id="modal-modal-title" variant="h6" component="h2">
-                {/* {contentFile.map((item: any) => (
-                        <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-                            {item["name_file"]}
-                        </Typography>       
-                    ))
-                } */}
                 XML file
                 </Typography>
                 <Typography id="modal-modal-description" sx={{ mt: 2 }}>
@@ -765,6 +771,7 @@ export const ListFiles = () => {
                     }
             </Box>
             </Modal>
+            </ThemeProvider>
         </Box>
     )
 }

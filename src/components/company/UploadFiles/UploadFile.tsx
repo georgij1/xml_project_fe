@@ -1,14 +1,28 @@
 import "./UploadFile.css"
 import React, {useState} from "react";
-import {ClipLoader} from "react-spinners";
 import {Logout} from "../../message/Logout";
+import useMediaQuery from '@mui/material/useMediaQuery';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+import CssBaseline from '@mui/material/CssBaseline';
+import { Box, Button } from "@mui/material";
 
 export const UploadFile: React.FunctionComponent = () => {
+    const prefersDarkMode = useMediaQuery('(prefers-color-scheme: ' + localStorage.getItem("dark_theme") + ')');
+
+    const theme = React.useMemo(
+      () =>
+        createTheme({
+          palette: {
+            mode: prefersDarkMode ? 'dark' : 'light',
+          },
+        }),
+      [prefersDarkMode],
+    );
+
     const [classes, setClasses] = useState<string>('')
     const [classes_type_false_file, setClassesTypeFalseFile] = useState<string>('')
-    const [ClassesContinue, setClassesContinue] = useState<string>('')
     const [ChooseFile, setChooseFile] = useState<string>('')
-    const [CancelBtn, setCancelBtn] = useState<string>('')
+    const [CancelBtn, setCancelBtn] = useState<string>('none')
 
     interface File {
         name: string
@@ -25,46 +39,9 @@ export const UploadFile: React.FunctionComponent = () => {
     const [nameFile, setNameFile] = useState('');
     const [size, setSize] = useState('');
     const [type, setType] = useState('');
-
-    const activate_loader = () => {
-        // @ts-ignore
-        document.querySelector('.loader').style.display = 'inline-block'
-        // @ts-ignore
-        document.querySelector('.loader').style.width = '150px'
-        // @ts-ignore
-        document.querySelector('.loader').style.height = '150px'
-        // @ts-ignore
-        document.querySelector('.loader').style.borderRadius = '100%'
-        // @ts-ignore
-        document.querySelector('.loader').style.borderColor = 'blue blue transparent'
-        // @ts-ignore
-        document.querySelector('.loader').style.borderImage = 'initial'
-        // @ts-ignore
-        document.querySelector('.loader').style.borderStyle = 'solid'
-        // @ts-ignore
-        document.querySelector('.loader').style.animation = '0.75s linear infinite normal both running react-spinners-ClipLoader-clip'
-        // @ts-ignore
-        document.querySelector('.loader').style.margin = 'auto'
-        // @ts-ignore
-        document.querySelector('.loader').style.position = 'absolute'
-        // @ts-ignore
-        document.querySelector('body').style.overflow='hidden'
-        // @ts-ignore
-        document.querySelector('body').style.opacity='0.5'
-    }
-
-    const distinctive_loader = () => {
-        // @ts-ignore
-        document.querySelector('.loader').style.display = 'none'
-        // @ts-ignore
-        document.querySelector('body').style.opacity = '1'
-        // @ts-ignore
-        document.querySelector('body').style.overflow = 'auto'
-    }
+    const form_data = new FormData()
 
     const handleChangeFile = (event: React.ChangeEvent<HTMLInputElement>) => {
-        activate_loader()
-
         const files = event.currentTarget.files;
         [].forEach.call(files, file => {
             console.log(file)
@@ -80,20 +57,16 @@ export const UploadFile: React.FunctionComponent = () => {
                 console.log('file is xml')
                 setClasses('flex')
                 setNameFile(data_file.name)
-                setClassesContinue('block')
                 setChooseFile('none')
+                setCancelBtn('')
                 setCancelBtn('flex')
                 setSize(data_file.size)
                 setType(data_file.type)
-                distinctive_loader()
 
                 const ContinueUploadFile = () => {
-                    activate_loader()
-                    const form_data = new FormData()
                     form_data.append("files", file)
                     form_data.append("NameCompany", `${localStorage.getItem('NameCompany')}`)
                     form_data.append("Author", `${localStorage.getItem('login')}`)
-                    // eslint-disable-next-line no-useless-concat
                     form_data.append("TimeStamp", `${new Date().getHours()}:`+`${new Date().getMinutes()}:`+`${new Date().getSeconds()}`)
 
                     fetch(`http://10.3.9.83:8080/file/upload`, {
@@ -114,12 +87,10 @@ export const UploadFile: React.FunctionComponent = () => {
                             console.log(resp.status)
 
                             if (resp.status === 0 || 200) {
-                                distinctive_loader()
-                                window.open('/home/company', '_self')
+                                SetSuccessResult('flex')
                             }
 
                             else {
-                                distinctive_loader()
                                 alert('Ошибка. Код ошибки: ' + resp.status)
                             }
                         })
@@ -128,10 +99,7 @@ export const UploadFile: React.FunctionComponent = () => {
                         })
                 }
 
-                // @ts-ignore
-                document.querySelector('.continue_btn').addEventListener('click', () => {
-                    ContinueUploadFile()
-                })
+                ContinueUploadFile()
             }
 
             else {
@@ -144,131 +112,103 @@ export const UploadFile: React.FunctionComponent = () => {
                 setClassesTypeFalseFile('flex')
                 setType(data_file.type)
                 setChooseFile('none')
-                setCancelBtn('flex')
-                distinctive_loader()
+                SetReloadPage('flex')
             }
         });
     }
 
-    const cancel_btn = () => {
-        window.location.reload()
+    const style = {
+        "display": "flex",
+        "align-items": "center",
+        "justify-content": "center",
+        "margin": 'auto',
+        "height": '70vh'
     }
 
-    if (localStorage.getItem('dark_theme')) {
-        document.body.classList.add('dark_theme_body')
-
-        return(
-            <div>
-                {/* <Logout/> */}
-                <label htmlFor="choose_file" className={"btn_upload_file " + ChooseFile}>Выбрать файл</label>
-
-                <input type="file"
-                       className="input_file"
-                       id="choose_file"
-                       onChangeCapture={handleChangeFile}
-                       name="file"
-                />
-
-                <div className="checks">
-                    <div className={"hidden bg-slate-600 m-10 items-center gap-5 p-5 rounded-lg " + classes}>
-                        <div className="success"></div>
-                        <div className="title_check">Файл является валидным</div>
-                    </div>
-
-                    <div className={"hidden bg-slate-600 m-10 items-center gap-5 p-5 rounded-lg " + classes}>
-                        <div className="success"></div>
-                        <div className="title_check">Имя файла {nameFile}</div>
-                    </div>
-
-                    <div className={"hidden bg-slate-600 m-10 items-center gap-5 p-5 rounded-lg " + classes}>
-                        <div className="success"></div>
-                        <div className="title_check">Размер файла: {size}</div>
-                    </div>
-
-                    <div className={"hidden bg-slate-600 m-10 items-center gap-5 p-5 rounded-lg " + classes}>
-                        <div className="success"></div>
-                        <div className="title_check">Тип файла: {type}</div>
-                    </div>
-
-                    <div className={"hidden bg-slate-600 m-10 items-center gap-5 p-5 rounded-lg " + classes_type_false_file}>
-                        <div className="error"></div>
-                        <div className="title_check">{type}</div>
-                    </div>
-
-                    <div className="fixed flex bottom-0 bg-slate-600 w-full rounded-t-xl z-10">
-                        <div className={"continue_btn " + ClassesContinue}>Продолжить</div>
-                        <div className={"cancel_btn " + CancelBtn} onClick={cancel_btn}>Отмена</div>
-                    </div>
-                </div>
-
-                <ClipLoader
-                    style={{display: "none"}}
-                    color={'blue'}
-                    size={150}
-                    aria-label="Loading Spinner"
-                    data-testid="loader"
-                    className="loader"
-                />
-            </div>
-        )
+    const styleChoosedFile = {
+        "display": ChooseFile
     }
 
-    else {
-        document.body.classList.remove('dark_theme_body')
+    const [SuccessResult, SetSuccessResult] = useState<string>('none')
+    const [ReloadPage, SetReloadPage] = useState<string>('none')
 
-        return(
-            <div>
-                {/* <Logout/> */}
-                <label htmlFor="choose_file" className={"btn_upload_file " + ChooseFile}>Выбрать файл</label>
-
-                <input type="file"
-                       className="input_file"
-                       id="choose_file"
-                       onChangeCapture={handleChangeFile}
-                       name="file"
-                />
-
-                <div className="checks">
-                    <div className={"hidden bg-white shadow-black shadow-2xl m-10 items-center gap-5 p-5 rounded-lg " + classes}>
-                        <div className="success"></div>
-                        <div className="title_check">Файл является валидным</div>
-                    </div>
-
-                    <div className={"hidden bg-white shadow-black shadow-2xl m-10 items-center gap-5 p-5 rounded-lg " + classes}>
-                        <div className="success"></div>
-                        <div className="title_check">Имя файла {nameFile}</div>
-                    </div>
-
-                    <div className={"hidden bg-white shadow-black shadow-2xl m-10 items-center gap-5 p-5 rounded-lg " + classes}>
-                        <div className="success"></div>
-                        <div className="title_check">Размер файла: {size}</div>
-                    </div>
-
-                    <div className={"hidden bg-white shadow-black shadow-2xl m-10 items-center gap-5 p-5 rounded-lg " + classes}>
-                        <div className="success"></div>
-                        <div className="title_check">Тип файла: {type}</div>
-                    </div>
-
-                    <div className={"hidden bg-white shadow-black shadow-2xl m-10 items-center gap-5 p-5 rounded-lg " + classes_type_false_file}>
-                        <div className="error"></div>
-                        <div className="title_check">{type}</div>
-                    </div>
-
-                    <div className="fixed flex bottom-0 bg-white shadow-black shadow-2xl w-full rounded-t-xl z-10">
-                        <div className={"continue_btn " + ClassesContinue}>Продолжить</div>
-                        <div className={"cancel_btn " + CancelBtn} onClick={cancel_btn}>Отмена</div>
-                    </div>
-                </div>
-
-                <ClipLoader
-                    style={{display: "none"}}
-                    color={'blue'}
-                    size={150}
-                    aria-label="Loading Spinner"
-                    data-testid="loader"
-                    className="loader"
-                />
-            </div>
-        )
+    const styleToolsUpload = {
+        "display": SuccessResult,
+        "align-items": "center",
+        "justify-content": "center",
+        "margin": 'auto'
     }
+
+    const styleCancelBtn = {
+        "align-items": "center",
+        "justify-content": "center",
+        "margin": 'auto'
+    }
+
+    const styleContinueBtn = {
+        "align-items": "center",
+        "justify-content": "center",
+        "margin": 'auto'
+    }
+
+    const styleReloadPage = {
+        "display": ReloadPage
+    }
+
+    return(
+        <>
+            <Box sx={style}>
+                <Logout/>
+                <ThemeProvider theme={theme}>
+                    <CssBaseline />
+
+                    <Button variant="contained" component="label" sx={styleChoosedFile}>
+                        Выбрать файл
+                        <input
+                            type="file"
+                            name="file"
+                            onChangeCapture={handleChangeFile}
+                            hidden
+                        />
+                    </Button>
+
+                    <Box>
+                        <div className={"hidden shadow-black shadow-2xl m-10 items-center gap-5 p-5 rounded-lg " + classes}>
+                            <div className="success"></div>
+                            <div className="title_check">Файл является валидным</div>
+                        </div>
+
+                        <div className={"hidden shadow-black shadow-2xl m-10 items-center gap-5 p-5 rounded-lg " + classes}>
+                            <div className="success"></div>
+                            <div className="title_check">Имя файла: {nameFile}</div>
+                        </div>
+
+                        <div className={"hidden shadow-black shadow-2xl m-10 items-center gap-5 p-5 rounded-lg " + classes}>
+                            <div className="success"></div>
+                            <div className="title_check">Размер файла: {size}</div>
+                        </div>
+
+                        <div className={"hidden shadow-black shadow-2xl m-10 items-center gap-5 p-5 rounded-lg " + classes}>
+                            <div className="success"></div>
+                            <div className="title_check">Тип файла: {type}</div>
+                        </div>
+
+                        <div className={"hidden shadow-black shadow-2xl m-10 items-center gap-5 p-5 rounded-lg " + classes_type_false_file}>
+                            <div className="error"></div>
+                            <div className="title_check">{type}</div>
+                        </div>
+                    </Box>
+                </ThemeProvider>
+            </Box>
+
+            <Box sx={styleToolsUpload}>
+                <Button variant="contained" sx={styleContinueBtn} onClick={() => window.open('/home/company', '_self')}>К списку файлов</Button>
+                
+            </Box>
+
+            <Box sx={styleReloadPage}>
+                <Button variant="contained" sx={styleCancelBtn} onClick={() => window.location.reload()}>Отмена</Button>
+            </Box>
+        </>
+    )
 }

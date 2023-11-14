@@ -1,24 +1,32 @@
-// @ts-ignore
-import {Logout} from "../components/message/Logout.tsx";
+import {Logout} from "../components/message/Logout";
+import useMediaQuery from '@mui/material/useMediaQuery';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+import CssBaseline from '@mui/material/CssBaseline';
+import * as React from 'react';
+import { Box } from "@mui/material";
 
 export const SupportHome = () => {
-    if (localStorage.getItem('dark_theme')) {
-        document.body.classList.add('dark_theme_body')
-        return (
-            <div>
-                <Logout/>
-                <h1 className="text-center flex justify-center h-screen items-center">Страница поддержки находится в разработке</h1>
-            </div>
-        )
+    const prefersDarkMode = useMediaQuery('(prefers-color-scheme: ' + localStorage.getItem("dark_theme") + ')');
+
+    const theme = React.useMemo(
+        () =>
+        createTheme({
+            palette: {
+            mode: prefersDarkMode ? 'dark' : 'light',
+            },
+        }),
+        [prefersDarkMode],
+    );
+
+    const style = {
+        "margin": '10px',
     }
 
-    else {
-        document.body.classList.remove('dark_theme_body')
-        return (
-            <div>
-                <Logout/>
-                <h1 className="">Страница поддержки находится в разработке</h1>
-            </div>
-        )
-    }
+    return (
+        <ThemeProvider theme={theme}>
+        <CssBaseline />
+            <Logout/>
+            <Box sx={style}>Страница поддержки находится в разработке</Box>
+        </ThemeProvider>
+    )
 }

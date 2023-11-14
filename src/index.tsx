@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import ReactDOM from 'react-dom/client';
 import {createBrowserRouter, Navigate, RouterProvider} from "react-router-dom";
 import {
@@ -18,9 +18,8 @@ import {
     SettingsHome,
     ClosePage,
     CompanyHeader,
-    NotFound, BodyLogout
+    NotFound, BodyLogout, ProfileCompany
 } from "./pages/export.pages.jsx"
-import "./App.css"
 import {Title} from "./components/company/Title"
 
 if (!localStorage.getItem('auth_token')) {
@@ -124,11 +123,19 @@ else if (localStorage.getItem('NameCompany') && localStorage.getItem('auth_token
             </div>
         },
         {
-            path: "/home/company/profile",
-            element: <div>
+            path: "/home/company/user/profile",
+            element: <>
+                <ClosePage/>
                 <Profile/>
                 <Footer/>
-            </div>
+            </>
+        },
+        {
+            path:"/home/company/company/profile",
+            element: <>
+                <ClosePage/>
+                <ProfileCompany/>
+            </>
         }
     ])
 
@@ -158,11 +165,11 @@ else if (localStorage.getItem('auth_token')) {
         },
         {
             path: "/home",
-            element: <div>
+            element: <>
                 <Header/>
                 <Body/>
                 <Footer/>
-            </div>,
+            </>,
         },
         {
             path: "/home/enter_company",
@@ -182,10 +189,11 @@ else if (localStorage.getItem('auth_token')) {
         },
         {
             path: "/home/profile",
-            element: <div>
+            element: <>
+                <ClosePage/>
                 <Profile/>
                 <Footer/>
-            </div>
+            </>
         },
         {
             path: "/home/support",

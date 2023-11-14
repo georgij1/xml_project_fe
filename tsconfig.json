@@ -22,5 +22,14 @@
   },
   "include": [
     "src"
-  ]
+  ],
+  "paths": {
+    "@assets": ["src/assets"],
+    "@assets/*": ["src/assets/*"],
+    "@pages/*": ["src/pages/*"],
+    "@forms/*": ["src/forms/*"],
+    "@components/*": ["src/components/*"],
+    "@": ["src"],
+    "@/*": ["src/*"],
+  }
 }

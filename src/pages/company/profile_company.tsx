@@ -4,7 +4,7 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 
-export const Profile = () => {
+export const ProfileCompany = () => {
     const style = {
         "margin": "10px"
     }
@@ -24,11 +24,9 @@ export const Profile = () => {
     return (
         <Box sx={style}>
             <ThemeProvider theme={theme}>
-            <CssBaseline />
-            <div className="info">
-                <div>Имя: {localStorage.getItem('login')}</div>
-            </div>
+                <CssBaseline />
+                <h1>Профиль компании</h1>
             </ThemeProvider>
         </Box>
-    );
+    )
 }

@@ -123,7 +123,6 @@ else if (localStorage.getItem('NameCompany') && localStorage.getItem('auth_token
         {
             path: "/home/company/user/profile",
             element: <>
-                <ClosePage/>
                 <Profile/>
                 <Footer/>
             </>
@@ -188,7 +187,6 @@ else if (localStorage.getItem('auth_token')) {
         {
             path: "/home/profile",
             element: <>
-                <ClosePage/>
                 <Profile/>
                 <Footer/>
             </>

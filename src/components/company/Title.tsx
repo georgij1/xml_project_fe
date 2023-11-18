@@ -59,6 +59,10 @@ export class Title {
         else if (window.location.pathname === "/error") {
             document.title = 'Ошибка в системе | Сервис xml'
         }
+        
+        else if (window.location.pathname === "/home/company/user/profile") {
+            document.title = 'Аккаунт пользователя | Сервис xml'
+        }
 
         else {
             document.title = 'Сервис по формированию заключений экспертизы в формате XML'

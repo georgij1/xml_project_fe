@@ -137,23 +137,29 @@ export const ListFiles = () => {
     
         return (
             <TableHead>
-                <TableRow>
-                    <TableCell padding="checkbox">
-                        <Checkbox
-                            color="primary"
-                            indeterminate={numSelected > 0 && numSelected < rowCount}
-                            checked={rowCount > 0 && numSelected === rowCount}
-                            onChange={onSelectAllClick}
-                            inputProps={{
-                                'aria-label': 'select all desserts',
-                            }}
-                        />
-                    </TableCell>
-                    {headCells.map((headCell) => (
-                        <TableCell>{headCell.label}</TableCell>
-                    ))}
-                </TableRow>
-            </TableHead>
+                    <TableRow>
+                        {
+                            foundFile === true ? <>
+                                <TableCell padding="checkbox">
+                                    <Checkbox
+                                        color="primary"
+                                        indeterminate={numSelected > 0 && numSelected < rowCount}
+                                        checked={rowCount > 0 && numSelected === rowCount}
+                                        onChange={onSelectAllClick}
+                                        inputProps={{
+                                            'aria-label': 'select all desserts',
+                                        }}
+                                    />
+                                </TableCell>
+                            </> : <>{null}</>
+                        }
+                        {foundFile === true ? <>
+                            {headCells.map((headCell) => (
+                                <TableCell>{headCell.label}</TableCell>
+                            ))}
+                        </> : <>{null}</>}
+                    </TableRow>
+                </TableHead>
         );
     }
     
@@ -270,8 +276,8 @@ export const ListFiles = () => {
                     }),
                 }}
             >
-                {numSelected > 0 ? (
-                    <Typography
+                {numSelected > 0 && foundFile === true ? 
+                    (<Typography
                         sx={{ flex: '1 1 100%' }}
                         color="inherit"
                         variant="subtitle1"
@@ -283,17 +289,18 @@ export const ListFiles = () => {
                             {numSelected} выбрано
                         </>
                         }
-                    </Typography>
-                ) : (
-                    <Typography
-                        sx={{ flex: '1 1 100%' }}
-                        variant="h6"
-                        id="tableTitle"
-                        component="div"
-                    >
-                        Файлы
-                    </Typography>
-                )}
+                    </Typography>)
+                : 
+                     
+                        <Typography
+                            sx={{ flex: '1 1 100%' }}
+                            variant="h6"
+                            id="tableTitle"
+                            component="div"
+                        >
+                            Файлы
+                        </Typography>
+                }
                 {numSelected > 0 ? (
                     <> {numSelected === 1 ? <>
                         <Tooltip title="Собрать пакет документов" onClick={() => {
@@ -484,6 +491,7 @@ export const ListFiles = () => {
                         rows.push(createData(item["id"], item["image_name"], item["author"], item["time_stamp"]))
                         setFoundFile(true)
                         setFiles(data)
+                        console.log(foundFile)
                     })
                 }
             })
@@ -545,10 +553,6 @@ export const ListFiles = () => {
         setPage(0);
     };
 
-    const handleChangeDense = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setDense(event.target.checked);
-    };
-
     const isSelected = (id: number) => selected.indexOf(id) !== -1;
 
     const emptyRows =
@@ -567,6 +571,7 @@ export const ListFiles = () => {
     const [openPDFFile, setOpenPDFFile] = React.useState(false);
     const [openXMLFile, setOpenXMLFile] = React.useState(false);
     const [openWordFile, setOpenWordFile] = React.useState(false);
+
     let FilterContentFile = contentFile.filter((item: any) => {
         return item !== contentFile[0]
     })
@@ -592,7 +597,7 @@ export const ListFiles = () => {
     }
 
     const style = {
-        position: 'absolute' as 'absolute',
+        position: 'absolute',
         top: '50%',
         left: '50%',
         transform: 'translate(-50%, -50%)',
@@ -639,15 +644,15 @@ export const ListFiles = () => {
                             onRequestSort={handleRequestSort}
                             rowCount={files.length}
                         />
-                        <TableBody>
-                            {visibleRows.map((row, index) => {
-                                const labelId = `enhanced-table-checkbox-${index}`;
-                                
-                                return (
-                                        <>
-                                        {
-                                            files.map((file) => (
-                                                <TableRow
+                        {
+                            foundFile === true ?
+                            <TableBody>
+                                {visibleRows.map((row, index) => {
+                                    const labelId = `enhanced-table-checkbox-${index}`;
+                                    
+                                    return (
+                                        files.map((file) => (
+                                            <TableRow
                                                 hover
                                                 onClick={(event) => handleClick(event, parseInt(file["id_image"]))}
                                                 aria-checked={file["id_image"]}
@@ -655,42 +660,103 @@ export const ListFiles = () => {
                                                 key={parseInt(file["id_image"])}
                                                 selected={file["id_image"]}
                                                 sx={{ cursor: 'pointer' }}
-                                                >
-                                                    <TableCell padding="checkbox">
-                                                        <Checkbox color="primary" checked={isSelected(file["id_image"])} inputProps={{'aria-labelledby': labelId}}/>
-                                                    </TableCell>
-                                                    <TableCell component="th" scope="row" padding="none" style={{textAlign:"start"}}>{file["image_name"]}</TableCell>
-                                                    <TableCell align="right" style={{textAlign:"start"}}>{file["author"]}</TableCell>
-                                                    <TableCell align="right" style={{textAlign:"start"}}>{file["time_stamp"]}</TableCell>
-                                                </TableRow>
-                                            ))
-                                        }
-                                        </>
-                                );
-                            })}
-                            {emptyRows > 0 && (
-                                <TableRow
-                                    style={{
-                                        height: (dense ? 33 : 53) * emptyRows,
-                                    }}
-                                >
-                                    <TableCell colSpan={6} />
-                                </TableRow>
-                            )}
-                        </TableBody>
+                                            >
+                                                <TableCell padding="checkbox">
+                                                    <Checkbox color="primary" checked={isSelected(file["id_image"])} inputProps={{'aria-labelledby': labelId}}/>
+                                                </TableCell>
+                                                <TableCell component="th" scope="row" padding="none" style={{textAlign:"start"}}>{file["image_name"]}</TableCell>
+                                                <TableCell align="right" style={{textAlign:"start"}}>{file["author"]}</TableCell>
+                                                <TableCell align="right" style={{textAlign:"start"}}>{file["time_stamp"]}</TableCell>
+                                            </TableRow>
+                                        ))
+                                    );
+                                })}
+                            </TableBody>
+                            :
+                            <TableBody sx={{ 
+                                margin: 'auto',
+                                display: 'flex',
+                                justifyContent: 'center'
+                            }}>
+                                {visibleRows.map((row, index) => {
+                                    const labelId = `enhanced-table-checkbox-${index}`;
+                                    
+                                    return (
+                                            <>
+                                            { foundFile ? (
+                                                    
+                                                        files.map((file) => (
+                                                            <TableRow
+                                                            hover
+                                                            onClick={(event) => handleClick(event, parseInt(file["id_image"]))}
+                                                            aria-checked={file["id_image"]}
+                                                            tabIndex={-1}
+                                                            key={parseInt(file["id_image"])}
+                                                            selected={file["id_image"]}
+                                                            sx={{ cursor: 'pointer' }}
+                                                            >
+                                                                <TableCell padding="checkbox">
+                                                                    <Checkbox color="primary" checked={isSelected(file["id_image"])} inputProps={{'aria-labelledby': labelId}}/>
+                                                                </TableCell>
+                                                                <TableCell component="th" scope="row" padding="none" style={{textAlign:"start"}}>{file["image_name"]}</TableCell>
+                                                                <TableCell align="right" style={{textAlign:"start"}}>{file["author"]}</TableCell>
+                                                                <TableCell align="right" style={{textAlign:"start"}}>{file["time_stamp"]}</TableCell>
+                                                            </TableRow>
+                                                        ))
+                                                ) : <>
+                                                    {null}
+                                                </>
+                                            }
+                                            </>
+                                    );
+                                })}
+                                {foundFile ?
+                                    <TableRow
+                                        style={{
+                                            height: (dense ? 33 : 53) * emptyRows,
+                                        }}
+                                    >
+                                        <TableCell colSpan={6} />
+                                    </TableRow>
+                                    :
+                                    <Box sx={{
+                                        display: 'flex',
+                                        justifyContent: 'center',
+                                        alignItems: 'center',
+                                        flexDirection: 'column',
+                                        gap: '30px',
+                                    }}>
+                                        <Button variant="contained" onClick={
+                                            () => {
+                                                window.open('/home/company/create/file', '_self')
+                                            }
+                                        }>Создать файл</Button>
+                                        <Button variant="contained" onClick={
+                                            () => {
+                                                window.open('/home/company/upload/file', '_self')
+                                            }
+                                        }>Загрузить файл</Button>
+                                    </Box>
+                                }
+                            </TableBody>
+                        }
                     </Table>
                 </TableContainer>
-                <TablePagination
-                    rowsPerPageOptions={[5, 10, 25]}
-                    component="div"
-                    count={rows.length}
-                    rowsPerPage={rowsPerPage}
-                    page={page}
-                    onPageChange={handleChangePage}
-                    onRowsPerPageChange={handleChangeRowsPerPage}
-                    labelRowsPerPage="Строк на странице:"
-                    labelDisplayedRows={({ from, to, count }) => `${from}–${to} из ${count}`}
-                />
+                {
+                    foundFile === true ?
+                        <TablePagination
+                            rowsPerPageOptions={[5, 10, 25]}
+                            component="div"
+                            count={rows.length}
+                            rowsPerPage={rowsPerPage}
+                            page={page}
+                            onPageChange={handleChangePage}
+                            onRowsPerPageChange={handleChangeRowsPerPage}
+                            labelRowsPerPage="Строк на странице:"
+                            labelDisplayedRows={({ from, to, count }) => `${from}–${to} из ${count}`}
+                        />
+                    : <>{null}</>
+                }
             </Paper>
             <Modal
             open={open}
@@ -702,10 +768,10 @@ export const ListFiles = () => {
                     <Typography id="modal-modal-title" variant="h6" component="h2">
                         {contentFile[0]}
                     </Typography>
-                    {FilterContentFile.map((item: any) => (
-                            <Typography id="modal-modal-description" sx={{ mt: 2 }}>                            
+                    {FilterContentFile.map((item: any, index: number) => (
+                            <Typography key={item.id} id="modal-modal-description" sx={{ mt: 2 }}>                            
                                 {item}
-                            </Typography>       
+                            </Typography>
                         ))
                     }
                 </Typography>
@@ -719,13 +785,13 @@ export const ListFiles = () => {
             aria-describedby="modal-modal-description">
             <Box sx={style}>
                 {contentFile.map((item: any) => (
-                <Typography id="modal-modal-title" variant="h6" component="h2">
-                {item["name_file"]}
-                </Typography>
+                    <Typography key={item.id} variant="h6" component="h2" id="modal-modal-title">
+                        {item["name_file"]}
+                    </Typography>
                 ))}
                 <Typography id="modal-modal-description" sx={{ mt: 2 }}>
                 {contentFile.map((item: any) => (
-                        <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+                        <Typography key={item.id} id="modal-modal-description" sx={{ mt: 2 }}>
                             {item["content_file"]}
                         </Typography>       
                     ))
@@ -745,7 +811,7 @@ export const ListFiles = () => {
                 </Typography>
                 <Typography id="modal-modal-description" sx={{ mt: 2 }}>
                 {contentFile.map((item: any) => (
-                        <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+                        <Typography key={item.id} id="modal-modal-description" sx={{ mt: 2 }}>
                             {item}
                         </Typography>
                     ))
@@ -764,7 +830,7 @@ export const ListFiles = () => {
                         {contentFile[0]}
                     </Typography>
                     {FilterContentFile.map((item: any) => (
-                            <Typography id="modal-modal-description" sx={{ mt: 2 }}>                            
+                            <Typography key={item.id} id="modal-modal-description" sx={{ mt: 2 }}>                            
                                 {item}
                             </Typography>       
                         ))

@@ -1,226 +1,153 @@
-import {ClipLoader} from "react-spinners";
+import Button from "@mui/material/Button";
+import TextField from "@mui/material/TextField";
+import Link from "@mui/material/Link";
+import Grid from "@mui/material/Grid";
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
+import Container from "@mui/material/Container";
 import React from "react";
+import useMediaQuery from '@mui/material/useMediaQuery';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+import CssBaseline from '@mui/material/CssBaseline';
 
 export const RegCompany = () => {
-    const open_auth_company = () => {
-        window.open('/home/enter_company', '_self')
+    const handleSubmit = (event: any) => {
+        event.preventDefault()
+        const data = new FormData(event.currentTarget)
+        console.log({
+            name_company: data.get('name_company'),
+            password_company: data.get('password_company'),
+            desc_company: data.get('desc_company'),
+            owner_company: data.get('owner_company'),
+        })
+
+        const body = {
+            "name_company": data.get('name_company'),
+            "password_company": data.get('password_company'),
+            "desc_company": data.get('desc_company'),
+            "owner_company": localStorage.getItem('owner_company')
+        }
+
+        fetch('http://10.3.9.83:8080/api/company/create', {
+            method: 'POST',
+            body: JSON.stringify(body),
+            headers: {
+                "Accept": "application/json",
+                "Authorization": `Bearer ${localStorage.getItem('auth_token')}`,
+                'Content-Type': 'application/json',
+                'Connection': 'keep-alive',
+                'Accept-Encoding': 'gzip, deflate, br',
+                'Cache-Control': 'no-cache'
+            },
+            mode: "cors"
+        })
+        .then((resp) => {
+            if (resp.status === 200) {
+                window.open('/home/enter_company', '_self')
+            }
+
+            else {
+                alert('Ошибка. Код ошибки: ' + resp.status)
+            }
+        })
+        .catch((error) => {
+            console.log(error)
+        })
     }
 
-    const create_company = () => {
-        const name_company = document.querySelector('.input_name_company')
-        const password_company = document.querySelector('.input_password_company')
-        const textarea_desc_company = document.querySelector('.textarea_desc_company')
+    const prefersDarkMode = useMediaQuery('(prefers-color-scheme: ' + localStorage.getItem("dark_theme") + ')');
 
-        // @ts-ignore
-        console.log(name_company.value)
-        // @ts-ignore
-        console.log(password_company.value)
-        // @ts-ignore
-        console.log(textarea_desc_company.value)
-
-        if (
-            // @ts-ignore
-            name_company.value.length === 0
-            &&
-            // @ts-ignore
-            password_company.value.length === 0
-            &&
-            // @ts-ignore
-            textarea_desc_company.value.length === 0
-        ) {
-            if (name_company && password_company && textarea_desc_company) {
-                name_company.classList.add('null_value_input')
-                password_company.classList.add('null_value_input')
-                textarea_desc_company.classList.add('null_value_input')
-            }
-        }
-
-        else if (
-            // @ts-ignore
-            name_company.value.length > 0
-            &&
-            // @ts-ignore
-            password_company.value.length === 0
-            &&
-            // @ts-ignore
-            textarea_desc_company.value.length === 0
-        ) {
-            if (name_company && password_company && textarea_desc_company) {
-                name_company.classList.remove('null_value_input')
-                password_company.classList.add('null_value_input')
-                textarea_desc_company.classList.add('null_value_input')
-            }
-        }
-
-        else if (
-            // @ts-ignore
-            name_company.value.length === 0
-            &&
-            // @ts-ignore
-            password_company.value.length > 0
-            &&
-            // @ts-ignore
-            textarea_desc_company.value.length === 0
-        ) {
-            if (name_company && password_company && textarea_desc_company) {
-                name_company.classList.add('null_value_input')
-                password_company.classList.remove('null_value_input')
-                textarea_desc_company.classList.add('null_value_input')
-            }
-        }
-
-        else if (
-            // @ts-ignore
-            name_company.value.length === 0
-            &&
-            // @ts-ignore
-            password_company.value.length === 0
-            &&
-            // @ts-ignore
-            textarea_desc_company.value.length > 0
-        ) {
-            if (name_company && password_company && textarea_desc_company) {
-                name_company.classList.add('null_value_input')
-                password_company.classList.add('null_value_input')
-                textarea_desc_company.classList.remove('null_value_input')
-            }
-        }
-
-        else if (
-            // @ts-ignore
-            name_company.value.length > 0
-            &&
-            // @ts-ignore
-            password_company.value.length > 0
-            &&
-            // @ts-ignore
-            textarea_desc_company.value.length > 0
-        ) {
-            if (name_company && password_company && textarea_desc_company) {
-                name_company.classList.remove('null_value_input')
-                password_company.classList.remove('null_value_input')
-                textarea_desc_company.classList.remove('null_value_input')
-
-                const body = {
-                    // @ts-ignore
-                    "name_company": name_company.value,
-                    // @ts-ignore
-                    "password_company": password_company.value,
-                    // @ts-ignore
-                    "desc_company": textarea_desc_company.value,
-                    "owner_company": localStorage.getItem('login')
-                }
-
-                activate_loader()
-
-                const url = "http://10.3.9.83:8080/api/company/create";
-
-                console.log(localStorage.getItem('auth_token'))
-
-                fetch(`${url}`, {
-                    method: 'POST',
-                    body: JSON.stringify(body),
-                    headers: {
-                        "Accept": "application/json",
-                        "Authorization": `Bearer ${localStorage.getItem('auth_token')}`,
-                        'Content-Type': 'application/json',
-                        'Connection': 'keep-alive',
-                        'Accept-Encoding': 'gzip, deflate, br',
-                        'Cache-Control': 'no-cache'
-                    },
-                    mode: "cors"
-                })
-                    .then((resp) => {
-                        console.log(resp.text().then((event) => {console.log(event)}))
-                        console.log(resp.status)
-
-                        if (resp.status === 200) {
-                            distinctive_loader()
-                            window.open('/home/enter_company', '_self')
-                            resp.text().then((event) => {
-                                console.log(event)
-                            })
-                        }
-
-                        else {
-                            distinctive_loader()
-                            alert('Ошибка. Код ошибки: ' + resp.status)
-                        }
-                    })
-                    .catch((error) => {
-                        console.log(error)
-                    })
-            }
-        }
-    }
-
-    const activate_loader = () => {
-        // @ts-ignore
-        document.querySelector('.loader').style.display = 'inline-block'
-        // @ts-ignore
-        document.querySelector('.loader').style.width = '150px'
-        // @ts-ignore
-        document.querySelector('.loader').style.height = '150px'
-        // @ts-ignore
-        document.querySelector('.loader').style.borderRadius = '100%'
-        // @ts-ignore
-        document.querySelector('.loader').style.borderColor = 'blue blue transparent'
-        // @ts-ignore
-        document.querySelector('.loader').style.borderImage = 'initial'
-        // @ts-ignore
-        document.querySelector('.loader').style.borderStyle = 'solid'
-        // @ts-ignore
-        document.querySelector('.loader').style.animation = '0.75s linear infinite normal both running react-spinners-ClipLoader-clip'
-        // @ts-ignore
-        document.querySelector('.loader').style.margin = 'auto'
-        // @ts-ignore
-        document.querySelector('.loader').style.position = 'absolute'
-        // @ts-ignore
-        document.querySelector('body').style.overflow='hidden'
-        // @ts-ignore
-        document.querySelector('body').style.opacity='0.5'
-    }
-
-    const distinctive_loader = () => {
-        // @ts-ignore
-        document.querySelector('.loader').style.display = 'none'
-        // @ts-ignore
-        document.querySelector('body').style.opacity = '1'
-        // @ts-ignore
-        document.querySelector('body').style.overflow = 'auto'
-    }
+    const theme = React.useMemo(
+      () =>
+        createTheme({
+          palette: {
+            mode: prefersDarkMode ? 'dark' : 'light',
+          },
+        }),
+      [prefersDarkMode],
+    );
 
     return (
-        <div>
-            <div className="form_create_company">
-                <div>
-                    <label htmlFor="name_company">Имя</label>
-                    <input autoComplete='new-password' id="name_company" className="input_name_company" placeholder="Введите название компании..."/>
-                </div>
-                <div>
-                    <label htmlFor="password_company">Пароль</label>
-                    <input autoComplete='new-password' id="password_company" type="password" className="input_password_company" placeholder="Введите пароль от компании..."/>
-                </div>
-                <div>
-                    <label htmlFor="desc_company">Описание</label>
-                    <textarea id="desc_company" className="textarea_desc_company" placeholder="Введите описание компании..."/>
-                </div>
-                <div>
-                    <label htmlFor="owner_company">Админ</label>
-                    {/*@ts-ignore*/}
-                    <input autoComplete='new-password' id="owner_company" type="text" readOnly value={localStorage.getItem('login')} className="input_password_company input_owner_company" placeholder="Введите пароль от компании..."/>
-                </div>
-                <div className="create_company_btn" onClick={create_company}>Создать</div>
-            </div>
-            <div className="exists_company">Если у вас уже есть компания <div className="link_reg" onClick={open_auth_company}>Войдите в неё</div></div>
-            <ClipLoader
-                style={{display: "none"}}
-                color={'blue'}
-                size={150}
-                aria-label="Loading Spinner"
-                data-testid="loader"
-                className="loader"
-            />
-        </div>
+        <ThemeProvider theme={theme}>
+            <CssBaseline />            
+            <Container component="main" maxWidth="xs">
+                <Box
+                sx={{  
+                marginTop: 8,
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                }}
+            >
+                <Typography component="h1" variant="h5">
+                Регистрации компании
+                </Typography>
+                <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
+                <TextField
+                    margin="normal"
+                    required
+                    fullWidth
+                    id="name_company"
+                    label="Имя компании"
+                    name="name_company"
+                    inputProps={{
+                        autocomplete: 'new-password'
+                    }}
+                    autoFocus
+                />
+                <TextField
+                    margin="normal"
+                    required
+                    fullWidth
+                    name="password_company"
+                    label="Пароль компании"
+                    type="password"
+                    id="password_company"
+                    inputProps={{
+                        autocomplete: 'new-password'
+                    }}
+                />
+                <TextField
+                    margin="normal"
+                    required
+                    fullWidth
+                    name="desc_company"
+                    label="Описание компании"
+                    id="desc_company"
+                    inputProps={{
+                        autocomplete: 'new-password'
+                    }}
+                />
+                <TextField
+                    required
+                    margin="normal"
+                    fullWidth
+                    name="owner_company"
+                    label="Владелец компании"
+                    id="owner_company"
+                    autoComplete="owner_company"
+                    defaultValue={localStorage.getItem('login')}
+                    variant="outlined"
+                    InputProps={{readOnly: true}}
+                />
+                <Button
+                    type="submit"
+                    fullWidth
+                    variant="contained"
+                    sx={{ mt: 3, mb: 2 }}
+                >
+                    Зарегистрировать
+                </Button>
+                <Grid container>
+                    <Grid item>
+                    <Link href="/home/enter_company" variant="body2">
+                        {"Есть компании? Авторизуйтесь в ней"}
+                    </Link>
+                    </Grid>
+                </Grid>
+                </Box>
+            </Box>
+            </Container>
+    </ThemeProvider>
     )
 }

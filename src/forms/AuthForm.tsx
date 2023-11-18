@@ -1,90 +1,24 @@
-import {ClipLoader} from "react-spinners";
-import React from "react";
+import Button from "@mui/material/Button";
+import TextField from "@mui/material/TextField";
+import Link from "@mui/material/Link";
+import Grid from "@mui/material/Grid";
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
+import Container from "@mui/material/Container";
 
 export const AuthForm = () => {
-    const open_reg_page = () => {
-        window.open(`/registration`, '_self')
-    }
-
-    const auth = () => {
-        // @ts-ignore
-        console.log(document.querySelector('.login_field').value)
-        // @ts-ignore
-        console.log(document.querySelector('.password_field').value)
-        if (
-            // @ts-ignore
-            document.querySelector('.login_field').value.length===0
-            &&
-            // @ts-ignore
-            document.querySelector('.password_field').value.length===0
-        ) {
-            // @ts-ignore
-            document.querySelector('.empty_all_fields').classList.add('block')
-        }
-        // @ts-ignore
-        else if (document.querySelector('.password_field').value.length>=6) {
-            // @ts-ignore
-            document.querySelector('.empty_all_fields').classList.remove('block')
-            // @ts-ignore
-            document.querySelector('.check_password_true_1').classList.add('block')
-            // @ts-ignore
-            document.querySelector('.continue_btn').classList.add('block')
-            console.log('Проверка по паролю пройдена')
-        }
-
-        else {
-            console.log('Валидность полей и валидность пароля не пройдена')
-            // @ts-ignore
-            document.querySelector('.check_password_false_1').classList.add('block')
-            // @ts-ignore
-            document.querySelector('.empty_all_fields').classList.add('block')
-        }
-    }
-
-    function activate_loader() {
-        // @ts-ignore
-        document.querySelector('.loader').style.display = 'inline-block'
-        // @ts-ignore
-        document.querySelector('.loader').style.width = '150px'
-        // @ts-ignore
-        document.querySelector('.loader').style.height = '150px'
-        // @ts-ignore
-        document.querySelector('.loader').style.borderRadius = '100%'
-        // @ts-ignore
-        document.querySelector('.loader').style.borderColor = 'blue blue transparent'
-        // @ts-ignore
-        document.querySelector('.loader').style.borderImage = 'initial'
-        // @ts-ignore
-        document.querySelector('.loader').style.borderStyle = 'solid'
-        // @ts-ignore
-        document.querySelector('.loader').style.animation = '0.75s linear infinite normal both running react-spinners-ClipLoader-clip'
-        // @ts-ignore
-        document.querySelector('.loader').style.margin = 'auto'
-        // @ts-ignore
-        document.querySelector('.loader').style.position = 'absolute'
-        // @ts-ignore
-        document.querySelector('body').style.overflow='hidden'
-        // @ts-ignore
-        document.querySelector('body').style.opacity='0.5'
-    }
-
-    function distinctive_loader() {
-        // @ts-ignore
-        document.querySelector('.loader').style.display = 'none'
-        // @ts-ignore
-        document.querySelector('body').style.opacity = '1'
-        // @ts-ignore
-        document.querySelector('body').style.overflow = 'auto'
-    }
-
-    function continue_btn() {
-        activate_loader()
+    const handleSubmit = (event: any) => {
+        event.preventDefault()
+        const data = new FormData(event.currentTarget)
+        console.log(data)
+        console.log({
+            login: data.get('login'),
+            password: data.get('password')
+        })
 
         const body = {
-            // @ts-ignore
-            "login": document.querySelector('.login_field').value,
-            // @ts-ignore
-            "password": document.querySelector('.password_field').value,
+            "login": data.get('login'),
+            "password": data.get('password'),
         }
 
         fetch(`http://10.3.9.83:8080/api/user/auth/login`, {
@@ -101,13 +35,12 @@ export const AuthForm = () => {
                     response.text().then((jwt_token) => {
                         console.log(jwt_token)
                         localStorage.setItem('auth_token', jwt_token)
-                        localStorage.setItem('login', body.login)
+                        localStorage.setItem('login', data.get('login') ? data.get('login') as string : '')
                         window.open("/home", '_self')
                     })
                 }
 
                 else {
-                    distinctive_loader()
                     alert('Ошибка. Код ошибки ' + response.status)
                 }
             })
@@ -116,36 +49,63 @@ export const AuthForm = () => {
             });
     }
 
-    return(
-        <div className="form_auth_company">
-            <h1>Вход</h1>
-
-            <div className="mini_form">
-                <label htmlFor="enter_name_admin">Логин</label>
-                <input className="input_from_auth login_field" id="enter_name_admin" placeholder="Введите имя администратора..."/>
-            </div>
-
-            <div className="mini_form">
-                <label htmlFor="enter_password_admin">Пароль</label>
-                <input type="password" className="input_from_auth password_field" id="enter_password_admin" placeholder="Введите пароль от администратора..."/>
-            </div>
-
-            <div className="btn_auth_company" onClick={auth}>Войти</div>
-
-            <div className="reg">Если у вас нет аккаунта <div className="link_reg" onClick={open_reg_page}>зарегистрируйтесь</div></div>
-            <div className="empty_all_fields">Не все поля заполнены</div>
-            <div className="check_password_true_1">Проверка по паролю пройдена</div>
-            <div className="check_password_false_1">Проверка по паролю не пройдена</div>
-
-            <div className="continue_btn" onClick={continue_btn}>Продолжить</div>
-            <ClipLoader
-                style={{display: "none"}}
-                color={'blue'}
-                size={150}
-                aria-label="Loading Spinner"
-                data-testid="loader"
-                className="loader"
+    return (
+        <Container component="main" maxWidth="xs">
+            <Box
+            sx={{  
+            marginTop: 8,
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            }}
+        >
+            <Typography component="h1" variant="h5">
+            Авторизация
+            </Typography>
+            <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
+            <TextField
+                margin="normal"
+                required
+                fullWidth
+                id="login"
+                label="Логин"
+                name="login"
+                inputProps={{
+                    autocomplete: 'new-password'
+                }}
+                autoFocus
             />
-        </div>
+            <TextField
+                margin="normal"
+                required
+                fullWidth
+                name="password"
+                label="пароль"
+                type="password"
+                id="password"
+                inputProps={{
+                    autocomplete: 'new-password'
+                }}
+                aria-readonly
+
+            />
+            <Button
+                type="submit"
+                fullWidth
+                variant="contained"
+                sx={{ mt: 3, mb: 2 }}
+            >
+                Войти
+            </Button>
+            <Grid container>
+                <Grid item>
+                <Link href="/registration" variant="body2">
+                    {"Нету аккаунта Создайте его"}
+                </Link>
+                </Grid>
+            </Grid>
+            </Box>
+        </Box>
+        </Container>
     )
 }

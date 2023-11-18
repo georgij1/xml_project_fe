@@ -36,16 +36,14 @@ if (!localStorage.getItem('auth_token')) {
         },
         {
             path: "/registration",
-            element: <div>
-                <RegistrationForm/>
-            </div>
+            element: <RegistrationForm/>
         },
         {
             path: "*",
-            element: <div>
+            element: <>
                 <NotFound/>
                 <Footer/>
-            </div>
+            </>
         }
     ]);
 

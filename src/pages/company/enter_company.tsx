@@ -11,10 +11,6 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 
 export const EnterCompany = () => {
-    const open_page_reg_company = () => {
-        window.open('/home/reg_company', '_self')
-    }
-
     const handleSubmit = (event: any) => {
         event.preventDefault();
         const data = new FormData(event.currentTarget);
@@ -61,7 +57,7 @@ export const EnterCompany = () => {
             })
       };
 
-      const prefersDarkMode = useMediaQuery('(prefers-color-scheme: ' + localStorage.getItem("dark_theme") + ')');
+    const prefersDarkMode = useMediaQuery('(prefers-color-scheme: ' + localStorage.getItem("dark_theme") + ')');
 
     const theme = React.useMemo(
       () =>
@@ -96,7 +92,9 @@ export const EnterCompany = () => {
                     id="login"
                     label="Логин"
                     name="login"
-                    autoComplete="login"
+                    inputProps={{
+                        autocomplete: 'new-password'
+                    }}
                     autoFocus
                 />
                 <TextField
@@ -107,7 +105,11 @@ export const EnterCompany = () => {
                     label="пароль"
                     type="password"
                     id="password"
-                    autoComplete="current-password"
+                    inputProps={{
+                        autocomplete: 'new-password'
+                    }}
+                    aria-readonly
+
                 />
                 <Button
                     type="submit"

@@ -55,7 +55,7 @@ export const CompanyHeader = () => {
 
     const profile_user = ['Аккаунт пользователя', 'Выйти из аккаунта']
 
-    const profile_company = ['Профиль компании', 'Выйти из компании']
+    const profile_company = ['Выйти из компании']
 
     const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
     const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);

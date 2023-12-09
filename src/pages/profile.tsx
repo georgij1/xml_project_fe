@@ -13,7 +13,7 @@ import LightModeIcon from '@mui/icons-material/LightMode';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import BusinessIcon from '@mui/icons-material/Business';
 import {Logout} from "../components/message/Logout";
-import { ClosePageProfile } from "./ClosePageProfile";
+import InfoIcon from '@mui/icons-material/Info';
 import { styled } from '@mui/material/styles';
 import IconButton from '@mui/material/IconButton';
 import Grid from '@mui/material/Grid';
@@ -68,8 +68,8 @@ export const Profile = () => {
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
 
-    const handleClick = () => {
-      window.history.back()
+  const handleClick = () => {
+    window.history.back()
   }
 
   const styleBtn_1 = {
@@ -96,7 +96,42 @@ export const Profile = () => {
     bgcolor: 'background.paper',
     boxShadow: 24,
     p: 4,
+    borderRadius: 10
   };
+
+  const handleClickSendData = (event: any) => {
+    event.preventDefault()
+    let data = new FormData(event.target)
+
+    const body = {
+      "newLogin": data.get('login'),
+      "oldLogin": localStorage.getItem('login'),
+      "NewNameCompany": data.get('name_company'),
+      "infoPerson": data.get('desc_person'),
+      "OldNameCompany": localStorage.getItem('NameCompany'),
+    }
+
+    fetch(`http://10.3.9.83:8080/api/account/edit`, {
+      method: 'POST',
+      body: JSON.stringify(body),
+      headers: {
+        'Content-type': 'application/json; charset=UTF-8'
+      },
+      mode: "cors"
+    })
+      .then(async (response) => {
+        const data = await response.json();
+        console.log(data.infoPerson);
+        console.log(data.nameCompany);
+        console.log(data.newLogin);
+        localStorage.setItem('login', data.newLogin);
+        localStorage.setItem('NameCompany', data.NewNameCompany);
+        localStorage.setItem('InfoPerson', data.infoPerson);
+      })
+      .catch((err) => {
+          console.log(err.message);
+      });
+  }
 
     return (
         <Box sx={style_main}>
@@ -150,6 +185,14 @@ export const Profile = () => {
                 </ListItemAvatar>
                 <ListItemText primary="Комапния" secondary={localStorage.getItem("NameCompany")} />
               </ListItem>
+              <ListItem>
+                <ListItemAvatar>
+                  <Avatar>
+                    <InfoIcon />
+                  </Avatar>
+                </ListItemAvatar>
+                <ListItemText primary="Информация о себе" secondary={localStorage.getItem("InfoPerson")} />
+              </ListItem>
             </List>
             <Grid item xs={12} md={6}>
           <Typography sx={{ mt: 4, mb: 2 }} variant="h6" component="div">
@@ -159,11 +202,11 @@ export const Profile = () => {
             <List dense={dense}>
               {generateWord(
                 <ListItem
-                  secondaryAction={
-                    <IconButton edge="end" aria-label="delete">
-                      <DeleteIcon />
-                    </IconButton>
-                  }
+                  // secondaryAction={
+                  //   <IconButton edge="end" aria-label="delete">
+                  //     <DeleteIcon />
+                  //   </IconButton>
+                  // }
                 >
                   <ListItemAvatar>
                     <Avatar>
@@ -178,11 +221,11 @@ export const Profile = () => {
               )}
               {generatePDF(
                 <ListItem
-                  secondaryAction={
-                    <IconButton edge="end" aria-label="delete">
-                      <DeleteIcon />
-                    </IconButton>
-                  }
+                  // secondaryAction={
+                  //   <IconButton edge="end" aria-label="delete">
+                  //     <DeleteIcon />
+                  //   </IconButton>
+                  // }
                 >
                   <ListItemAvatar>
                     <Avatar>
@@ -197,11 +240,11 @@ export const Profile = () => {
               )}
               {generateXML(
                 <ListItem
-                  secondaryAction={
-                    <IconButton edge="end" aria-label="delete">
-                      <DeleteIcon />
-                    </IconButton>
-                  }
+                  // secondaryAction={
+                  //   <IconButton edge="end" aria-label="delete">
+                  //     <DeleteIcon />
+                  //   </IconButton>
+                  // }
                 >
                   <ListItemAvatar>
                     <Avatar>
@@ -217,9 +260,9 @@ export const Profile = () => {
             </List>
           </Demo>
         </Grid>
-              <Button variant="contained" color="error">
+              {/* <Button variant="contained" color="error">
                 Удалить
-              </Button>
+              </Button> */}
           </Box>
           <Modal
         open={open}
@@ -232,12 +275,14 @@ export const Profile = () => {
             Изменение информации оо себе
           </Typography>
           <Typography id="modal-modal-description" sx={{ mt: 2, "display": "flex", "flexDirection": "column", "gap": "10px" }}>
-            <TextField label="Логин" variant="outlined" />
-            <TextField label="Компания" variant="outlined" />
-            <TextField label="Информация о себе" variant="outlined" />
-            <Button variant="contained" color="success">
-              Сохранить
-            </Button>
+            <Box component="form" sx={{ mt: 2, "display": "flex", "flexDirection": "column", "gap": "10px" }} onSubmit={handleClickSendData}>
+              <TextField name="login" required label="Логин" variant="outlined" defaultValue={localStorage.getItem("login")} />
+              <TextField name="name_company" required label="Компания" variant="outlined" defaultValue={localStorage.getItem("NameCompany")} />
+              <TextField name="desc_person" required label="Информация о себе" defaultValue={localStorage.getItem("InfoPerson")} variant="outlined" />
+              <Button variant="contained" color="success" type="submit">
+                Сохранить
+              </Button>
+            </Box>
           </Typography>
         </Box>
       </Modal>

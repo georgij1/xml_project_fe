@@ -5,7 +5,6 @@ import {
     AuthForm,
     Header,
     Body,
-    Footer,
     RegistrationForm,
     UploadFile, CreateFile,
     ListFiles
@@ -42,7 +41,6 @@ if (!localStorage.getItem('auth_token')) {
             path: "*",
             element: <>
                 <NotFound/>
-                <Footer/>
             </>
         }
     ]);
@@ -60,11 +58,10 @@ else if (localStorage.getItem('NameCompany') && localStorage.getItem('auth_token
     const router = createBrowserRouter([
         {
             path: "/logout",
-            element: <div>
+            element: <>
                 <ClosePage/>
                 <BodyLogout/>
-                <Footer/>
-            </div>
+            </>
         },
 
         {
@@ -74,57 +71,50 @@ else if (localStorage.getItem('NameCompany') && localStorage.getItem('auth_token
 
         {
             path: "/home/company",
-            element: <div>
+            element: <>
                 <CompanyHeader/>
                 <ListFiles/>
-                <Footer/>
-            </div>
+            </>
         },
 
         {
             path: "/home/company/upload/file",
-            element: <div>
+            element: <>
                 <ClosePage/>
                 <UploadFile/>
-                <Footer/>
-            </div>
+            </>
         },
         {
             path: "/home/company/create/file",
-            element: <div>
+            element: <>
                 <ClosePage/>
                 <CreateFile/>
-                <Footer/>
-            </div>
+            </>
         },
         {
             path: "/home/company/settings",
-            element: <div>
+            element: <>
                 <ClosePage/>
                 <SettingsHome/>
-                <Footer/>
-            </div>
+            </>
         },
         {
             path: "/home/company/support",
-            element: <div>
+            element: <>
                 <ClosePage/>
                 <SupportHome/>
-                <Footer/>
-            </div>
+            </>
         },
         {
             path: "*",
-            element: <div>
+            element: <>
                 <NotFound/>
-                <Footer/>
-            </div>
+            </>
         },
         {
             path: "/home/company/user/profile",
             element: <>
                 <Profile/>
-                <Footer/>
             </>
         },
         {
@@ -150,11 +140,10 @@ else if (localStorage.getItem('auth_token')) {
     const router = createBrowserRouter([
         {
             path: "/logout",
-            element: <div>
+            element: <>
                 <ClosePage/>
                 <BodyLogout/>
-                <Footer/>
-            </div>
+            </>
         },
         {
             path: "/",
@@ -165,54 +154,47 @@ else if (localStorage.getItem('auth_token')) {
             element: <>
                 <Header/>
                 <Body/>
-                <Footer/>
             </>,
         },
         {
             path: "/home/enter_company",
-            element: <div>
+            element: <>
                 <ClosePage/>
                 <EnterCompany/>
-                <Footer/>
-            </div>
+            </>
         },
         {
             path: "/home/reg_company",
-            element: <div>
+            element: <>
                 <ClosePage/>
                 <RegCompany/>
-                <Footer/>
-            </div>
+            </>
         },
         {
             path: "/home/profile",
             element: <>
                 <Profile/>
-                <Footer/>
             </>
         },
         {
             path: "/home/support",
-            element: <div>
+            element: <>
                 <ClosePage/>
                 <SupportHome/>
-                <Footer/>
-            </div>
+            </>
         },
         {
             path: "/home/settings",
-            element: <div>
+            element: <>
                 <ClosePage/>
                 <SettingsHome/>
-                <Footer/>
-            </div>
+            </>
         },
         {
             path: "*",
-            element: <div>
+            element: <>
                 <NotFound/>
-                <Footer/>
-            </div>
+            </>
         }
     ]);
 
@@ -233,22 +215,20 @@ else {
         },
         {
             path: "/error",
-            element: <div>В системе произошла ошибка</div>,
+            element: <>В системе произошла ошибка</>,
         },
         {
             path: "*",
-            element: <div>
+            element: <>
                 <NotFound/>
-                <Footer/>
-            </div>
+            </>
         },
         {
             path: "/logout",
-            element: <div>
+            element: <>
                 <ClosePage/>
                 <BodyLogout/>
-                <Footer/>
-            </div>
+            </>
         }
     ]);
 

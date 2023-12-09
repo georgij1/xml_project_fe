@@ -1,4 +1,3 @@
-import "./ListFiles.css";
 import React, {useEffect, useState} from "react";
 import {Logout} from "../../message/Logout";
 import {
@@ -28,6 +27,10 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 
 export const ListFiles = () => {
+    const test_api = "http://localhost:"
+    const deploy_api = "http://10.3.9.83:"
+    const port_server = "8080"
+
     interface Data {
         id: number;
         name: string;
@@ -169,9 +172,7 @@ export const ListFiles = () => {
     
     function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
         const { numSelected } = props;
-
-        const options = ['Просмотр', 'Просмотреть как PDF', 'Просмотреть как XML', 'Просмотреть как Word файл'];
-    
+        const options = ['Просмотр', 'Просмотреть как PDF', 'Просмотреть как XML', 'Просмотреть как Word файл'];    
         const [open, setOpen_1] = React.useState(false);
         const anchorRef = React.useRef<HTMLDivElement>(null);
         const [selectedIndex, setSelectedIndex] = React.useState(1);
@@ -181,7 +182,7 @@ export const ListFiles = () => {
             if (options[selectedIndex] === "Просмотреть как PDF") {
                 setOpenPDFFile(true)
                 selected.map((id) => {
-                    fetch(`http://10.3.9.83:8080/file/read/PDF/${localStorage.getItem('NameCompany')}/${id}`, {
+                    fetch(deploy_api+port_server+`/file/read/PDF/${localStorage.getItem('NameCompany')}/${id}`, {
                         method: 'GET',
                         headers: {
                             "Accept": "application/json",
@@ -192,11 +193,8 @@ export const ListFiles = () => {
                             'Cache-Control': 'no-cache'
                         }
                     })
-                        .then((response) => {
-                            console.log(response.json())
-                            console.log(localStorage.getItem)
-                        })
-                        // .then((data) => setContentFile(data))
+                        .then((response) => response.json())
+                        .then((data) => setContentFile(data))
                         .catch((error) => console.log(error))
                 })
             }
@@ -204,7 +202,7 @@ export const ListFiles = () => {
             else if (options[selectedIndex] === "Просмотреть как XML") {
                 setOpenXMLFile(true)
                 selected.map((id) => {
-                    fetch(`http://10.3.9.83:8080/file/read/XML/${localStorage.getItem('NameCompany')}/${id}`, {
+                    fetch(deploy_api+port_server+`/file/read/XML/${localStorage.getItem('NameCompany')}/${id}`, {
                         method: 'GET',
                         headers: {
                             "Accept": "application/json",
@@ -224,7 +222,7 @@ export const ListFiles = () => {
             else if (options[selectedIndex] === "Просмотреть как Word файл") {
                 setOpenWordFile(true)
                 selected.map((id) => {
-                    fetch(`http://10.3.9.83:8080/file/read/${localStorage.getItem('NameCompany')}/${id}`, {
+                    fetch(deploy_api+port_server+`/file/read/${localStorage.getItem('NameCompany')}/${id}`, {
                         method: 'GET',
                         headers: {
                             "Accept": "application/json",
@@ -256,12 +254,10 @@ export const ListFiles = () => {
 
         const handleClose = (event: Event) => {
             if (
-            anchorRef.current &&
-            anchorRef.current.contains(event.target as HTMLElement)
-            ) {
-            return;
-            }
-
+                anchorRef.current 
+                &&
+                anchorRef.current.contains(event.target as HTMLElement)
+            ) {return;}
             setOpen_1(false);
         };
 
@@ -314,7 +310,7 @@ export const ListFiles = () => {
                         <Tooltip title="Открыть в браузере" onClick={() => {
                             selected.map((id) => {
                                 setOpen(true)
-                                fetch(`http://10.3.9.83:8080/file/read/${localStorage.getItem('NameCompany')}/${id}`, {
+                                fetch(deploy_api+port_server+`/file/read/${localStorage.getItem('NameCompany')}/${id}`, {
                                     method: 'GET',
                                     headers: {
                                         "Accept": "application/json",
@@ -326,9 +322,7 @@ export const ListFiles = () => {
                                     }
                                 })
                                     .then((response) => response.json())
-                                    .then((data) => {
-                                        setContentFile(data)
-                                    })
+                                    .then((data) => setContentFile(data))
                                     .catch((error) => console.log(error))
                             })
                         }}>
@@ -396,7 +390,7 @@ export const ListFiles = () => {
     
                         <Tooltip title="Удалить" onClick={() => {
                             selected.map(select => {
-                                fetch(`http://10.3.9.83:8080/file/delete/file/${localStorage.getItem('NameCompany')}/${select}`, {
+                                fetch(deploy_api+port_server+`/file/delete/file/${localStorage.getItem('NameCompany')}/${select}`, {
                                     method: 'DELETE',
                                     headers: {
                                         "Accept": "*/*",
@@ -408,12 +402,20 @@ export const ListFiles = () => {
                                     }
                                 })
                                 .then((resp) => {
-                                    resp.text().then(ev => {
-                                        console.log(ev)
-                                    })
-                                    console.log(resp.status)
-                                    if (resp.status) {
-                                        window.location.reload()
+                                    if (typeof resp.status === "string") {
+                                        if (resp.status === "200") {
+                                            window.location.reload()
+                                        }
+                                    }
+
+                                    else if (typeof resp.status === "number") {
+                                        if (resp.status === 200) {
+                                            window.location.reload()
+                                        }
+                                    }
+
+                                    else {
+                                        console.log("Возможно произошло изменение на сервире и фронт его пока ещё не подтянул")
                                     }
                                 })
                                 .catch((error) => {
@@ -433,7 +435,6 @@ export const ListFiles = () => {
                                 <FolderZip />
                             </IconButton>
                         </Tooltip>
-    
                         <Tooltip title="Удалить" onClick={() => {
                             console.info('delete')
                         }}>
@@ -471,7 +472,7 @@ export const ListFiles = () => {
     const [foundFile, setFoundFile] = useState<boolean>(false)
 
     useEffect(() => {
-        fetch(`http://10.3.9.83:8080/file/list`, {
+        fetch(deploy_api+port_server+`/file/list`, {
             method: 'POST',
             // @ts-ignore
             body: JSON.stringify(body),
@@ -486,9 +487,9 @@ export const ListFiles = () => {
         })
             .then((response) => response.json())
             .then((data) => {
-                if (data[0].image_name !== "Not found file") {
+                if (data[0].file_name !== "Not found file") {
                     data.forEach((item: any) => {
-                        rows.push(createData(item["id"], item["image_name"], item["author"], item["time_stamp"]))
+                        rows.push(createData(item["id_file"], item["file_name"], item["author"], item["time_stamp"]))
                         setFoundFile(true)
                         setFiles(data)
                         console.log(foundFile)
@@ -518,7 +519,7 @@ export const ListFiles = () => {
 
     const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.checked) {
-            const newSelected = files.map((n) => n["id_image"]);
+            const newSelected = files.map((n) => n["id_file"]);
             setSelected(newSelected);
             return;
         }
@@ -544,9 +545,7 @@ export const ListFiles = () => {
         setSelected(newSelected);
     };
 
-    const handleChangePage = (event: unknown, newPage: number) => {
-        setPage(newPage);
-    };
+    const handleChangePage = (event: unknown, newPage: number) => setPage(newPage);
 
     const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
         setRowsPerPage(parseInt(event.target.value, 10));
@@ -624,15 +623,15 @@ export const ListFiles = () => {
     );
 
     return (
-        <Box sx={{ width: '100%' }}>
+        <Box sx={{ width: '100%', boxShadow: 'none' }}>
             <Logout/>
             <ThemeProvider theme={theme}>
             <CssBaseline />
-            <Paper sx={{ width: '100%', mb: 2 }}>
+            <Paper sx={{ width: '100%', mb: 2, boxShadow: 'none' }}>
                 <EnhancedTableToolbar numSelected={selected.length} />
                 <TableContainer>
                     <Table
-                        sx={{ minWidth: 750 }}
+                        sx={{ minWidth: 750, boxShadow: 'none' }}
                         aria-labelledby="tableTitle"
                         size={dense ? 'small' : 'medium'}
                     >
@@ -654,17 +653,17 @@ export const ListFiles = () => {
                                         files.map((file) => (
                                             <TableRow
                                                 hover
-                                                onClick={(event) => handleClick(event, parseInt(file["id_image"]))}
-                                                aria-checked={file["id_image"]}
+                                                onClick={(event) => handleClick(event, parseInt(file["id_file"]))}
+                                                aria-checked={file["id_file"]}
                                                 tabIndex={-1}
-                                                key={parseInt(file["id_image"])}
-                                                selected={file["id_image"]}
+                                                key={parseInt(file["id_file"])}
+                                                selected={file["id_file"]}
                                                 sx={{ cursor: 'pointer' }}
                                             >
                                                 <TableCell padding="checkbox">
-                                                    <Checkbox color="primary" checked={isSelected(file["id_image"])} inputProps={{'aria-labelledby': labelId}}/>
+                                                    <Checkbox color="primary" checked={isSelected(file["id_file"])} inputProps={{'aria-labelledby': labelId}}/>
                                                 </TableCell>
-                                                <TableCell component="th" scope="row" padding="none" style={{textAlign:"start"}}>{file["image_name"]}</TableCell>
+                                                <TableCell component="th" scope="row" padding="none" style={{textAlign:"start"}}>{file["file_name"]}</TableCell>
                                                 <TableCell align="right" style={{textAlign:"start"}}>{file["author"]}</TableCell>
                                                 <TableCell align="right" style={{textAlign:"start"}}>{file["time_stamp"]}</TableCell>
                                             </TableRow>
@@ -676,11 +675,11 @@ export const ListFiles = () => {
                             <TableBody sx={{ 
                                 margin: 'auto',
                                 display: 'flex',
-                                justifyContent: 'center'
+                                justifyContent: 'center',
+                                boxShadow: 'none',
                             }}>
                                 {visibleRows.map((row, index) => {
                                     const labelId = `enhanced-table-checkbox-${index}`;
-                                    
                                     return (
                                             <>
                                             { foundFile ? (
@@ -688,17 +687,17 @@ export const ListFiles = () => {
                                                         files.map((file) => (
                                                             <TableRow
                                                             hover
-                                                            onClick={(event) => handleClick(event, parseInt(file["id_image"]))}
-                                                            aria-checked={file["id_image"]}
+                                                            onClick={(event) => handleClick(event, parseInt(file["id_file"]))}
+                                                            aria-checked={file["id_file"]}
                                                             tabIndex={-1}
-                                                            key={parseInt(file["id_image"])}
-                                                            selected={file["id_image"]}
+                                                            key={parseInt(file["id_file"])}
+                                                            selected={file["id_file"]}
                                                             sx={{ cursor: 'pointer' }}
                                                             >
                                                                 <TableCell padding="checkbox">
-                                                                    <Checkbox color="primary" checked={isSelected(file["id_image"])} inputProps={{'aria-labelledby': labelId}}/>
+                                                                    <Checkbox color="primary" checked={isSelected(file["id_file"])} inputProps={{'aria-labelledby': labelId}}/>
                                                                 </TableCell>
-                                                                <TableCell component="th" scope="row" padding="none" style={{textAlign:"start"}}>{file["image_name"]}</TableCell>
+                                                                <TableCell component="th" scope="row" padding="none" style={{textAlign:"start"}}>{file["file_name"]}</TableCell>
                                                                 <TableCell align="right" style={{textAlign:"start"}}>{file["author"]}</TableCell>
                                                                 <TableCell align="right" style={{textAlign:"start"}}>{file["time_stamp"]}</TableCell>
                                                             </TableRow>

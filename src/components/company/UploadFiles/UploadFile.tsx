@@ -52,9 +52,9 @@ export const UploadFile: React.FunctionComponent = () => {
                 type: file["type"]
             }
 
-            // @ts-ignore
-            if (file["name"].includes('doc')) {
-                console.log('file is xml')
+            console.log(data_file)
+
+            if (file["type"] === "application/msword") {
                 setClasses('flex')
                 setNameFile(data_file.name)
                 setChooseFile('none')
@@ -68,6 +68,7 @@ export const UploadFile: React.FunctionComponent = () => {
                     form_data.append("NameCompany", `${localStorage.getItem('NameCompany')}`)
                     form_data.append("Author", `${localStorage.getItem('login')}`)
                     form_data.append("TimeStamp", `${new Date().getHours()}:`+`${new Date().getMinutes()}:`+`${new Date().getSeconds()}`)
+                    form_data.append("TypeFile", `${file["type"]}`)
 
                     fetch(`http://10.3.9.83:8080/file/upload`, {
                         method: 'POST',
@@ -80,7 +81,56 @@ export const UploadFile: React.FunctionComponent = () => {
                             'Accept-Encoding': 'gzip, deflate, br',
                             'Cache-Control': 'no-cache'
                         },
-                        mode: "no-cors"
+                        mode: 'no-cors'
+                    })
+                        .then((resp) => {
+                            console.log(resp.body)
+                            console.log(resp.status)
+
+                            if (resp.status === 0 || 200) {
+                                SetSuccessResult('flex')
+                            }
+
+                            else {
+                                alert('Ошибка. Код ошибки: ' + resp.status)
+                            }
+                        })
+                        .catch((error) => {
+                            console.log(error)
+                        })
+                }
+
+                ContinueUploadFile()
+            }
+            
+            else if (file["type"] === "application/vnd.openxmlformats-officedocument.wordprocessingml.document") {
+                setClasses('flex')
+                setNameFile(data_file.name)
+                setChooseFile('none')
+                setCancelBtn('')
+                setCancelBtn('flex')
+                setSize(data_file.size)
+                setType(data_file.type)
+
+                const ContinueUploadFile = () => {
+                    form_data.append("files", file)
+                    form_data.append("NameCompany", `${localStorage.getItem('NameCompany')}`)
+                    form_data.append("Author", `${localStorage.getItem('login')}`)
+                    form_data.append("TimeStamp", `${new Date().getHours()}:`+`${new Date().getMinutes()}:`+`${new Date().getSeconds()}`)
+                    form_data.append("TypeFile", `${file["type"]}`)
+
+                    fetch(`http://10.3.9.83:8080/file/upload`, {
+                        method: 'POST',
+                        body: form_data,
+                        headers: {
+                            "Accept": "*/*",
+                            "Authorization": `Bearer ${localStorage.getItem('auth_token')}`,
+                            'Content-Type': 'multipart/form-data; boundary=<calculated when request is sent>',
+                            'Connection': 'keep-alive',
+                            'Accept-Encoding': 'gzip, deflate, br',
+                            'Cache-Control': 'no-cache'
+                        },
+                        mode: 'no-cors'
                     })
                         .then((resp) => {
                             console.log(resp.body)

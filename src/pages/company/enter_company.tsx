@@ -9,6 +9,7 @@ import React from "react";
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
+import { Logout } from "../../components/message/Logout";
 
 export const EnterCompany = () => {
     const handleSubmit = (event: any) => {
@@ -73,6 +74,7 @@ export const EnterCompany = () => {
         <ThemeProvider theme={theme}>
             <CssBaseline />            
             <Container component="main" maxWidth="xs">
+                <Logout/>
                 <Box
                 sx={{  
                 marginTop: 8,

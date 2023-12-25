@@ -25,6 +25,8 @@ import MenuList from '@mui/material/MenuList';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
+import { style } from "../../../data/objects/Style";
+import { GetFileList } from "../../../data/api/file/GetFileList";
 
 export const ListFiles = () => {
     const test_api = "http://localhost:"
@@ -331,62 +333,60 @@ export const ListFiles = () => {
                             </IconButton>
                         </Tooltip>
     
-                        <>
-                            <IconButton>
-                                <React.Fragment>
-                                    <ButtonGroup variant="contained" ref={anchorRef} aria-label="split button">
-                                        <Button onClick={handleClick} style={{textTransform:'none'}}>{options[selectedIndex]}</Button>
-                                        <Button
-                                        size="small"
-                                        aria-controls={open ? 'split-button-menu' : undefined}
-                                        aria-expanded={open ? 'true' : undefined}
-                                        aria-label="select merge strategy"
-                                        aria-haspopup="menu"
-                                        onClick={handleToggle}
-                                        >
-                                        <ArrowDropDownIcon />
-                                        </Button>
-                                    </ButtonGroup>
-                                    <Popper
-                                        sx={{
-                                        zIndex: 1,
-                                        }}
-                                        open={open}
-                                        anchorEl={anchorRef.current}
-                                        role={undefined}
-                                        transition
-                                        disablePortal
+                        <IconButton>
+                            <React.Fragment>
+                                <ButtonGroup variant="contained" ref={anchorRef} aria-label="split button">
+                                    <Button onClick={handleClick} style={{textTransform:'none'}}>{options[selectedIndex]}</Button>
+                                    <Button
+                                    size="small"
+                                    aria-controls={open ? 'split-button-menu' : undefined}
+                                    aria-expanded={open ? 'true' : undefined}
+                                    aria-label="select merge strategy"
+                                    aria-haspopup="menu"
+                                    onClick={handleToggle}
                                     >
-                                        {({ TransitionProps, placement }) => (
-                                        <Grow
-                                            {...TransitionProps}
-                                            style={{
-                                            transformOrigin:
-                                                placement === 'bottom' ? 'center top' : 'center bottom',
-                                            }}
-                                        >
-                                            <Paper>
-                                            <ClickAwayListener onClickAway={handleClose}>
-                                                <MenuList id="split-button-menu" autoFocusItem>
-                                                {options.map((option, index) => (
-                                                    <MenuItem
-                                                    key={option}
-                                                    disabled={index==0}
-                                                    selected={index === selectedIndex}
-                                                    onClick={(event) => handleMenuItemClick(event, index)}
-                                                    >
-                                                    {option}
-                                                    </MenuItem>
-                                                ))}
-                                                </MenuList>
-                                            </ClickAwayListener>
-                                            </Paper>
-                                        </Grow>
-                                        )}
-                                    </Popper>
-                                </React.Fragment>
-                            </IconButton>
-                        </>
+                                    <ArrowDropDownIcon />
+                                    </Button>
+                                </ButtonGroup>
+                                <Popper
+                                    sx={{
+                                    zIndex: 1,
+                                    }}
+                                    open={open}
+                                    anchorEl={anchorRef.current}
+                                    role={undefined}
+                                    transition
+                                    disablePortal
+                                >
+                                    {({ TransitionProps, placement }) => (
+                                    <Grow
+                                        {...TransitionProps}
+                                        style={{
+                                        transformOrigin:
+                                            placement === 'bottom' ? 'center top' : 'center bottom',
+                                        }}
+                                    >
+                                        <Paper>
+                                        <ClickAwayListener onClickAway={handleClose}>
+                                            <MenuList id="split-button-menu" autoFocusItem>
+                                            {options.map((option, index) => (
+                                                <MenuItem
+                                                key={option}
+                                                disabled={index==0}
+                                                selected={index === selectedIndex}
+                                                onClick={(event) => handleMenuItemClick(event, index)}
+                                                >
+                                                {option}
+                                                </MenuItem>
+                                            ))}
+                                            </MenuList>
+                                        </ClickAwayListener>
+                                        </Paper>
+                                    </Grow>
+                                    )}
+                                </Popper>
+                            </React.Fragment>
+                        </IconButton>
     
                         <Tooltip title="Удалить" onClick={() => {
                             selected.map(select => {
@@ -463,43 +463,11 @@ export const ListFiles = () => {
         );
     }
 
-    let body = {
-        "NameCompany": localStorage.getItem('NameCompany')
-    }
-
     const [files, setFiles] = useState([])
 
     const [foundFile, setFoundFile] = useState<boolean>(false)
 
-    useEffect(() => {
-        fetch(deploy_api+port_server+`/file/list`, {
-            method: 'POST',
-            // @ts-ignore
-            body: JSON.stringify(body),
-            headers: {
-                "Accept": "application/json",
-                "Authorization": `Bearer ${localStorage.getItem('auth_token')}`,
-                'Content-Type': 'application/json',
-                'Connection': 'keep-alive',
-                'Accept-Encoding': 'gzip, deflate, br',
-                'Cache-Control': 'no-cache'
-            }
-        })
-            .then((response) => response.json())
-            .then((data) => {
-                if (data[0].file_name !== "Not found file") {
-                    data.forEach((item: any) => {
-                        rows.push(createData(item["id_file"], item["file_name"], item["author"], item["time_stamp"]))
-                        setFoundFile(true)
-                        setFiles(data)
-                        console.log(foundFile)
-                    })
-                }
-            })
-            .catch((error) => {
-                console.log(error)
-            })
-    }, [])
+    useEffect(() => {GetFileList(setFiles, setFoundFile)}, [])
 
     const [order, setOrder] = React.useState<Order>('asc');
     const [orderBy, setOrderBy] = React.useState<keyof Data>('author');
@@ -595,31 +563,16 @@ export const ListFiles = () => {
         setOpenWordFile(false)
     }
 
-    const style = {
-        position: 'absolute',
-        top: '50%',
-        left: '50%',
-        transform: 'translate(-50%, -50%)',
-        width: 400,
-        bgcolor: 'background.paper',
-        border: '2px solid blue',
-        boxShadow: 24,
-        p: 4,
-        overflow: 'scroll',
-        height: '90vh',
-        borderRadius: '10px'
-    }
-
     const prefersDarkMode = useMediaQuery('(prefers-color-scheme: ' + localStorage.getItem("dark_theme") + ')');
 
     const theme = React.useMemo(
-      () =>
-        createTheme({
-          palette: {
-            mode: prefersDarkMode ? 'dark' : 'light',
-          },
-        }),
-      [prefersDarkMode],
+        () =>
+          createTheme({
+            palette: {
+              mode: prefersDarkMode ? 'dark' : 'light',
+            },
+          }),
+        [prefersDarkMode],
     );
 
     return (

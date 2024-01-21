@@ -1,4 +1,3 @@
-interface EnhancedTableToolbarProps {
+export interface EnhancedTableToolbarProps {
     numSelected: number;
-    openXMLFile: boolean;
 }

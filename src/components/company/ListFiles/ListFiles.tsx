@@ -68,11 +68,22 @@ import MuiAccordionSummary, {
 import MuiAccordionDetails from '@mui/material/AccordionDetails';
 import CircularProgress from '@mui/material/CircularProgress';
 import Help from '@mui/icons-material/Help';
+import Stepper from '@mui/material/Stepper';
+import Step from '@mui/material/Step';
+import StepButton from '@mui/material/StepButton';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemButton from '@mui/material/ListItemButton';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
+import StarIcon from '@mui/icons-material/Star';
 
 export const ListFiles = () => {
     const rows = [
         createData(1, 'test', 'test', 'test'),
     ];
+
+    const steps = ['Выбирите строку', 'Выбирите способ', 'Нажмите жёлтую галочку'];
     
     function createData(
         id: number,
@@ -640,7 +651,17 @@ export const ListFiles = () => {
     let arr_count_cell:any = []
     const addDataCellTable = () => setDataCellTable([...dataCellTable, {value: 'Данных нет'}]);
     const [dataCellTable, setDataCellTable] = React.useState([{ value: 'Данных нет' }]);
+    const [watchGuide, setWatchGuide] = React.useState(false)
 
+    const watch_guide = () => {
+        if (watchGuide === true) {
+            setWatchGuide(false)
+        }
+
+        else {
+            setWatchGuide(true)
+        }
+    }
 
     const click_card_table_xml = (event: React.MouseEvent<HTMLElement>) => {
         const element = event.currentTarget;
@@ -698,14 +719,21 @@ export const ListFiles = () => {
         setDataCellTable([])
     }
 
+    const WindowChooseEditString = () => {
+        return (<>Choose string edit</>)
+    }
+
     const edit_cell_table_xml = () => {
         console.log("edit_cell_table_xml")
+        setOpenChooseString(true)
     }
 
     const StyleSettingsCell = {
         "display": "flex",
         "gap": "10px"
     }
+
+    const [OpenChooseString, setOpenChooseString] = React.useState(false)
 
     const Settings_cell = () => {
         return (
@@ -1049,6 +1077,110 @@ export const ListFiles = () => {
         }
 
         else return(<>Произошла ошибка</>);
+    }
+
+    const DescriptionEditXMLTable = (props: any) => {
+        const { data } = props
+
+        if (data === 0) {
+            return (
+                <>
+                    <Typography>Выбирите, пожалуйста, строку из списка, которую будуте редактировать</Typography>
+                    {arr_count_columns_xml.map((row:any) => (
+                        <List
+                          sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}
+                          aria-label="contacts"
+                        >
+                            {click_card_data.map((item:any) => (
+                                <>
+                                    <ListItem disablePadding>
+                                        <ListItemButton>
+                                            <ListItemText primary={item["value_columns"][0]["name_"+row+"_org_full_name_value"]} />
+                                        </ListItemButton>
+                                    </ListItem>
+                                        <ListItem disablePadding>
+                                            <ListItemButton>
+                                                <ListItemText primary={item["value_columns"][0]["name_"+row+"_org_ogrn_value"]} />
+                                            </ListItemButton>
+                                        </ListItem>
+                                        <ListItem disablePadding>
+                                            <ListItemButton>
+                                                <ListItemText primary={item["value_columns"][0]["name_"+row+"_org_inn_value"]} />
+                                            </ListItemButton>
+                                        </ListItem>
+                                        <ListItem disablePadding>
+                                            <ListItemButton>
+                                                <ListItemText primary={item["value_columns"][0]["name_"+row+"_org_kpp_value"]} />
+                                            </ListItemButton>
+                                        </ListItem>
+                                        <ListItem disablePadding>
+                                            <ListItemButton>
+                                                <ListItemText primary={item["value_columns"][0]["name_"+row+"_region_value"]} />
+                                            </ListItemButton>
+                                        </ListItem>
+                                        <ListItem disablePadding>
+                                            <ListItemButton>
+                                                <ListItemText primary={item["value_columns"][0]["name_"+row+"_city_value"]} />
+                                            </ListItemButton>
+                                        </ListItem>
+                                        <ListItem disablePadding>
+                                            <ListItemButton>
+                                                <ListItemText primary={item["value_columns"][0]["name_"+row+"_street_value"]} />
+                                            </ListItemButton>
+                                        </ListItem>
+                                        <ListItem disablePadding>
+                                            <ListItemButton>
+                                                <ListItemText primary={item["value_columns"][0]["name_"+row+"_building_value"]} />
+                                            </ListItemButton>
+                                        </ListItem>
+                                        <ListItem disablePadding>
+                                            <ListItemButton>
+                                                <ListItemText primary={item["value_columns"][0]["name_"+row+"_room_value"]} />
+                                            </ListItemButton>
+                                        </ListItem>
+                                        <ListItem disablePadding>
+                                            <ListItemButton>
+                                                <ListItemText primary={item["value_columns"][0]["name_"+row+"_id_transaction"]} />
+                                            </ListItemButton>
+                                        </ListItem>
+                                    </>           
+                            ))}
+                        </List>
+                        ))}
+                </>
+            )
+        }
+
+        else if (data === 1) {
+            return (
+                <>
+                    <>Выбирите, пожалуйст, способ с помощью, 
+                    котрого будет происходить редактирование 
+                    (автоматическое из файл или ручное)</>
+                    <List
+                          sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}
+                          aria-label="contacts"
+                    >
+                        <ListItem disablePadding>
+                            <ListItemButton>
+                                <ListItemText primary="Автоматическое" />
+                            </ListItemButton>
+                            <ListItemButton>
+                                <ListItemText primary="Выбор из файла" />
+                            </ListItemButton>
+                        </ListItem>
+                    </List>
+                </>
+            )
+        }
+
+        else if (data === 2) {
+            return (<>Не забудьте сохранить при нажатии на зелённую галочку</>)
+        }
+
+        else {
+            return (<>Напишите в поддержку</>)
+        }
     }
 
     const Row: React.FC<RowProps> = ({ item }) => {
@@ -1703,6 +1835,57 @@ export const ListFiles = () => {
             setCoppy(true)
         }
     }
+
+    const [activeStep, setActiveStep] = React.useState(0);
+  const [completed, setCompleted] = React.useState<{
+    [k: number]: boolean;
+  }>({});
+
+  const totalSteps = () => {
+    return steps.length;
+  };
+
+  const completedSteps = () => {
+    return Object.keys(completed).length;
+  };
+
+  const isLastStep = () => {
+    return activeStep === totalSteps() - 1;
+  };
+
+  const allStepsCompleted = () => {
+    return completedSteps() === totalSteps();
+  };
+
+  const handleNext = () => {
+    const newActiveStep =
+      isLastStep() && !allStepsCompleted()
+        ? // It's the last step, but not all steps have been completed,
+          // find the first step that has been completed
+          steps.findIndex((step, i) => !(i in completed))
+        : activeStep + 1;
+    setActiveStep(newActiveStep);
+  };
+
+  const handleBack = () => {
+    setActiveStep((prevActiveStep) => prevActiveStep - 1);
+  };
+
+  const handleStep = (step: number) => () => {
+    setActiveStep(step);
+  };
+
+  const handleComplete = () => {
+    const newCompleted = completed;
+    newCompleted[activeStep] = true;
+    setCompleted(newCompleted);
+    handleNext();
+  };
+
+  const handleReset = () => {
+    setActiveStep(0);
+    setCompleted({});
+  };
     
     return (
         <>
@@ -2121,21 +2304,20 @@ export const ListFiles = () => {
                                     overflow: 'auto',
                                     paddingTop: '6%'
                                 }}>
-                                
                                     <ToggleButtonGroup
-                                    value={alignment}
-                                    exclusive
-                                    onChange={handleAlignment}
-                                    aria-label="text alignment"
-                                    >
-                                        <ToggleButton value="left" aria-label="left aligned">
-                                            <TableChart onClick={() => {setVisiualType(true)}} />
-                                        </ToggleButton>
-                                        <ToggleButton value="center" aria-label="centered">
-                                            <Code onClick={() => {setVisiualType(false)}} />
-                                        </ToggleButton>
-                                    </ToggleButtonGroup>
-
+                                            value={alignment}
+                                            exclusive
+                                            onChange={handleAlignment}
+                                            aria-label="text alignment"
+                                            >
+                                                <ToggleButton value="left" aria-label="left aligned">
+                                                    <TableChart onClick={() => {setVisiualType(true)}} />
+                                                </ToggleButton>
+                                                <ToggleButton value="center" aria-label="centered">
+                                                    <Code onClick={() => {setVisiualType(false)}} />
+                                                </ToggleButton>
+                                            </ToggleButtonGroup> 
+                                
                                     <Typography id="modal-modal-description" sx={{ mt: 2, width: '100%', owerflow: 'auto' }}>
                                         {
                                             isLoading?
@@ -2233,7 +2415,73 @@ export const ListFiles = () => {
                                                             visiulCard && click_card_data.length === 0 ? <></> : <>
                                                                     {
                                                                         visiualType && click_card_data !== null ? <>
-                                                                            {click_card_data.map((item:any) => (
+                                                                            {OpenChooseString ? <Box sx={{ width: '100%' }}>
+                                                                                <Button variant="contained" onClick={() => {watch_guide()}}>Информация</Button>
+                                                                                {
+                                                                                   watchGuide ? <>
+                                                                                       <Stepper nonLinear activeStep={activeStep}>
+                                                                                    {steps.map((label, index) => (
+                                                                                      <Step key={label} completed={completed[index]}>
+                                                                                        <StepButton color="inherit" onClick={handleStep(index)}>
+                                                                                          {label}
+                                                                                        </StepButton>
+                                                                                      </Step>
+                                                                                    ))}
+                                                                                </Stepper>
+                                                                                <div>
+                                                                                    {allStepsCompleted() ? (
+                                                                                        <React.Fragment>
+                                                                                            <Typography sx={{ mt: 2, mb: 1 }}>
+                                                                                                Все шаги закончены
+                                                                                            </Typography>
+                                                                                            <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
+                                                                                              <Box sx={{ flex: '1 1 auto' }} />
+                                                                                              <Button onClick={handleReset}>Начать с начала</Button>
+                                                                                            </Box>
+                                                                                        </React.Fragment>
+                                                                                    ) : (
+                                                                                    <React.Fragment>
+                                                                                        <Typography sx={{ mt: 2, mb: 1, py: 1 }}>
+                                                                                            <>Шаг {activeStep + 1}</>
+                                                                                        </Typography>
+                                                                                        <Typography sx={{ mt: 2, mb: 1, py: 1 }}>
+                                                                                            <DescriptionEditXMLTable data={activeStep}/>
+                                                                                        </Typography>
+                                                                                        <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
+                                                                                          <Button
+                                                                                            color="inherit"
+                                                                                            disabled={activeStep === 0}
+                                                                                            onClick={handleBack}
+                                                                                            sx={{ mr: 1 }}
+                                                                                          >
+                                                                                            Назад
+                                                                                          </Button>
+                                                                                          <Box sx={{ flex: '1 1 auto' }} />
+                                                                                          <Button onClick={handleNext} sx={{ mr: 1 }}>
+                                                                                            Вперёд
+                                                                                          </Button>
+                                                                                          {activeStep !== steps.length &&
+                                                                                            (completed[activeStep] ? (
+                                                                                              <Typography variant="caption" sx={{ display: 'inline-block' }}>
+                                                                                                Шаг {activeStep + 1} уже закончен
+                                                                                              </Typography>
+                                                                                            ) : (
+                                                                                              <Button onClick={handleComplete}>
+                                                                                                {completedSteps() === totalSteps() - 1
+                                                                                                  ? 'Финиш'
+                                                                                                  : 'Закончить шаг'}
+                                                                                              </Button>
+                                                                                            ))}
+                                                                                        </Box>
+                                                                                    </React.Fragment>
+                                                                                )}
+                                                                                </div>
+                                                                                   </> : <>
+                                                                                       Гайд закрыт
+                                                                                   </> 
+                                                                                }
+                                                                            </Box> : <>
+                                                                                {click_card_data.map((item:any) => (
                                                                                 <>
                                                                                     <TableContainer key={item} component={Paper} sx={{
                                                                                         marginTop: "10px",
@@ -2319,6 +2567,7 @@ export const ListFiles = () => {
                                                                             </div>
                                                                         </>
                                                                     ))}
+                                                                            </>}
                                                                         </> : <>
                                                                             <blockquote>
                                                                                 <Typography id="modal-modal-description" sx={{ mt: 2 }}>

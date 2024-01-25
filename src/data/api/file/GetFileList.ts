@@ -5,7 +5,8 @@ import { body } from "../../objects/BodyObjects"
 
 export const GetFileList = (
     setFiles: any,
-    setFoundFile: any
+    setFoundFile: any,
+    setIsLoadingElementMain: any
 ) => {
     fetch(deploy_api+port_server+`/file/list`, {
         method: 'POST',
@@ -27,6 +28,7 @@ export const GetFileList = (
                     rows.push(createData(item["id_file"], item["file_name"], item["author"], item["time_stamp"]))
                     setFoundFile(true)
                     setFiles(data)
+                    setIsLoadingElementMain(false)
                 })
             }
         })

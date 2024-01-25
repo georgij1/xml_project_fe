@@ -66,6 +66,8 @@ import MuiAccordionSummary, {
   AccordionSummaryProps,
 } from '@mui/material/AccordionSummary';
 import MuiAccordionDetails from '@mui/material/AccordionDetails';
+import CircularProgress from '@mui/material/CircularProgress';
+import Help from '@mui/icons-material/Help';
 
 export const ListFiles = () => {
     const rows = [
@@ -183,7 +185,8 @@ export const ListFiles = () => {
         );
     }
 
-    let [arr_count_tables_xml, setArr_count_tables_xml]:any = React.useState([]);
+    const [arr_count_tables_xml, setArr_count_tables_xml]:any = React.useState([]);
+    const [isLoadingXMLTables, setIsLoadingXMLTables]:any = React.useState<boolean>(true);
     
     const EnhancedTableToolbar = (props: Readonly<EnhancedTableToolbarProps>) => {
         const { numSelected } = props;
@@ -241,6 +244,7 @@ export const ListFiles = () => {
                                 numTables.push(i)
                             }
                             setArr_count_tables_xml(numTables)
+                            setIsLoadingXMLTables(false)
                         })
                         .catch((error) => console.log(error))
                 })
@@ -493,8 +497,10 @@ export const ListFiles = () => {
 
     const [foundFile, setFoundFile] = useState<boolean>(false)
 
+    const [isLoadingElementMain, setIsLoadingElementMain] = React.useState<boolean>(true);
+
     useEffect(() => {
-        GetFileList(setFiles, setFoundFile)
+        GetFileList(setFiles, setFoundFile, setIsLoadingElementMain)
     }, [])
 
     const [order, setOrder] = React.useState<Order>('asc');
@@ -616,6 +622,8 @@ export const ListFiles = () => {
     const [visiualType, setVisiualType] = React.useState(true);
     const [visiulCard, setVisiualCard] = React.useState(true);
     const [click_card_data, setClickCardData] = React.useState([]);
+    const [countPlus, setCountPlus] = React.useState(0)
+    const [arrPlusCellTable, setArrPlusCellTable] = React.useState([0])
 
     const handleAlignment = (
         event: React.MouseEvent<HTMLElement>,
@@ -629,6 +637,9 @@ export const ListFiles = () => {
     let [arr_count_columns_xml, setArr_count_columns_xml]:any = React.useState([]);
     let [arr_count_head_xml, setArr_count_head_xml]:any = React.useState([]);
     let numValues:any[] = []
+    let arr_count_cell:any = []
+    const addDataCellTable = () => setDataCellTable([...dataCellTable, {value: 'Данных нет'}]);
+    const [dataCellTable, setDataCellTable] = React.useState([{ value: 'Данных нет' }]);
 
 
     const click_card_table_xml = (event: React.MouseEvent<HTMLElement>) => {
@@ -652,19 +663,19 @@ export const ListFiles = () => {
                         .then((data) => {
                             setVisiualCard(false)
                             setClickCardData(data)
+                            console.log(data)
                             for (let i = 1; i <= data[0]["count_column_table"]; i++) {
                                 numHead.push(i)
                             }
                             setArr_count_head_xml(numHead)
-                            for (let i = 1; i <= data[0]["value_columns"][1]; i++) {
+                            for (let i = 0; i < data[0]["value_columns"][1]; i++) {
                                 numColumns.push(i)
                             }
                             setArr_count_columns_xml(numColumns)
-                            for (let i = 1; i <= data[0]["value_columns"][1]; i++) {
+                            for (let i = 0; i < data[0]["value_columns"][1]; i++) {
                                 numValues.push(i)
                             }
-                            console.log(numValues)
-                            // console.log(data["value_columns"][0]["name_1"])
+                            setDataCellTable([])
                         })
                         .catch((error) => console.log(error))
                 })
@@ -674,54 +685,370 @@ export const ListFiles = () => {
             }
         }
         else {
-            console.log('elemtent is null')
+            console.log('element is null')
         }
-    }
-
-    if (click_card_data === null) {
-        alert('Такой таблицы не существует')
-    }
-
-    else {
-        console.log(click_card_data)
     }
 
     type RowProps = {
         item: any;
     };
 
-    const add_cell_table_xml = () => {
-        console.log("add_cell_table_xml")
-    }
-
     const remove_data_table_xml = () => {
         console.log("remove_data_table_xml")
+        setDataCellTable([])
     }
 
     const edit_cell_table_xml = () => {
         console.log("edit_cell_table_xml")
     }
 
+    const StyleSettingsCell = {
+        "display": "flex",
+        "gap": "10px"
+    }
+
     const Settings_cell = () => {
         return (
-            <>
-                <TableCell>
-                    <Fab size="medium" color="info" aria-label="edit" onClick={edit_cell_table_xml}>
-                        <Edit />
-                    </Fab>
-                </TableCell>
-                <TableCell>
-                    <Fab size="medium" color="info" aria-label="add" onClick={add_cell_table_xml}>
+            <Box style={StyleSettingsCell}>
+                <Tooltip title="Добавить">
+                    <Fab sx={{
+                        marginTop: "10px",
+                        borderRadius: '10px',
+                        gap: '5px'
+                    }} size="medium" color="info" aria-label="add" onClick={addDataCellTable}>
                         <Add />
-                    </Fab>
-                </TableCell>
-                <TableCell>
-                    <Fab size="medium" color="info" aria-label="add" onClick={remove_data_table_xml}>
+                    </Fab>    
+                </Tooltip>
+                <Tooltip title="Изменить">
+                    <Fab sx={{
+                        marginTop: "10px",
+                        borderRadius: '10px',
+                        gap: '5px'
+                    }} size="medium" color="info" aria-label="edit" onClick={edit_cell_table_xml}>
+                        <Edit />
+                    </Fab>    
+                </Tooltip>
+                <Tooltip title="Удалить">
+                    <Fab sx={{
+                        marginTop: "10px",
+                        borderRadius: '10px',
+                        gap: '5px'
+                    }} size="medium" color="info" aria-label="add" onClick={remove_data_table_xml}>
                         <Delete />
                     </Fab>
-                </TableCell>
-            </>
+                </Tooltip>
+            </Box>
         )
+    }
+
+    const Parent = (props:any) => {
+        console.log(props)
+        console.log(dataCellTable)
+
+
+        return (
+            <>
+                <Child data={props} />
+            </>
+        );
+    }
+
+    const Child = (props:any) => {
+        const { data } = props;
+
+        if (data["data"] === "Approver") {
+            return (
+                <>
+                    {dataCellTable.map((item:any) => (
+                        <TableRow key={item.name}>
+                            <TableCell></TableCell>
+                            <TableCell></TableCell>
+                            <TableCell></TableCell>
+                            <TableCell></TableCell>
+                            <TableCell></TableCell>
+                        </TableRow>
+                    ))}
+                </>
+            );
+        }
+
+        else if (data["data"] === "ExpertOrganization") {
+            return (
+                <>
+                    {dataCellTable.map((item:any) => (
+                        <TableRow key={item.name}>
+                            <TableCell></TableCell>
+                            <TableCell></TableCell>
+                            <TableCell></TableCell>
+                            <TableCell></TableCell>
+                            <TableCell></TableCell>
+                        </TableRow>
+                    ))}
+                </>
+            );
+        }
+
+        else if (data["data"] === "Documents") {
+            return (
+                <>
+                    {dataCellTable.map((item:any) => (
+                        <TableRow key={item.name}>
+                            <TableCell></TableCell>
+                            <TableCell></TableCell>
+                            <TableCell></TableCell>
+                            <TableCell></TableCell>
+                            <TableCell></TableCell>
+                            <TableCell></TableCell>
+                            <TableCell></TableCell>
+                            <TableCell></TableCell>
+                            <TableCell></TableCell>
+                            <TableCell></TableCell>
+                            <TableCell></TableCell>
+                            <TableCell></TableCell>
+                            <TableCell></TableCell>
+                            <TableCell></TableCell>
+                        </TableRow>
+                    ))}
+                </>
+            );
+        }
+
+        else if (data["data"] === "PreviousConclusions") {
+            return (
+                <>
+                    {dataCellTable.map((item:any) => (
+                        <TableRow key={item.name}>
+                            <TableCell></TableCell>
+                            <TableCell></TableCell>
+                            <TableCell></TableCell>
+                            <TableCell></TableCell>
+                            <TableCell></TableCell>
+                            <TableCell></TableCell>
+                            <TableCell></TableCell>
+                            <TableCell></TableCell>
+                        </TableRow>
+                    ))}
+                </>
+            );
+        }
+
+        else if (data["data"] === "PreviousSimpleConclusions") {
+            return (
+                <>
+                    {dataCellTable.map((item:any) => (
+                        <TableRow key={item.name}>
+                            <TableCell></TableCell>
+                            <TableCell></TableCell>
+                            <TableCell></TableCell>
+                            <TableCell></TableCell>
+                            <TableCell></TableCell>
+                            <TableCell></TableCell>
+                            <TableCell></TableCell>
+                            <TableCell></TableCell>
+                        </TableRow>
+                    ))}
+                </>
+            );
+        }
+
+        else if (data["data"] === "Object") {
+            return (
+                <>
+                    {dataCellTable.map((item:any) => (
+                        <TableRow key={item.name}>
+                            <TableCell></TableCell>
+                            <TableCell></TableCell>
+                            <TableCell></TableCell>
+                            <TableCell></TableCell>
+                            <TableCell></TableCell>
+                            <TableCell></TableCell>
+                            <TableCell></TableCell>
+                            <TableCell></TableCell>
+                        </TableRow>
+                    ))}
+                </>
+            );
+        }
+
+        else if (data["data"] === "Declarant") {
+            return (
+                <>
+                    {dataCellTable.map((item:any) => (
+                        <TableRow key={item.name}>
+                            <TableCell></TableCell>
+                            <TableCell></TableCell>
+                            <TableCell></TableCell>
+                            <TableCell></TableCell>
+                            <TableCell></TableCell>
+                            <TableCell></TableCell>
+                            <TableCell></TableCell>
+                            <TableCell></TableCell>
+                            <TableCell></TableCell>
+                            <TableCell></TableCell>
+                            <TableCell></TableCell>
+                        </TableRow>
+                    ))}
+                </>
+            );
+        }
+
+        else if (data["data"] === "ProjectDocumentsDeveloper") {
+            return (
+                <>
+                    {dataCellTable.map((item:any) => (
+                        <TableRow key={item.name}>
+                            <TableCell></TableCell>
+                            <TableCell></TableCell>
+                            <TableCell></TableCell>
+                            <TableCell></TableCell>
+                            <TableCell></TableCell>
+                            <TableCell></TableCell>
+                            <TableCell></TableCell>
+                            <TableCell></TableCell>
+                            <TableCell></TableCell>
+                            <TableCell></TableCell>
+                            <TableCell></TableCell>
+                        </TableRow>
+                    ))}
+                </>
+            );
+        }
+
+        else if (data["data"] === "Finance") {
+            return (
+                <>
+                    {dataCellTable.map((item:any) => (
+                        <TableRow key={item.name}>
+                            <TableCell></TableCell>
+                            <TableCell></TableCell>
+                            <TableCell></TableCell>
+                        </TableRow>
+                    ))}
+                </>
+            );
+        }
+
+        else if (data["data"] === "ClimateConditions") {
+            return (
+                <>
+                    {dataCellTable.map((item:any) => (
+                        <TableRow key={item.name}>
+                            <TableCell></TableCell>
+                            <TableCell></TableCell>
+                            <TableCell></TableCell>
+                            <TableCell></TableCell>
+                            <TableCell></TableCell>
+                            <TableCell></TableCell>
+                        </TableRow>
+                    ))}
+                </>
+            );
+        }
+
+        else if (data["data"] === "ClimateConditionsNote") {
+            return (
+                <>
+                    {dataCellTable.map((item:any) => (
+                        <TableRow key={item.name}>
+                            <TableCell></TableCell>
+                            <TableCell></TableCell>
+                            <TableCell></TableCell>
+                            <TableCell></TableCell>
+                            <TableCell></TableCell>
+                            <TableCell></TableCell>
+                        </TableRow>
+                    ))}
+                </>
+            );
+        }
+
+        else if (data["data"] === "CadastralNumber") {
+            return (
+                <>
+                    {dataCellTable.map((item:any) => (
+                        <TableRow key={item.name}>
+                            <TableCell></TableCell>
+                            <TableCell></TableCell>
+                            <TableCell></TableCell>
+                            <TableCell></TableCell>
+                            <TableCell></TableCell>
+                            <TableCell></TableCell>
+                        </TableRow>
+                    ))}
+                </>
+            );
+        }
+
+        else if (data["data"] === "ExpertProjectDocuments") {
+            return (
+                <>
+                    {dataCellTable.map((item:any) => (
+                        <TableRow key={item.name}>
+                            <TableCell></TableCell>
+                            <TableCell></TableCell>
+                        </TableRow>
+                    ))}
+                </>
+            );
+        }
+
+        else if (data["data"] === "Experts") {
+            return (
+                <>
+                    {dataCellTable.map((item:any) => (
+                        <TableRow key={item.name}>
+                            <TableCell></TableCell>
+                            <TableCell></TableCell>
+                            <TableCell></TableCell>
+                            <TableCell></TableCell>
+                            <TableCell></TableCell>
+                            <TableCell></TableCell>
+                            <TableCell></TableCell>
+                            <TableCell></TableCell>
+                            <TableCell></TableCell>
+                        </TableRow>
+                    ))}
+                </>
+            );
+        }
+
+        else if (data["data"] === "Designer") {
+            return (
+                <>
+                    {dataCellTable.map((item:any) => (
+                        <TableRow key={item.name}>
+                            <TableCell></TableCell>
+                            <TableCell></TableCell>
+                            <TableCell></TableCell>
+                            <TableCell></TableCell>
+                            <TableCell></TableCell>
+                            <TableCell></TableCell>
+                            <TableCell></TableCell>
+                            <TableCell></TableCell>
+                            <TableCell></TableCell>
+                        </TableRow>
+                    ))}
+                </>
+            );
+        }
+
+        else if (data["data"] === "Summary") {
+            return (
+                <>
+                    {dataCellTable.map((item:any) => (
+                        <TableRow key={item.name}>
+                            <TableCell></TableCell>
+                            <TableCell></TableCell>
+                            <TableCell></TableCell>
+                            <TableCell></TableCell>
+                            <TableCell></TableCell>
+                        </TableRow>
+                    ))}
+                </>
+            );
+        }
+
+        else return(<>Произошла ошибка</>);
     }
 
     const Row: React.FC<RowProps> = ({ item }) => {
@@ -729,7 +1056,7 @@ export const ListFiles = () => {
             return (
                 <React.Fragment>
                     {arr_count_columns_xml.map((row:any) => (
-                        <TableRow key={row} sx={{ '& > *': { borderBottom: 'unset' }, paddingTop: '10px' }}>
+                        <TableRow key={row} className="table_row" sx={{ '& > *': { borderBottom: 'unset' }, paddingTop: '10px' }}>
                             <TableCell>
                                 {item["value_columns"][0]["name_"+row+"_org_full_name_value"]}
                             </TableCell>
@@ -757,7 +1084,9 @@ export const ListFiles = () => {
                             <TableCell>
                                 {item["value_columns"][0]["name_"+row+"_room_value"]}
                             </TableCell>
-                            <Settings_cell/>
+                            <TableCell>
+                                {item["value_columns"][0]["name_"+row+"_id_transaction"]}
+                            </TableCell>
                         </TableRow>
                     ))}
                 </React.Fragment>
@@ -782,19 +1111,7 @@ export const ListFiles = () => {
                                 {item["value_columns"][0]["name_"+row+"_position_value"]}
                             </TableCell>
                             <TableCell>
-                                <Fab size="medium" color="info" aria-label="edit" onClick={edit_cell_table_xml}>
-                                    <Edit />
-                                </Fab>
-                            </TableCell>
-                            <TableCell>
-                                <Fab size="medium" color="info" aria-label="add" onClick={add_cell_table_xml}>
-                                    <Add />
-                                </Fab>
-                            </TableCell>
-                            <TableCell>
-                                <Fab size="medium" color="info" aria-label="add" onClick={remove_data_table_xml}>
-                                    <Delete />
-                                </Fab>
+                                {item["value_columns"][0]["name_"+row+"_id_transaction"]}
                             </TableCell>
                         </TableRow>
                     ))}
@@ -835,19 +1152,7 @@ export const ListFiles = () => {
                                 {item["value_columns"][0]["name_"+row+"_room_value"]}
                             </TableCell>
                             <TableCell>
-                                <Fab size="medium" color="info" aria-label="edit" onClick={edit_cell_table_xml}>
-                                    <Edit />
-                                </Fab>
-                            </TableCell>
-                            <TableCell>
-                                <Fab size="medium" color="info" aria-label="add" onClick={add_cell_table_xml}>
-                                    <Add />
-                                </Fab>
-                            </TableCell>
-                            <TableCell>
-                                <Fab size="medium" color="info" aria-label="add" onClick={remove_data_table_xml}>
-                                    <Delete />
-                                </Fab>
+                                {item["value_columns"][0]["name_"+row+"_id_transaction"]}
                             </TableCell>
                         </TableRow>
                       ))}
@@ -900,19 +1205,7 @@ export const ListFiles = () => {
                                 {item["value_columns"][0]["name_"+row+"_file_checksum_1_value"]}
                             </TableCell>
                             <TableCell>
-                                <Fab size="medium" color="info" aria-label="edit" onClick={edit_cell_table_xml}>
-                                    <Edit />
-                                </Fab>
-                            </TableCell>
-                            <TableCell>
-                                <Fab size="medium" color="info" aria-label="add" onClick={add_cell_table_xml}>
-                                    <Add />
-                                </Fab>
-                            </TableCell>
-                            <TableCell>
-                                <Fab size="medium" color="info" aria-label="add" onClick={remove_data_table_xml}>
-                                    <Delete />
-                                </Fab>
+                                {item["value_columns"][0]["name_"+row+"_id_transaction"]}
                             </TableCell>
                         </TableRow>
                     ))}
@@ -948,19 +1241,7 @@ export const ListFiles = () => {
                                 {item["value_columns"][0]["name_"+row+"_result_value"]}
                             </TableCell>
                             <TableCell>
-                                <Fab size="medium" color="info" aria-label="edit" onClick={edit_cell_table_xml}>
-                                    <Edit />
-                                </Fab>
-                            </TableCell>
-                            <TableCell>
-                                <Fab size="medium" color="info" aria-label="add" onClick={add_cell_table_xml}>
-                                    <Add />
-                                </Fab>
-                            </TableCell>
-                            <TableCell>
-                                <Fab size="medium" color="info" aria-label="add" onClick={remove_data_table_xml}>
-                                    <Delete />
-                                </Fab>
+                                {item["value_columns"][0]["name_"+row+"_id_transaction"]}
                             </TableCell>
                         </TableRow>
                     ))}
@@ -986,19 +1267,7 @@ export const ListFiles = () => {
                                 {item["value_columns"][0]["name_"+row+"_result_value"]}
                             </TableCell>
                             <TableCell>
-                                <Fab size="medium" color="info" aria-label="edit" onClick={edit_cell_table_xml}>
-                                    <Edit />
-                                </Fab>
-                            </TableCell>
-                            <TableCell>
-                                <Fab size="medium" color="info" aria-label="add" onClick={add_cell_table_xml}>
-                                    <Add />
-                                </Fab>
-                            </TableCell>
-                            <TableCell>
-                                <Fab size="medium" color="info" aria-label="add" onClick={remove_data_table_xml}>
-                                    <Delete />
-                                </Fab>
+                                {item["value_columns"][0]["name_"+row+"_id_transaction"]}
                             </TableCell>
                         </TableRow>
                     ))}
@@ -1042,19 +1311,7 @@ export const ListFiles = () => {
                                 {item["value_columns"][0]["name_"+row+"_tei_value_value"]}
                             </TableCell>
                             <TableCell>
-                                <Fab size="medium" color="info" aria-label="edit" onClick={edit_cell_table_xml}>
-                                    <Edit />
-                                </Fab>
-                            </TableCell>
-                            <TableCell>
-                                <Fab size="medium" color="info" aria-label="add" onClick={add_cell_table_xml}>
-                                    <Add />
-                                </Fab>
-                            </TableCell>
-                            <TableCell>
-                                <Fab size="medium" color="info" aria-label="add" onClick={remove_data_table_xml}>
-                                    <Delete />
-                                </Fab>
+                                {item["value_columns"][0]["name_"+row+"_id_transaction"]}
                             </TableCell>
                         </TableRow>
                     ))}
@@ -1099,19 +1356,7 @@ export const ListFiles = () => {
                                 {item["value_columns"][0]["name_"+row+"_room_value"]}
                             </TableCell>
                             <TableCell>
-                                <Fab size="medium" color="info" aria-label="edit" onClick={edit_cell_table_xml}>
-                                    <Edit />
-                                </Fab>
-                            </TableCell>
-                            <TableCell>
-                                <Fab size="medium" color="info" aria-label="add" onClick={add_cell_table_xml}>
-                                    <Add />
-                                </Fab>
-                            </TableCell>
-                            <TableCell>
-                                <Fab size="medium" color="info" aria-label="add" onClick={remove_data_table_xml}>
-                                    <Delete />
-                                </Fab>
+                                {item["value_columns"][0]["name_"+row+"_id_transaction"]}
                             </TableCell>
                         </TableRow>
                     ))}
@@ -1155,19 +1400,7 @@ export const ListFiles = () => {
                                 {item["value_columns"][0]["name_"+row+"_room_value"]}
                             </TableCell>
                             <TableCell>
-                                <Fab size="medium" color="info" aria-label="edit" onClick={edit_cell_table_xml}>
-                                    <Edit />
-                                </Fab>
-                            </TableCell>
-                            <TableCell>
-                                <Fab size="medium" color="info" aria-label="add" onClick={add_cell_table_xml}>
-                                    <Add />
-                                </Fab>
-                            </TableCell>
-                            <TableCell>
-                                <Fab size="medium" color="info" aria-label="add" onClick={remove_data_table_xml}>
-                                    <Delete />
-                                </Fab>
+                                {item["value_columns"][0]["name_"+row+"_id_transaction"]}
                             </TableCell>
                         </TableRow>
                     ))}
@@ -1187,19 +1420,7 @@ export const ListFiles = () => {
                                 {item["value_columns"][0]["name_"+row+"_finance_size"]}
                             </TableCell>
                             <TableCell>
-                                <Fab size="medium" color="info" aria-label="edit" onClick={edit_cell_table_xml}>
-                                    <Edit />
-                                </Fab>
-                            </TableCell>
-                            <TableCell>
-                                <Fab size="medium" color="info" aria-label="add" onClick={add_cell_table_xml}>
-                                    <Add />
-                                </Fab>
-                            </TableCell>
-                            <TableCell>
-                                <Fab size="medium" color="info" aria-label="add" onClick={remove_data_table_xml}>
-                                    <Delete />
-                                </Fab>
+                                {item["value_columns"][0]["name_"+row+"_id_transaction"]}
                             </TableCell>
                         </TableRow>
                       ))}
@@ -1228,19 +1449,7 @@ export const ListFiles = () => {
                                 {item["value_columns"][0]["name_"+row+"_wind_district_value"]}
                             </TableCell>
                             <TableCell>
-                                <Fab size="medium" color="info" aria-label="edit" onClick={edit_cell_table_xml}>
-                                    <Edit />
-                                </Fab>
-                            </TableCell>
-                            <TableCell>
-                                <Fab size="medium" color="info" aria-label="add" onClick={add_cell_table_xml}>
-                                    <Add />
-                                </Fab>
-                            </TableCell>
-                            <TableCell>
-                                <Fab size="medium" color="info" aria-label="add" onClick={remove_data_table_xml}>
-                                    <Delete />
-                                </Fab>
+                                {item["value_columns"][0]["name_"+row+"_id_transaction"]}
                             </TableCell>
                         </TableRow>
                       ))}
@@ -1257,19 +1466,7 @@ export const ListFiles = () => {
                                 {item["value_columns"][0]["name_"+row+"_climate_conditions_note_value"]}
                             </TableCell>
                             <TableCell>
-                                <Fab size="medium" color="info" aria-label="edit" onClick={edit_cell_table_xml}>
-                                    <Edit />
-                                </Fab>
-                            </TableCell>
-                            <TableCell>
-                                <Fab size="medium" color="info" aria-label="add" onClick={add_cell_table_xml}>
-                                    <Add />
-                                </Fab>
-                            </TableCell>
-                            <TableCell>
-                                <Fab size="medium" color="info" aria-label="add" onClick={remove_data_table_xml}>
-                                    <Delete />
-                                </Fab>
+                                {item["value_columns"][0]["name_"+row+"_id_transaction"]}
                             </TableCell>
                         </TableRow>
                     ))}
@@ -1286,19 +1483,7 @@ export const ListFiles = () => {
                                 {item["value_columns"][0]["name_"+row+"_cadastral_number_value"]}
                             </TableCell>
                             <TableCell>
-                                <Fab size="medium" color="info" aria-label="edit" onClick={edit_cell_table_xml}>
-                                    <Edit />
-                                </Fab>
-                            </TableCell>
-                            <TableCell>
-                                <Fab size="medium" color="info" aria-label="add" onClick={add_cell_table_xml}>
-                                    <Add />
-                                </Fab>
-                            </TableCell>
-                            <TableCell>
-                                <Fab size="medium" color="info" aria-label="add" onClick={remove_data_table_xml}>
-                                    <Delete />
-                                </Fab>
+                                {item["value_columns"][0]["name_"+row+"_id_transaction"]}
                             </TableCell>
                         </TableRow>
                     ))}
@@ -1315,19 +1500,7 @@ export const ListFiles = () => {
                                 {item["value_columns"][0]["name_"+row+"_project_documents_review"]}
                             </TableCell>
                             <TableCell>
-                                <Fab size="medium" color="info" aria-label="edit" onClick={edit_cell_table_xml}>
-                                    <Edit />
-                                </Fab>
-                            </TableCell>
-                            <TableCell>
-                                <Fab size="medium" color="info" aria-label="add" onClick={add_cell_table_xml}>
-                                    <Add />
-                                </Fab>
-                            </TableCell>
-                            <TableCell>
-                                <Fab size="medium" color="info" aria-label="add" onClick={remove_data_table_xml}>
-                                    <Delete />
-                                </Fab>
+                                {item["value_columns"][0]["name_"+row+"_id_transaction"]}
                             </TableCell>
                         </TableRow>
                     ))}
@@ -1365,19 +1538,7 @@ export const ListFiles = () => {
                                 {item["value_columns"][0]["name_"+row+"_expert_certificate_end_date_value"]}
                             </TableCell>
                             <TableCell>
-                                <Fab size="medium" color="info" aria-label="edit" onClick={edit_cell_table_xml}>
-                                    <Edit />
-                                </Fab>
-                            </TableCell>
-                            <TableCell>
-                                <Fab size="medium" color="info" aria-label="add" onClick={add_cell_table_xml}>
-                                    <Add />
-                                </Fab>
-                            </TableCell>
-                            <TableCell>
-                                <Fab size="medium" color="info" aria-label="add" onClick={remove_data_table_xml}>
-                                    <Delete />
-                                </Fab>
+                                {item["value_columns"][0]["name_"+row+"_id_transaction"]}
                             </TableCell>
                         </TableRow>
                     ))}
@@ -1430,19 +1591,7 @@ export const ListFiles = () => {
                                 {item["value_columns"][0]["name_"+row+"_street_value"]}
                             </TableCell>
                             <TableCell>
-                                <Fab size="medium" color="info" aria-label="edit" onClick={edit_cell_table_xml}>
-                                    <Edit />
-                                </Fab>
-                            </TableCell>
-                            <TableCell>
-                                <Fab size="medium" color="info" aria-label="add" onClick={add_cell_table_xml}>
-                                    <Add />
-                                </Fab>
-                            </TableCell>
-                            <TableCell>
-                                <Fab size="medium" color="info" aria-label="add" onClick={remove_data_table_xml}>
-                                    <Delete />
-                                </Fab>
+                                {item["value_columns"][0]["name_"+row+"_id_transaction"]}
                             </TableCell>
                         </TableRow>
                     ))}
@@ -1468,19 +1617,7 @@ export const ListFiles = () => {
                                 {item["value_columns"][0]["name_"+row+"_project_documents_summary_value"]}
                             </TableCell>
                             <TableCell>
-                                <Fab size="medium" color="info" aria-label="edit" onClick={edit_cell_table_xml}>
-                                    <Edit />
-                                </Fab>
-                            </TableCell>
-                            <TableCell>
-                                <Fab size="medium" color="info" aria-label="add" onClick={add_cell_table_xml}>
-                                    <Add />
-                                </Fab>
-                            </TableCell>
-                            <TableCell>
-                                <Fab size="medium" color="info" aria-label="add" onClick={remove_data_table_xml}>
-                                    <Delete />
-                                </Fab>
+                                {item["value_columns"][0]["name_"+row+"_id_transaction"]}
                             </TableCell>
                         </TableRow>
                     ))}
@@ -1568,69 +1705,46 @@ export const ListFiles = () => {
     }
     
     return (
-        <Box sx={{ width: '100%', boxShadow: 'none' }}>
-            <Logout/>
-            <ThemeProvider theme={theme}>
-            <CssBaseline />
-            <Paper sx={{ width: '100%', mb: 2, boxShadow: 'none' }}>
-                <EnhancedTableToolbar numSelected={selected.length} />
-                <TableContainer>
-                    <Table
-                        sx={{ minWidth: 750, boxShadow: 'none' }}
-                        aria-labelledby="tableTitle"
-                        size={'medium'}
-                    >
-                        <EnhancedTableHead
-                            numSelected={selected.length}
-                            order={order}
-                            orderBy={orderBy}
-                            onSelectAllClick={handleSelectAllClick}
-                            onRequestSort={handleRequestSort}
-                            rowCount={files.length}
-                        />
-                        {
-                            foundFile === true ?
-                            <TableBody>
-                                {visibleRows.map((row, index) => {
-                                    const labelId = `enhanced-table-checkbox-${index}`;
-                                    
-                                    return (
-                                        files.map((file) => (
-                                            <TableRow
-                                                hover
-                                                onClick={(event) => handleClick(event, parseInt(file["id_file"]))}
-                                                aria-checked={file["id_file"]}
-                                                tabIndex={-1}
-                                                key={parseInt(file["id_file"])}
-                                                selected={file["id_file"]}
-                                                sx={{ cursor: 'pointer' }}
-                                            >
-                                                <TableCell padding="checkbox">
-                                                    <Checkbox color="primary" checked={isSelected(file["id_file"])} inputProps={{'aria-labelledby': labelId}}/>
-                                                </TableCell>
-                                                <TableCell component="th" scope="row" padding="none" style={{textAlign:"start"}}>{file["file_name"]}</TableCell>
-                                                <TableCell align="right" style={{textAlign:"start"}}>{file["author"]}</TableCell>
-                                                <TableCell align="right" style={{textAlign:"start"}}>{file["time_stamp"]}</TableCell>
-                                            </TableRow>
-                                        ))
-                                    );
-                                })}
-                            </TableBody>
-                            :
-                            <TableBody sx={{ 
-                                margin: 'auto',
-                                display: 'flex',
-                                justifyContent: 'center',
-                                boxShadow: 'none',
-                            }}>
-                                {visibleRows.map((row, index) => {
-                                    const labelId = `enhanced-table-checkbox-${index}`;
-                                    return (
-                                            <>
-                                            { foundFile ? (
-                                                    
-                                                        files.map((file) => (
-                                                            <TableRow
+        <>
+            {
+                isLoadingElementMain ? <>
+                    <Box sx={{
+                    position: 'absolute',
+                    left: '50vW',
+                    top: '50vh'
+                    }}>
+                       <CircularProgress /> 
+                    </Box>
+                </> : <>
+                    <Box sx={{ width: '100%', boxShadow: 'none'}}>
+                        <Logout/>
+                        <ThemeProvider theme={theme}>
+                        <CssBaseline />
+                        <Paper sx={{ width: '100%', mb: 2, boxShadow: 'none' }}>
+                            <EnhancedTableToolbar numSelected={selected.length} />
+                            <TableContainer>
+                                <Table
+                                    sx={{ minWidth: 750, boxShadow: 'none' }}
+                                    aria-labelledby="tableTitle"
+                                    size={'medium'}
+                                >
+                                    <EnhancedTableHead
+                                        numSelected={selected.length}
+                                        order={order}
+                                        orderBy={orderBy}
+                                        onSelectAllClick={handleSelectAllClick}
+                                        onRequestSort={handleRequestSort}
+                                        rowCount={files.length}
+                                    />
+                                    {
+                                        foundFile === true ?
+                                        <TableBody>
+                                            {visibleRows.map((row, index) => {
+                                                const labelId = `enhanced-table-checkbox-${index}`;
+                                                
+                                                return (
+                                                    files.map((file) => (
+                                                        <TableRow
                                                             hover
                                                             onClick={(event) => handleClick(event, parseInt(file["id_file"]))}
                                                             aria-checked={file["id_file"]}
@@ -1638,644 +1752,718 @@ export const ListFiles = () => {
                                                             key={parseInt(file["id_file"])}
                                                             selected={file["id_file"]}
                                                             sx={{ cursor: 'pointer' }}
-                                                            >
-                                                                <TableCell padding="checkbox">
-                                                                    <Checkbox color="primary" checked={isSelected(file["id_file"])} inputProps={{'aria-labelledby': labelId}}/>
-                                                                </TableCell>
-                                                                <TableCell component="th" scope="row" padding="none" style={{textAlign:"start"}}>{file["file_name"]}</TableCell>
-                                                                <TableCell align="right" style={{textAlign:"start"}}>{file["author"]}</TableCell>
-                                                                <TableCell align="right" style={{textAlign:"start"}}>{file["time_stamp"]}</TableCell>
-                                                            </TableRow>
-                                                        ))
-                                                ) : <>
-                                                    {null}
-                                                </>
-                                            }
-                                            </>
-                                    );
-                                })}
-                                {foundFile ?
-                                    <TableRow
-                                        style={{
-                                            height: 33 * emptyRows,
-                                        }}
-                                    >
-                                        <TableCell colSpan={6} />
-                                    </TableRow>
-                                    :
-                                    <Box sx={{
-                                        display: 'flex',
-                                        justifyContent: 'center',
-                                        alignItems: 'center',
-                                        flexDirection: 'column',
-                                        gap: '30px',
-                                    }}>
-                                        <Button variant="contained" onClick={
-                                            () => {
-                                                window.open('/home/company/create/file', '_self')
-                                            }
-                                        }>Создать файл</Button>
-                                        <Button variant="contained" onClick={
-                                            () => {
-                                                window.open('/home/company/upload/file', '_self')
-                                            }
-                                        }>Загрузить файл</Button>
-                                    </Box>
-                                }
-                            </TableBody>
-                        }
-                    </Table>
-                </TableContainer>
-                {
-                    foundFile === true ?
-                        <TablePagination
-                            rowsPerPageOptions={[5, 10, 25]}
-                            component="div"
-                            count={rows.length}
-                            rowsPerPage={rowsPerPage}
-                            page={page}
-                            onPageChange={handleChangePage}
-                            onRowsPerPageChange={handleChangeRowsPerPage}
-                            labelRowsPerPage="Строк на странице:"
-                            labelDisplayedRows={({ from, to, count }) => `${from}–${to} из ${count}`}
-                        />
-                    : <>{null}</>
-                }
-            </Paper>
-            <Modal
-            open={open}
-            onClose={handleClose}
-            aria-labelledby="modal-modal-title"
-            aria-describedby="modal-modal-description">
-            <Box sx={style}>
-                <Typography id="modal-modal-description" sx={{ mt: 2, width: '100%', owerflow: 'auto' }}>
-                    {isLoading? 
-                            <Alert severity="info" variant="filled">Ворд документ открывается!</Alert>
-                        : <>
-                            <Box sx={{
-                                "display": "flex",
-                                "position": "sticky",
-                                "top": "91vh",
-                                "justify-content": "space-between",
-                            }}>
-                                <SpeedDial
-                                    ariaLabel="SpeedDial openIcon example"
-                                    sx={{ 
-                                        "position": "sticky",
-                                        "display": "flex",
-                                        "justify-content": "start",
-                                        "flex-direction": "inherit",
-                                        "height": 0,
-                                        "top": "94vh",
-                                    }}
-                                    icon={<SpeedDialIcon openIcon={<Edit />} />}
-                                >
-                                    {actions.map((action) => (
-                                        <SpeedDialAction
-                                            sx={{
-                                                "matgin-bottom": '55px'
-                                            }}
-                                            key={action.name}
-                                            icon={action.icon}
-                                            tooltipTitle={action.name}
-                                            onClick={() => action_click(action)}
-                                        />
-                                    ))}
-                                </SpeedDial>
-                                <>
-                                    {
-                                        coppy?
-                                            <Alert 
-                                                sx={{ 
-                                                    "position": "sticky",
-                                                    "display": "flex",
-                                                    "justify-content": "start",
-                                                    "flex-direction": "row",
-                                                    "top": "94vh",
-                                                }}
-                                                variant="filled" 
-                                                severity="success"
-                                            >
-                                                Текст скопирован
-                                            </Alert>
-                                        :<></>
-                                    }
-                                </>
-                            </Box>
-                            
-
-                            <Typography id="modal-modal-title" variant="h6" component="h2" sx={{
-                                'position': 'sticky',
-                                'background': '#FFF',
-                                'width': '102%',
-                                'top': '-10px',
-                                'display': 'flex',
-                                'justifyContent': 'space-between',
-                                "padding": "10px",
-                                "marginLeft": "-10px"
-                            }}>
-                                {contentFile[0]}
-                                <IconButton
-                                    aria-label="close"
-                                    color="inherit"
-                                    size="medium"
-                                    onClick={() => {
-                                        handleClose();
-                                    }}
-                                >
-                                    <Close fontSize="inherit" />
-                                </IconButton>
-                            </Typography>
-
-                            <blockquote>
-                                {contentFile.length > 0 ? <>
-                                    {contentFile.map((item: any, index: number) => (
-                                        <Typography className="textWord" key={item.id} id="modal-modal-description textWord" sx={{ mt: 2 }}>                            
-                                            {item}
-                                        </Typography>
-                                    ))}
-                                </> : <></>}
-                            </blockquote>
-                        </>
-                    }
-                </Typography>
-            </Box>
-            </Modal>
-
-            <Modal
-            open={openPDFFile}
-            onClose={handleClosePDF}
-            aria-labelledby="modal-modal-title"
-            aria-describedby="modal-modal-description">
-            <Box sx={style}>
-                <Typography id="modal-modal-description" sx={{ mt: 2, width: '100%', owerflow: 'auto' }}>
-                    {isLoading ? <Alert severity="info" variant="filled">PDF документ открывается!</Alert> : <>
-                            <Box sx={{
-                                "display": "flex",
-                                "position": "sticky",
-                                "top": "91vh",
-                                "justify-content": "space-between",
-                            }}>
-                                <SpeedDial
-                                    ariaLabel="SpeedDial openIcon example"
-                                    sx={{ 
-                                        "position": "sticky",
-                                        "display": "flex",
-                                        "justify-content": "start",
-                                        "flex-direction": "inherit",
-                                        "height": 0,
-                                        "top": "94vh",
-                                    }}
-                                    icon={<SpeedDialIcon openIcon={<Edit />} />}
-                                >
-                                    {actions.map((action) => (
-                                        <SpeedDialAction
-                                            sx={{
-                                                "matgin-bottom": '55px'
-                                            }}
-                                            key={action.name}
-                                            icon={action.icon}
-                                            tooltipTitle={action.name}
-                                            onClick={() => {action_click(action)}}
-                                        />
-                                    ))}
-                                </SpeedDial>
-                                <>
-                                    {
-                                        coppy? 
-                                            <Alert 
-                                                sx={{ 
-                                                    "position": "sticky",
-                                                    "display": "flex",
-                                                    "justify-content": "start",
-                                                    "flex-direction": "row",
-                                                    "top": "94vh",
-                                                }}
-                                                action={
-                                                    <IconButton
-                                                        aria-label="close"
-                                                        color="inherit"
-                                                        size="small"
-                                                        onClick={() => {
-                                                            setCoppy(false);
-                                                        }}
-                                                    >
-                                                        <Close fontSize="inherit" />
-                                                    </IconButton>
-                                                }
-                                                variant="filled" 
-                                                severity="success"
-                                            >
-                                                Текст скопирован
-                                            </Alert>
-                                        :<></>
-                                    }
-                                </>
-                            </Box>
-                            
-
-                            <Typography id="modal-modal-title" variant="h6" component="h2" sx={{
-                                'position': 'sticky',
-                                'background': '#FFF',
-                                'width': '102%',
-                                'top': '-10px',
-                                'display': 'flex',
-                                'justifyContent': 'space-between',
-                                "padding": "10px",
-                                "marginLeft": "-10px"
-                            }}>
-                                {
-                                    contentFile.length > 0 && contentFile[0]["name_file"] ? <>
-                                        {contentFile.map((item: any) => (
-                                            <Typography key={item.id} variant="h6" component="h2" id="modal-modal-title">
-                                                {item["name_file"]}
-                                            </Typography>
-                                        ))}
-                                    </> : <></>
-                                }
-                                <IconButton
-                                    aria-label="close"
-                                    color="inherit"
-                                    size="medium"
-                                    onClick={() => {
-                                        handleClosePDF();
-                                    }}
-                                >
-                                    <Close fontSize="inherit" />
-                                </IconButton>
-                            </Typography>
-
-                            <blockquote>
-                                <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-                                    {contentFile.length > 0 ? 
-                                        <>
-                                            {contentFile.map((item: any) => (
-                                                <Typography key={item.id} id="modal-modal-description" sx={{ mt: 2 }}>
-                                                    {item["content_file"]}
-                                                </Typography>       
-                                            ))}
-                                        </> : <></>
-                                    }
-                                </Typography>
-                            </blockquote>
-                        </>
-                    }
-                </Typography>
-            </Box>
-            </Modal>
-
-            <Modal
-            open={openXMLFile}
-            onClose={handleCloseXMLFile}
-            aria-labelledby="modal-modal-title"
-            aria-describedby="modal-modal-description"
-            style={{ 
-                overflow: 'hidden', 
-                height: '100%' 
-            }}>
-                <Box>
-                    <AppBar sx={{ 
-                        position: 'relative',
-                        zIndex: "9999",
-                        paddingTop: "5px",
-                        paddingBottom: "5px",
-                    }} position="static">
-                        <Toolbar variant="dense">
-                            <IconButton
-                            edge="start"
-                            aria-label="close"
-                            color="inherit"
-                            size="medium"
-                            sx={{ mr: 2 }}
-                            onClick={() => {
-                                handleCloseXMLFile();
-                            }}
-                            >
-                                <Close fontSize="inherit" />
-                            </IconButton>
-                            <Typography variant="h6" color="inherit" component="div">
-                                {
-                                    contentFile.length > 0 ? <>
-                                        {
-                                            contentFile.map((item: any) => (
-                                                <Typography key={item.id} variant="h6" component="h2" id="modal-modal-title">
-                                                    {item["name_file"]}
-                                                </Typography>
-                                            ))
-                                        }
-                                    </>: <></>
-                                }
-                            </Typography>
-                        </Toolbar>
-                    </AppBar>
-
-                    <Box sx={style} style={{
-                        overflow: 'auto',
-                        paddingTop: '6%'
-                    }}>
-                    
-                        <ToggleButtonGroup
-                        value={alignment}
-                        exclusive
-                        onChange={handleAlignment}
-                        aria-label="text alignment"
-                        >
-                            <ToggleButton value="left" aria-label="left aligned">
-                                <TableChart onClick={() => {setVisiualType(true)}} />
-                            </ToggleButton>
-                            <ToggleButton value="center" aria-label="centered">
-                                <Code onClick={() => {setVisiualType(false)}} />
-                            </ToggleButton>
-                        </ToggleButtonGroup>
-
-                        <Typography id="modal-modal-description" sx={{ mt: 2, width: '100%', owerflow: 'auto' }}>
-                            {
-                                isLoading?
-                                    <Alert severity="info" variant="filled">XML документ открывается!</Alert>
-                                : <>
-                                    <Box position="fixed" display="none" bottom={0}>
-                                        <SpeedDial
-                                            sx={{ position: 'fixed', bottom: 16, right: 16 }}
-                                            ariaLabel="SpeedDial openIcon example"
-                                            icon={<SpeedDialIcon openIcon={<Edit />} />}
-                                        >
-                                            {actions.map((action) => (
-                                                <SpeedDialAction
-                                                    key={action.name}
-                                                    icon={action.icon}
-                                                    tooltipTitle={action.name}
-                                                    onClick={() => {
-                                                        
-                                                    }}
-                                                />
-                                            ))}
-                                        </SpeedDial>
-                                        <>
-                                            {
-                                                coppy?
-                                                    <Alert
-                                                        action={
-                                                            <IconButton
-                                                                aria-label="close"
-                                                                color="inherit"
-                                                                size="small"
-                                                                onClick={() => {
-                                                                    setCoppy(false);
-                                                                }}
-                                                            >
-                                                                <Close fontSize="inherit" />
-                                                            </IconButton>
-                                                        }
-                                                        variant="filled" 
-                                                        severity="success"
-                                                    >
-                                                        Текст скопирован
-                                                    </Alert>
-                                                :<></>
-                                            }
-                                        </>
-                                    </Box>
-
-                                    {
-                                        visiulCard ?
-                                            <Box sx={{
-                                                "display": "grid",
-                                                "grid-template-columns": "repeat(1, 1fr)",
-                                                "gap": "20px"
-                                            }}>
-                                                {
-                                                    arr_count_tables_xml.map((item_1: any) => (
-                                                        <Card key={item_1.id} onClick={(event) => {click_card_table_xml(event)}}>
-                                                            <CardActionArea>
-                                                                <CardContent>
-                                                                    {contentFile.map((item: any) => (
-                                                                        <>
-                                                                            <Typography gutterBottom variant="h5" component="div">
-                                                                            {item["tables"]["table_"+item_1]["name"]}
-                                                                            </Typography>
-                                                                            <Typography variant="body2" color="text.secondary">
-                                                                                {item["tables"]["table_"+item_1]["content"]}
-                                                                            </Typography>
-                                                                        </>
-                                                                        ))} 
-                                                                </CardContent>
-                                                            </CardActionArea>
-                                                        </Card>
+                                                        >
+                                                            <TableCell padding="checkbox">
+                                                                <Checkbox color="primary" checked={isSelected(file["id_file"])} inputProps={{'aria-labelledby': labelId}}/>
+                                                            </TableCell>
+                                                            <TableCell component="th" scope="row" padding="none" style={{textAlign:"start"}}>{file["file_name"]}</TableCell>
+                                                            <TableCell align="right" style={{textAlign:"start"}}>{file["author"]}</TableCell>
+                                                            <TableCell align="right" style={{textAlign:"start"}}>{file["time_stamp"]}</TableCell>
+                                                        </TableRow>
                                                     ))
-                                                }
-                                            </Box>
-                                        :<>
-                                            {
-                                                visiulCard && click_card_data.length === 0 ? <></> : <>
-                                                        {
-                                                            visiualType && click_card_data !== null ? <>
-                                                                {click_card_data.map((item:any) => (
-                                                            <TableContainer key={item} component={Paper} sx={{
-                                                                marginTop: "10px",
-                                                            }}>
-                                                            <Typography variant="h4" sx={{
-                                                                padding: "10px"
-                                                            }}>{item["table"]["TableName"]}</Typography>
-                                                                <Table aria-label="collapsible table">
-                                                                    <TableHead>
-                                                                        <TableRow>
-                                                                            {
-                                                                                arr_count_head_xml.map((item_1: any) => (
-                                                                                    <TableCell key={item_1}>{item["table"]["columns"]["column_"+item_1]["name"]}</TableCell>
-                                                                                ))
-                                                                            }
+                                                );
+                                            })}
+                                        </TableBody>
+                                        :
+                                        <TableBody sx={{ 
+                                            margin: 'auto',
+                                            display: 'flex',
+                                            justifyContent: 'center',
+                                            boxShadow: 'none',
+                                        }}>
+                                            {visibleRows.map((row, index) => {
+                                                const labelId = `enhanced-table-checkbox-${index}`;
+                                                return (
+                                                        <>
+                                                        { foundFile ? (
+                                                                
+                                                                    files.map((file) => (
+                                                                        <TableRow
+                                                                        hover
+                                                                        onClick={(event) => handleClick(event, parseInt(file["id_file"]))}
+                                                                        aria-checked={file["id_file"]}
+                                                                        tabIndex={-1}
+                                                                        key={parseInt(file["id_file"])}
+                                                                        selected={file["id_file"]}
+                                                                        sx={{ cursor: 'pointer' }}
+                                                                        >
+                                                                            <TableCell padding="checkbox">
+                                                                                <Checkbox color="primary" checked={isSelected(file["id_file"])} inputProps={{'aria-labelledby': labelId}}/>
+                                                                            </TableCell>
+                                                                            <TableCell component="th" scope="row" padding="none" style={{textAlign:"start"}}>{file["file_name"]}</TableCell>
+                                                                            <TableCell align="right" style={{textAlign:"start"}}>{file["author"]}</TableCell>
+                                                                            <TableCell align="right" style={{textAlign:"start"}}>{file["time_stamp"]}</TableCell>
                                                                         </TableRow>
-                                                                    </TableHead>
-                                                                    <TableBody>
-                                                                        <Row key={item.id} item={item} />
-                                                                    </TableBody>
-                                                                </Table>
-
-                                                                <div>
-                                                                    <Typography variant="h3" sx={{
-                                                                        padding: "10px"
-                                                                    }}>Помощь</Typography>
-
-                                                                    <Accordion expanded={expanded === 'panel1'} onChange={handleChange('panel1')}>
-                                                                        <AccordionSummary aria-controls="panel1d-content" id="panel1d-header">
-                                                                        <Typography>Вопросы?</Typography>
-                                                                        </AccordionSummary>
-                                                                        <AccordionDetails>
-                                                                        <Typography>
-                                                                            Хотите что-то улучшить или появились вопросы напишите нам в поддержку
-                                                                        </Typography>
-                                                                        </AccordionDetails>
-                                                                    </Accordion>
-                                                                    
-                                                                    <Accordion expanded={expanded === 'panel2'} onChange={handleChange('panel2')}>
-                                                                        <AccordionSummary aria-controls="panel1d-content" id="panel1d-header">
-                                                                        <Typography>Ваши возможности на этой странице</Typography>
-                                                                        </AccordionSummary>
-                                                                        <AccordionDetails>
-                                                                        <Typography>
-                                                                            Вы можете изменять данные в таблице.
-                                                                            Вы можете удалять данные из таблицы.
-                                                                            Вы можете добавлять данные в таблицу.
-                                                                        </Typography>
-                                                                        </AccordionDetails>
-                                                                    </Accordion>
-                                                                    
-                                                                    <Accordion expanded={expanded === 'panel3'} onChange={handleChange('panel3')}>
-                                                                        <AccordionSummary aria-controls="panel1d-content" id="panel1d-header">
-                                                                        <Typography>Что означает кнопка с двумя стрелочками?</Typography>
-                                                                        </AccordionSummary>
-                                                                        <AccordionDetails>
-                                                                        <Typography>
-                                                                            В той области вы можете просматривать код, который сейчас редактируете в виде таблицы
-                                                                        </Typography>
-                                                                        </AccordionDetails>
-                                                                    </Accordion>
-                                                                </div>
-                                                            
-                                                            </TableContainer>
-                                                        ))}
-                                                            </> : <>
-                                                                <blockquote>
-                                                                    <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-                                                                        {
-                                                                            contentFile.length > 0 && visiualType ? <></> : <>
-                                                                                {contentFile.map((item: any) => (
-                                                                                    <Typography key={item.id} id="modal-modal-description" sx={{ mt: 2 }}>
-                                                                                        {item["content_file"]}
-                                                                                    </Typography>       
-                                                                                ))}
-                                                                            </>
-                                                                        }
-                                                                    </Typography>
-                                                                </blockquote>
+                                                                    ))
+                                                            ) : <>
+                                                                {null}
                                                             </>
                                                         }
-                                                    </>
+                                                        </>
+                                                );
+                                            })}
+                                            {foundFile ?
+                                                <TableRow
+                                                    style={{
+                                                        height: 33 * emptyRows,
+                                                    }}
+                                                >
+                                                    <TableCell colSpan={6} />
+                                                </TableRow>
+                                                :
+                                                <Box sx={{
+                                                    display: 'flex',
+                                                    justifyContent: 'center',
+                                                    alignItems: 'center',
+                                                    flexDirection: 'column',
+                                                    gap: '30px',
+                                                }}>
+                                                    <Button variant="contained" onClick={
+                                                        () => {
+                                                            window.open('/home/company/create/file', '_self')
+                                                        }
+                                                    }>Создать файл</Button>
+                                                    <Button variant="contained" onClick={
+                                                        () => {
+                                                            window.open('/home/company/upload/file', '_self')
+                                                        }
+                                                    }>Загрузить файл</Button>
+                                                </Box>
                                             }
-                                        </>
+                                        </TableBody>
                                     }
-                                </>
+                                </Table>
+                            </TableContainer>
+                            {
+                                foundFile === true ?
+                                    <TablePagination
+                                        rowsPerPageOptions={[5, 10, 25]}
+                                        component="div"
+                                        count={rows.length}
+                                        rowsPerPage={rowsPerPage}
+                                        page={page}
+                                        onPageChange={handleChangePage}
+                                        onRowsPerPageChange={handleChangeRowsPerPage}
+                                        labelRowsPerPage="Строк на странице:"
+                                        labelDisplayedRows={({ from, to, count }) => `${from}–${to} из ${count}`}
+                                    />
+                                : <>{null}</>
                             }
-                        </Typography>
-                    </Box>
-                </Box>
-            </Modal>
-
-            <Modal
-            open={openWordFile}
-            onClose={handleCloseWordFile}
-            aria-labelledby="modal-modal-title"
-            aria-describedby="modal-modal-description">
-            <Box sx={style}>
-                <Typography id="modal-modal-description" sx={{ mt: 2, width: '100%', owerflow: 'auto' }}>
-                    {isLoading?<Alert severity="info" variant="filled">Ворд документ открывается!</Alert>: <>
-                            <Box sx={{
-                                "display": "flex",
-                                "position": "sticky",
-                                "top": "91vh",
-                                "justify-content": "space-between",
-                            }}>
-                                <SpeedDial
-                                    ariaLabel="SpeedDial openIcon example"
-                                    sx={{ 
-                                        "position": "sticky",
-                                        "display": "flex",
-                                        "justify-content": "start",
-                                        "flex-direction": "inherit",
-                                        "height": 0,
-                                        "top": "94vh",
-                                    }}
-                                    icon={<SpeedDialIcon openIcon={<Edit />} />}
-                                >
-                                    {actions.map((action:any) => (
-                                        <SpeedDialAction
-                                            sx={{
-                                                "matgin-bottom": '55px'
-                                            }}
-                                            key={action.name}
-                                            icon={action.icon}
-                                            tooltipTitle={action.name}
-                                            onClick={() => action_click(action)}
-                                        />
-                                    ))}
-                                </SpeedDial>
-                                <>
-                                    {
-                                        coppy?
-                                            <Alert 
+                        </Paper>
+                        <Modal
+                        open={open}
+                        onClose={handleClose}
+                        aria-labelledby="modal-modal-title"
+                        aria-describedby="modal-modal-description">
+                        <Box sx={style}>
+                            <Typography id="modal-modal-description" sx={{ mt: 2, width: '100%', owerflow: 'auto' }}>
+                                {isLoading? 
+                                        <Alert severity="info" variant="filled">Ворд документ открывается!</Alert>
+                                    : <>
+                                        <Box sx={{
+                                            "display": "flex",
+                                            "position": "sticky",
+                                            "top": "91vh",
+                                            "justify-content": "space-between",
+                                        }}>
+                                            <SpeedDial
+                                                ariaLabel="SpeedDial openIcon example"
                                                 sx={{ 
                                                     "position": "sticky",
                                                     "display": "flex",
                                                     "justify-content": "start",
-                                                    "flex-direction": "row",
+                                                    "flex-direction": "inherit",
+                                                    "height": 0,
                                                     "top": "94vh",
                                                 }}
-                                                action={
-                                                    <IconButton
-                                                        aria-label="close"
-                                                        color="inherit"
-                                                        size="small"
-                                                        onClick={() => {
-                                                            setCoppy(false);
-                                                        }}
-                                                    >
-                                                        <Close fontSize="inherit" />
-                                                    </IconButton>
-                                                }
-                                                variant="filled" 
-                                                severity="success"
+                                                icon={<SpeedDialIcon openIcon={<Edit />} />}
                                             >
-                                                Текст скопирован
-                                            </Alert>:<></>
-                                    }
-                                </>
-                            </Box>
-                            
+                                                {actions.map((action) => (
+                                                    <SpeedDialAction
+                                                        sx={{
+                                                            "matgin-bottom": '55px'
+                                                        }}
+                                                        key={action.name}
+                                                        icon={action.icon}
+                                                        tooltipTitle={action.name}
+                                                        onClick={() => action_click(action)}
+                                                    />
+                                                ))}
+                                            </SpeedDial>
+                                            <>
+                                                {
+                                                    coppy?
+                                                        <Alert 
+                                                            sx={{ 
+                                                                "position": "sticky",
+                                                                "display": "flex",
+                                                                "justify-content": "start",
+                                                                "flex-direction": "row",
+                                                                "top": "94vh",
+                                                            }}
+                                                            variant="filled" 
+                                                            severity="success"
+                                                        >
+                                                            Текст скопирован
+                                                        </Alert>
+                                                    :<></>
+                                                }
+                                            </>
+                                        </Box>
+                                        
 
-                            <Typography id="modal-modal-title" variant="h6" component="h2" sx={{
-                                'position': 'sticky',
-                                'background': '#FFF',
-                                'width': '102%',
-                                'top': '-10px',
-                                'display': 'flex',
-                                'justifyContent': 'space-between',
-                                "padding": "10px",
-                                "marginLeft": "-10px"
-                            }}>
-                                {
-                                    contentFile.length > 0 ? <>
-                                        {contentFile[0]}
-                                    </> : <></>
+                                        <Typography id="modal-modal-title" variant="h6" component="h2" sx={{
+                                            'position': 'sticky',
+                                            'background': '#FFF',
+                                            'width': '102%',
+                                            'top': '-10px',
+                                            'display': 'flex',
+                                            'justifyContent': 'space-between',
+                                            "padding": "10px",
+                                            "marginLeft": "-10px"
+                                        }}>
+                                            {contentFile[0]}
+                                            <IconButton
+                                                aria-label="close"
+                                                color="inherit"
+                                                size="medium"
+                                                onClick={() => {
+                                                    handleClose();
+                                                }}
+                                            >
+                                                <Close fontSize="inherit" />
+                                            </IconButton>
+                                        </Typography>
+
+                                        <blockquote>
+                                            {contentFile.length > 0 ? <>
+                                                {contentFile.map((item: any, index: number) => (
+                                                    <Typography className="textWord" key={item.id} id="modal-modal-description textWord" sx={{ mt: 2 }}>                            
+                                                        {item}
+                                                    </Typography>
+                                                ))}
+                                            </> : <></>}
+                                        </blockquote>
+                                    </>
                                 }
-                                <IconButton
-                                    aria-label="close"
-                                    color="inherit"
-                                    size="medium"
-                                    onClick={() => {
-                                        handleCloseWordFile();
-                                    }}
-                                >
-                                    <Close fontSize="inherit" />
-                                </IconButton>
                             </Typography>
+                        </Box>
+                        </Modal>
 
-                            <blockquote>
-                                {
-                                    contentFile.length > 0 ? <>
-                                        {contentFile.map((item: any, index: number) => (
-                                            <Typography className="textWord" key={item.id} id="modal-modal-description textWord" sx={{ mt: 2 }}>                            
-                                                {item}
+                        <Modal
+                        open={openPDFFile}
+                        onClose={handleClosePDF}
+                        aria-labelledby="modal-modal-title"
+                        aria-describedby="modal-modal-description">
+                        <Box sx={style}>
+                            <Typography id="modal-modal-description" sx={{ mt: 2, width: '100%', owerflow: 'auto' }}>
+                                {isLoading ? <Alert severity="info" variant="filled">PDF документ открывается!</Alert> : <>
+                                        <Box sx={{
+                                            "display": "flex",
+                                            "position": "sticky",
+                                            "top": "91vh",
+                                            "justify-content": "space-between",
+                                        }}>
+                                            <SpeedDial
+                                                ariaLabel="SpeedDial openIcon example"
+                                                sx={{ 
+                                                    "position": "sticky",
+                                                    "display": "flex",
+                                                    "justify-content": "start",
+                                                    "flex-direction": "inherit",
+                                                    "height": 0,
+                                                    "top": "94vh",
+                                                }}
+                                                icon={<SpeedDialIcon openIcon={<Edit />} />}
+                                            >
+                                                {actions.map((action) => (
+                                                    <SpeedDialAction
+                                                        sx={{
+                                                            "matgin-bottom": '55px'
+                                                        }}
+                                                        key={action.name}
+                                                        icon={action.icon}
+                                                        tooltipTitle={action.name}
+                                                        onClick={() => {action_click(action)}}
+                                                    />
+                                                ))}
+                                            </SpeedDial>
+                                            <>
+                                                {
+                                                    coppy? 
+                                                        <Alert 
+                                                            sx={{ 
+                                                                "position": "sticky",
+                                                                "display": "flex",
+                                                                "justify-content": "start",
+                                                                "flex-direction": "row",
+                                                                "top": "94vh",
+                                                            }}
+                                                            action={
+                                                                <IconButton
+                                                                    aria-label="close"
+                                                                    color="inherit"
+                                                                    size="small"
+                                                                    onClick={() => {
+                                                                        setCoppy(false);
+                                                                    }}
+                                                                >
+                                                                    <Close fontSize="inherit" />
+                                                                </IconButton>
+                                                            }
+                                                            variant="filled" 
+                                                            severity="success"
+                                                        >
+                                                            Текст скопирован
+                                                        </Alert>
+                                                    :<></>
+                                                }
+                                            </>
+                                        </Box>
+                                        
+
+                                        <Typography id="modal-modal-title" variant="h6" component="h2" sx={{
+                                            'position': 'sticky',
+                                            'background': '#FFF',
+                                            'width': '102%',
+                                            'top': '-10px',
+                                            'display': 'flex',
+                                            'justifyContent': 'space-between',
+                                            "padding": "10px",
+                                            "marginLeft": "-10px"
+                                        }}>
+                                            {
+                                                contentFile.length > 0 && contentFile[0]["name_file"] ? <>
+                                                    {contentFile.map((item: any) => (
+                                                        <Typography key={item.id} variant="h6" component="h2" id="modal-modal-title">
+                                                            {item["name_file"]}
+                                                        </Typography>
+                                                    ))}
+                                                </> : <></>
+                                            }
+                                            <IconButton
+                                                aria-label="close"
+                                                color="inherit"
+                                                size="medium"
+                                                onClick={() => {
+                                                    handleClosePDF();
+                                                }}
+                                            >
+                                                <Close fontSize="inherit" />
+                                            </IconButton>
+                                        </Typography>
+
+                                        <blockquote>
+                                            <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+                                                {contentFile.length > 0 ? 
+                                                    <>
+                                                        {contentFile.map((item: any) => (
+                                                            <Typography key={item.id} id="modal-modal-description" sx={{ mt: 2 }}>
+                                                                {item["content_file"]}
+                                                            </Typography>       
+                                                        ))}
+                                                    </> : <></>
+                                                }
                                             </Typography>
-                                        ))}
-                                    </>: <></>
+                                        </blockquote>
+                                    </>
                                 }
-                            </blockquote>
-                        </>
-                    }
-                </Typography>
-            </Box>
-            </Modal>
-            </ThemeProvider>
-        </Box>
+                            </Typography>
+                        </Box>
+                        </Modal>
+
+                        <Modal
+                        open={openXMLFile}
+                        onClose={handleCloseXMLFile}
+                        aria-labelledby="modal-modal-title"
+                        aria-describedby="modal-modal-description"
+                        style={{ 
+                            overflow: 'hidden', 
+                            height: '100%' 
+                        }}>
+                            <Box>
+                                <AppBar sx={{ 
+                                    position: 'relative',
+                                    zIndex: "9999",
+                                    paddingTop: "5px",
+                                    paddingBottom: "5px",
+                                }} position="static">
+                                    <Toolbar variant="dense">
+                                        <IconButton
+                                        edge="start"
+                                        aria-label="close"
+                                        color="inherit"
+                                        size="medium"
+                                        sx={{ mr: 2 }}
+                                        onClick={() => {
+                                            handleCloseXMLFile();
+                                        }}
+                                        >
+                                            <Close fontSize="inherit" />
+                                        </IconButton>
+                                        <Typography variant="h6" color="inherit" component="div">
+                                            {
+                                                contentFile.length > 0 ? <>
+                                                    {
+                                                        contentFile.map((item: any) => (
+                                                            <Typography key={item.id} variant="h6" component="h2" id="modal-modal-title">
+                                                                {item["name_file"]}
+                                                            </Typography>
+                                                        ))
+                                                    }
+                                                </>: <></>
+                                            }
+                                        </Typography>
+                                    </Toolbar>
+                                </AppBar>
+
+                                <Box sx={style} style={{
+                                    overflow: 'auto',
+                                    paddingTop: '6%'
+                                }}>
+                                
+                                    <ToggleButtonGroup
+                                    value={alignment}
+                                    exclusive
+                                    onChange={handleAlignment}
+                                    aria-label="text alignment"
+                                    >
+                                        <ToggleButton value="left" aria-label="left aligned">
+                                            <TableChart onClick={() => {setVisiualType(true)}} />
+                                        </ToggleButton>
+                                        <ToggleButton value="center" aria-label="centered">
+                                            <Code onClick={() => {setVisiualType(false)}} />
+                                        </ToggleButton>
+                                    </ToggleButtonGroup>
+
+                                    <Typography id="modal-modal-description" sx={{ mt: 2, width: '100%', owerflow: 'auto' }}>
+                                        {
+                                            isLoading?
+                                                <Alert severity="info" variant="filled">XML документ открывается!</Alert>
+                                            : <>
+                                                <Box position="fixed" display="none" bottom={0}>
+                                                    <SpeedDial
+                                                        sx={{ position: 'fixed', bottom: 16, right: 16 }}
+                                                        ariaLabel="SpeedDial openIcon example"
+                                                        icon={<SpeedDialIcon openIcon={<Edit />} />}
+                                                    >
+                                                        {actions.map((action) => (
+                                                            <SpeedDialAction
+                                                                key={action.name}
+                                                                icon={action.icon}
+                                                                tooltipTitle={action.name}
+                                                                onClick={() => {
+                                                                    
+                                                                }}
+                                                            />
+                                                        ))}
+                                                    </SpeedDial>
+                                                    <>
+                                                        {
+                                                            coppy?
+                                                                <Alert
+                                                                    action={
+                                                                        <IconButton
+                                                                            aria-label="close"
+                                                                            color="inherit"
+                                                                            size="small"
+                                                                            onClick={() => {
+                                                                                setCoppy(false);
+                                                                            }}
+                                                                        >
+                                                                            <Close fontSize="inherit" />
+                                                                        </IconButton>
+                                                                    }
+                                                                    variant="filled" 
+                                                                    severity="success"
+                                                                >
+                                                                    Текст скопирован
+                                                                </Alert>
+                                                            :<></>
+                                                        }
+                                                    </>
+                                                </Box>
+
+                                                {
+                                                    visiulCard ?
+                                                        <Box sx={{
+                                                            "display": "grid",
+                                                            "grid-template-columns": "repeat(1, 1fr)",
+                                                            "gap": "20px"
+                                                        }}>
+                                                            {
+                                                                arr_count_tables_xml.map((item_1: any) => (
+                                                                    <>
+                                                                        {
+                                                                            isLoadingXMLTables ? <>
+                                                                                <Box sx={{
+                                                                                    position: 'absolute',
+                                                                                    left: '50vW',
+                                                                                    top: '50vh'
+                                                                                }}>
+                                                                                   <CircularProgress /> 
+                                                                                </Box>        
+                                                                            </> : <>
+                                                                                <Card key={item_1.id} onClick={(event) => {
+                                                                                    click_card_table_xml(event)
+                                                                                }}>
+                                                                                    <CardActionArea>
+                                                                                        <CardContent>
+                                                                                            {contentFile.map((item: any) => (
+                                                                                                <>
+                                                                                                    <Typography gutterBottom variant="h5" component="div">
+                                                                                                    {item["tables"]["table_"+item_1]["name"]}
+                                                                                                    </Typography>
+                                                                                                    <Typography variant="body2" color="text.secondary">
+                                                                                                        {item["tables"]["table_"+item_1]["content"]}
+                                                                                                    </Typography>
+                                                                                                </>
+                                                                                                ))} 
+                                                                                        </CardContent>
+                                                                                    </CardActionArea>
+                                                                                </Card>        
+                                                                            </>
+                                                                        } 
+                                                                    </>
+                                                                ))
+                                                            }
+                                                        </Box>
+                                                    :<>
+                                                        {
+                                                            visiulCard && click_card_data.length === 0 ? <></> : <>
+                                                                    {
+                                                                        visiualType && click_card_data !== null ? <>
+                                                                            {click_card_data.map((item:any) => (
+                                                                                <>
+                                                                                    <TableContainer key={item} component={Paper} sx={{
+                                                                                        marginTop: "10px",
+                                                                                    }}>
+                                                                                    <Typography variant="h4" sx={{
+                                                                                        padding: "10px"
+                                                                                    }}>{item["table"]["TableName"]}</Typography>
+                                                                                        <Table aria-label="collapsible table">
+                                                                                            <TableHead>
+                                                                                                <TableRow>
+                                                                                                    {
+                                                                                                        arr_count_head_xml.map((item_1: any) => (
+                                                                                                            <TableCell key={item_1}>{item["table"]["columns"]["column_"+item_1]["name"]}</TableCell>
+                                                                                                        ))
+                                                                                                    }
+                                                                                                </TableRow>
+                                                                                            </TableHead>
+                                                                                            <TableBody className="table_body">
+                                                                                                <Row key={item.id} item={item} />
+                                                                                                <Parent data={item["table"]["TableName"]}/>
+                                                                                            </TableBody>
+                                                                                        </Table>                                                            
+                                                                                    </TableContainer>
+                                                                                    <Settings_cell/>
+                                                                                <div>
+                                                                                <Typography variant="h3" sx={{
+                                                                                    padding: "10px"
+                                                                                }}>Помощь</Typography>
+
+                                                                                <Accordion expanded={expanded === 'panel2'} onChange={handleChange('panel2')}>
+                                                                                    <AccordionSummary aria-controls="panel1d-content" id="panel1d-header">
+                                                                                    <Typography>Ваши возможности на этой странице</Typography>
+                                                                                    </AccordionSummary>
+                                                                                    <AccordionDetails>
+                                                                                    <Typography>
+                                                                                        Вы можете изменять данные в таблице.
+                                                                                        Вы можете удалять данные из таблицы.
+                                                                                        Вы можете добавлять данные в таблицу.
+                                                                                    </Typography>
+                                                                                    </AccordionDetails>
+                                                                                </Accordion>
+                                                                                
+                                                                                <Accordion expanded={expanded === 'panel3'} onChange={handleChange('panel3')}>
+                                                                                    <AccordionSummary aria-controls="panel1d-content" id="panel1d-header">
+                                                                                    <Typography>Что означает кнопка с двумя стрелочками?</Typography>
+                                                                                    </AccordionSummary>
+                                                                                    <AccordionDetails>
+                                                                                    <Typography>
+                                                                                        В той области вы можете просматривать код, который сейчас редактируете в виде таблицы
+                                                                                    </Typography>
+                                                                                    </AccordionDetails>
+                                                                                </Accordion>
+
+                                                                                <Accordion expanded={expanded === 'panel4'} onChange={handleChange('panel4')}>
+                                                                                    <AccordionSummary aria-controls="panel1d-content" id="panel1d-header">
+                                                                                    <Typography>Что означает кнопка удалить?</Typography>
+                                                                                    </AccordionSummary>
+                                                                                    <AccordionDetails>
+                                                                                    <Typography>
+                                                                                        По этой кнопке удаляются все пустые строчки и строчки, которые вы выбрали
+                                                                                    </Typography>
+                                                                                    </AccordionDetails>
+                                                                                </Accordion>
+
+                                                                                <Accordion expanded={expanded === 'panel1'} onChange={handleChange('panel1')}>
+                                                                                    <AccordionSummary aria-controls="panel1d-content" id="panel1d-header">
+                                                                                    <Typography>Остались ещё вопросы напишите в поддержку</Typography>
+                                                                                    </AccordionSummary>
+                                                                                    <AccordionDetails>
+                                                                                    <Typography>
+                                                                                        Хотите что-то улучшить или появились вопросы напишите нам в поддержку
+                                                                                    </Typography>
+                                                                                    <Fab sx={{
+                                                                                        marginTop: "10px",
+                                                                                        width: '145px',
+                                                                                        borderRadius: '10px'
+                                                                                    }} size="medium" color="info" aria-label="add" onClick={() => {window.open('/home/company/support', '_self')}}>
+                                                                                        <Help />
+                                                                                        <Typography>Поддержка</Typography>
+                                                                                    </Fab>
+                                                                                    </AccordionDetails>
+                                                                                </Accordion>
+                                                                            </div>
+                                                                        </>
+                                                                    ))}
+                                                                        </> : <>
+                                                                            <blockquote>
+                                                                                <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+                                                                                    {
+                                                                                        contentFile.length > 0 && visiualType ? <></> : <>
+                                                                                            {contentFile.map((item: any) => (
+                                                                                                <Typography key={item.id} id="modal-modal-description" sx={{ mt: 2 }}>
+                                                                                                    {item["content_file"]}
+                                                                                                </Typography>       
+                                                                                            ))}
+                                                                                        </>
+                                                                                    }
+                                                                                </Typography>
+                                                                            </blockquote>
+                                                                        </>
+                                                                    }
+                                                                </>
+                                                        }
+                                                    </>
+                                                }
+                                            </>
+                                        }
+                                    </Typography>
+                                </Box>
+                            </Box>
+                        </Modal>
+
+                        <Modal
+                        open={openWordFile}
+                        onClose={handleCloseWordFile}
+                        aria-labelledby="modal-modal-title"
+                        aria-describedby="modal-modal-description">
+                        <Box sx={style}>
+                            <Typography id="modal-modal-description" sx={{ mt: 2, width: '100%', owerflow: 'auto' }}>
+                                {isLoading?<Alert severity="info" variant="filled">Ворд документ открывается!</Alert>: <>
+                                        <Box sx={{
+                                            "display": "flex",
+                                            "position": "sticky",
+                                            "top": "91vh",
+                                            "justify-content": "space-between",
+                                        }}>
+                                            <SpeedDial
+                                                ariaLabel="SpeedDial openIcon example"
+                                                sx={{ 
+                                                    "position": "sticky",
+                                                    "display": "flex",
+                                                    "justify-content": "start",
+                                                    "flex-direction": "inherit",
+                                                    "height": 0,
+                                                    "top": "94vh",
+                                                }}
+                                                icon={<SpeedDialIcon openIcon={<Edit />} />}
+                                            >
+                                                {actions.map((action:any) => (
+                                                    <SpeedDialAction
+                                                        sx={{
+                                                            "matgin-bottom": '55px'
+                                                        }}
+                                                        key={action.name}
+                                                        icon={action.icon}
+                                                        tooltipTitle={action.name}
+                                                        onClick={() => action_click(action)}
+                                                    />
+                                                ))}
+                                            </SpeedDial>
+                                            <>
+                                                {
+                                                    coppy?
+                                                        <Alert 
+                                                            sx={{ 
+                                                                "position": "sticky",
+                                                                "display": "flex",
+                                                                "justify-content": "start",
+                                                                "flex-direction": "row",
+                                                                "top": "94vh",
+                                                            }}
+                                                            action={
+                                                                <IconButton
+                                                                    aria-label="close"
+                                                                    color="inherit"
+                                                                    size="small"
+                                                                    onClick={() => {
+                                                                        setCoppy(false);
+                                                                    }}
+                                                                >
+                                                                    <Close fontSize="inherit" />
+                                                                </IconButton>
+                                                            }
+                                                            variant="filled" 
+                                                            severity="success"
+                                                        >
+                                                            Текст скопирован
+                                                        </Alert>:<></>
+                                                }
+                                            </>
+                                        </Box>
+                                        
+
+                                        <Typography id="modal-modal-title" variant="h6" component="h2" sx={{
+                                            'position': 'sticky',
+                                            'background': '#FFF',
+                                            'width': '102%',
+                                            'top': '-10px',
+                                            'display': 'flex',
+                                            'justifyContent': 'space-between',
+                                            "padding": "10px",
+                                            "marginLeft": "-10px"
+                                        }}>
+                                            {
+                                                contentFile.length > 0 ? <>
+                                                    {contentFile[0]}
+                                                </> : <></>
+                                            }
+                                            <IconButton
+                                                aria-label="close"
+                                                color="inherit"
+                                                size="medium"
+                                                onClick={() => {
+                                                    handleCloseWordFile();
+                                                }}
+                                            >
+                                                <Close fontSize="inherit" />
+                                            </IconButton>
+                                        </Typography>
+
+                                        <blockquote>
+                                            {
+                                                contentFile.length > 0 ? <>
+                                                    {contentFile.map((item: any, index: number) => (
+                                                        <Typography className="textWord" key={item.id} id="modal-modal-description textWord" sx={{ mt: 2 }}>                            
+                                                            {item}
+                                                        </Typography>
+                                                    ))}
+                                                </>: <></>
+                                            }
+                                        </blockquote>
+                                    </>
+                                }
+                            </Typography>
+                        </Box>
+                        </Modal>
+                        </ThemeProvider>
+                    </Box>
+                </>
+            }
+        </>
     )
 }

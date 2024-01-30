@@ -51,7 +51,7 @@ import Popper from '@mui/material/Popper';
 import MenuItem from '@mui/material/MenuItem';
 import MenuList from '@mui/material/MenuList';
 import useMediaQuery from '@mui/material/useMediaQuery';
-import { createTheme, ThemeProvider, styled } from '@mui/material/styles';
+import { createTheme, ThemeProvider, styled, useTheme  } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import { style } from "../../../data/objects/Style";
 import { GetFileList } from "../../../data/api/file/GetFileList";
@@ -74,9 +74,15 @@ import StepButton from '@mui/material/StepButton';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
-import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import StarIcon from '@mui/icons-material/Star';
+import { SnackbarProvider, VariantType, useSnackbar } from 'notistack';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import { TreeView } from '@mui/x-tree-view/TreeView';
+import { TreeItem } from '@mui/x-tree-view/TreeItem';
+import Drawer from '@mui/material/Drawer';
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import { TextareaAutosize as BaseTextareaAutosize } from '@mui/base/TextareaAutosize';
 
 export const ListFiles = () => {
     const rows = [
@@ -341,12 +347,8 @@ export const ListFiles = () => {
                     <> {numSelected === 1 ? <>
                         <Tooltip title="Собрать пакет документов" onClick={() => {
                             console.info('create packet of document')
-                        }}>
-                            <IconButton>
-                                <FolderZip />
-                            </IconButton>
+                        }}><IconButton><FolderZip /></IconButton>
                         </Tooltip>
-    
                         <Tooltip title="Открыть в браузере" onClick={() => {
                             selected.map((id) => {
                                 setOpen(true)
@@ -428,7 +430,6 @@ export const ListFiles = () => {
                                 </Popper>
                             </React.Fragment>
                         </IconButton>
-    
                         <Tooltip title="Удалить" onClick={() => {
                             selected.map(select => {
                                 fetch(deploy_api+port_server+`/file/delete/file/${localStorage.getItem('NameCompany')}/${select}`, {
@@ -603,6 +604,11 @@ export const ListFiles = () => {
         setClickCardData([])
         setArr_count_head_xml([])
         setArr_count_columns_xml([])
+        setOpenChooseString(false)
+        setComponentTableName_1([])
+        setComponentTableName([])
+        setCloseListItemTables(false)
+
     }
 
     const handleCloseWordFile = () => {
@@ -633,8 +639,6 @@ export const ListFiles = () => {
     const [visiualType, setVisiualType] = React.useState(true);
     const [visiulCard, setVisiualCard] = React.useState(true);
     const [click_card_data, setClickCardData] = React.useState([]);
-    const [countPlus, setCountPlus] = React.useState(0)
-    const [arrPlusCellTable, setArrPlusCellTable] = React.useState([0])
 
     const handleAlignment = (
         event: React.MouseEvent<HTMLElement>,
@@ -648,7 +652,6 @@ export const ListFiles = () => {
     let [arr_count_columns_xml, setArr_count_columns_xml]:any = React.useState([]);
     let [arr_count_head_xml, setArr_count_head_xml]:any = React.useState([]);
     let numValues:any[] = []
-    let arr_count_cell:any = []
     const addDataCellTable = () => setDataCellTable([...dataCellTable, {value: 'Данных нет'}]);
     const [dataCellTable, setDataCellTable] = React.useState([{ value: 'Данных нет' }]);
     const [watchGuide, setWatchGuide] = React.useState(false)
@@ -717,10 +720,6 @@ export const ListFiles = () => {
     const remove_data_table_xml = () => {
         console.log("remove_data_table_xml")
         setDataCellTable([])
-    }
-
-    const WindowChooseEditString = () => {
-        return (<>Choose string edit</>)
     }
 
     const edit_cell_table_xml = () => {
@@ -1147,6 +1146,284 @@ export const ListFiles = () => {
                             ))}
                         </List>
                         ))}
+                </>
+            )
+        }
+
+        else if (data === 1) {
+            return (
+                <>
+                    <>Выбирите, пожалуйст, способ с помощью, 
+                    котрого будет происходить редактирование 
+                    (автоматическое из файл или ручное)</>
+                    <List
+                          sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}
+                          aria-label="contacts"
+                    >
+                        <ListItem disablePadding>
+                            <ListItemButton>
+                                <ListItemText primary="Автоматическое" />
+                            </ListItemButton>
+                            <ListItemButton>
+                                <ListItemText primary="Выбор из файла" />
+                            </ListItemButton>
+                        </ListItem>
+                    </List>
+                </>
+            )
+        }
+
+        else if (data === 2) {
+            return (<>Не забудьте сохранить при нажатии на зелённую галочку</>)
+        }
+
+        else {
+            return (<>Напишите в поддержку</>)
+        }
+    }
+
+    let formData = new FormData()
+
+
+    const send_update_data_server = () => {
+        console.log('get data')
+        let main_doc:any = document.querySelector('main')
+        if (main_doc !== null) {
+            let Textarea:any = main_doc.querySelector('textarea')
+            let h4:any = main_doc.querySelector('h4')
+            let h4Content:any = h4.textContent
+            formData.append('h4', h4Content)
+            let TextareaContent:any = Textarea.textContent
+            formData.append('Textarea', TextareaContent)
+            console.log(formData.get("Textarea"))
+            console.log(formData.get("h4"))
+        }
+    }
+
+    const SuccessMessage = (props: any) => {
+        const { data } = props
+        const { enqueueSnackbar } = useSnackbar();
+
+        const handleClickVariant = (variant: VariantType) => () => {
+            enqueueSnackbar(data, { variant });
+            send_update_data_server()
+        };
+
+        return (
+            <React.Fragment>
+                <EditScreen/>
+                <Button onClick={
+                    handleClickVariant('success')
+                } variant="contained" color="success">Сохранить</Button>
+            </React.Fragment>
+        );
+    }
+
+    const ErrorMessage = (props: any) => {
+        console.log(props)
+        const { data } = props
+        const { enqueueSnackbar } = useSnackbar();
+
+        const handleClickVariant = (variant: VariantType) => () => {
+            enqueueSnackbar(data, { variant });
+        };
+
+        return (
+            <React.Fragment>
+                <Button onClick={handleClickVariant('error')} variant="outlined" color="error">Сохранить</Button>
+            </React.Fragment>
+        );
+    }
+
+    const [ShowSuccessMessage, setShowSuccessMessage] = React.useState(false)
+    const [ShowErrorMessage, setShowErrorMessage] = React.useState(false)
+    const [ComponentTableName, setComponentTableName] = React.useState([])
+    const [ComponentTableName_1, setComponentTableName_1] = React.useState([""])
+    const [CloseListItemTables, setCloseListItemTables] = React.useState(false)
+
+    const ChooseStringEditXMLTable = (props: any) => {
+        const { data } = props
+
+        const choose_string = (props: any) => {
+            console.log(props)
+
+            setCloseListItemTables(true)
+
+            if (props.indexOf('id_transaction') !== -1) {
+                console.log('only read')
+                setShowSuccessMessage(false)
+                setShowErrorMessage(true)
+            }
+
+            else {
+                console.log('you can edit')
+                setShowSuccessMessage(true)
+                setShowErrorMessage(false)
+            }
+        }
+
+        if (data === 0) {
+            return (
+                <>
+                    {arr_count_columns_xml.map((row:any) => (
+                        <>
+                            <List
+                                sx={{ width: '100%', bgcolor: 'background.paper' }}
+                             aria-label="contacts"
+                             >
+                                 {click_card_data.map((item:any) => (
+                                    <>
+                                    {
+                                        CloseListItemTables ? <>
+                                            
+                                        </> : <>
+                                            <ListItem disablePadding onClick={() => {
+                                            choose_string("org_full_name_value: "+item["value_columns"][0]["name_"+row+"_org_full_name_value"])
+                                             setComponentTableName([])
+                                             setComponentTableName_1([])
+                                             setComponentTableName_1(["org_full_name_value"])
+                                             setComponentTableName(item["value_columns"][0]["name_"+row+"_org_full_name_value"])
+                                         }}>
+                                             <ListItemButton>
+                                                     <Typography>org_full_name_value: </Typography>
+                                                     <ListItemText primary={item["value_columns"][0]["name_"+row+"_org_full_name_value"]} />
+                                             </ListItemButton>
+                                         </ListItem>
+                                         <ListItem disablePadding onClick={() => {
+                                             choose_string("org_ogrn_value: "+item["value_columns"][0]["name_"+row+"_org_ogrn_value"])
+                                             setComponentTableName([])
+                                             setComponentTableName_1([])
+                                             setComponentTableName_1(["org_ogrn_value"])
+                                             setComponentTableName(item["value_columns"][0]["name_"+row+"_org_ogrn_value"])
+                                         }}>
+                                             <ListItemButton>
+                                                 <Typography>org_ogrn_value: </Typography>
+                                                 <ListItemText primary={item["value_columns"][0]["name_"+row+"_org_ogrn_value"]} />
+                                             </ListItemButton>
+                                         </ListItem>
+                                         <ListItem disablePadding onClick={() => {
+                                             choose_string("org_inn_value: "+item["value_columns"][0]["name_"+row+"_org_inn_value"])
+                                             setComponentTableName([])
+                                             setComponentTableName_1([])
+                                             setComponentTableName_1(["org_inn_value"])
+                                             setComponentTableName(item["value_columns"][0]["name_"+row+"_org_inn_value"])
+                                         }}>
+                                             <ListItemButton>
+                                                 <Typography>org_inn_value: </Typography>
+                                                 <ListItemText primary={item["value_columns"][0]["name_"+row+"_org_inn_value"]} />
+                                             </ListItemButton>
+                                         </ListItem>
+                                         <ListItem disablePadding onClick={() => {
+                                             choose_string("org_kpp_value: "+item["value_columns"][0]["name_"+row+"_org_kpp_value"])
+                                             setComponentTableName([])
+                                             setComponentTableName_1([])
+                                             setComponentTableName_1(["org_kpp_value"])
+                                             setComponentTableName(item["value_columns"][0]["name_"+row+"_org_kpp_value"])
+                                         }}>
+                                             <ListItemButton>
+                                                 <Typography>org_kpp_value: </Typography>
+                                                 <ListItemText primary={item["value_columns"][0]["name_"+row+"_org_kpp_value"]} />
+                                             </ListItemButton>
+                                         </ListItem>
+                                         <ListItem disablePadding onClick={() => {
+                                             choose_string("region_value: "+item["value_columns"][0]["name_"+row+"_region_value"])
+                                             setComponentTableName([])
+                                             setComponentTableName_1([])
+                                             setComponentTableName_1(["region_value"])
+                                             setComponentTableName(item["value_columns"][0]["name_"+row+"_region_value"])
+                                         }}>
+                                             <ListItemButton>
+                                                 <Typography>region_value: </Typography>
+                                                 <ListItemText primary={item["value_columns"][0]["name_"+row+"_region_value"]} />
+                                             </ListItemButton>
+                                         </ListItem>
+                                         <ListItem disablePadding onClick={() => {
+                                             choose_string("city_value: "+item["value_columns"][0]["name_"+row+"_org_full_name_value"])
+                                             setComponentTableName([])
+                                             setComponentTableName_1([])
+                                             setComponentTableName_1(["city_value"])
+                                             setComponentTableName(item["value_columns"][0]["name_"+row+"_org_full_name_value"])
+                                         }}>
+                                             <ListItemButton>
+                                                 <Typography>city_value: </Typography>
+                                                 <ListItemText primary={item["value_columns"][0]["name_"+row+"_city_value"]} />
+                                             </ListItemButton>
+                                         </ListItem>
+                                         <ListItem disablePadding onClick={() => {
+                                             choose_string("street_value: "+item["value_columns"][0]["name_"+row+"_street_value"])
+                                             setComponentTableName([])
+                                             setComponentTableName_1([])
+                                             setComponentTableName_1(["street_value"])
+                                             setComponentTableName(item["value_columns"][0]["name_"+row+"_street_value"])
+                                         }}>
+                                             <ListItemButton>
+                                                 <Typography>street_value: </Typography>
+                                                 <ListItemText primary={item["value_columns"][0]["name_"+row+"_street_value"]} />
+                                             </ListItemButton>
+                                         </ListItem>
+                                         <ListItem disablePadding onClick={() => {
+                                             choose_string("building_value: "+item["value_columns"][0]["name_"+row+"_building_value"])
+                                             setComponentTableName([])
+                                             setComponentTableName_1([])
+                                             setComponentTableName_1(["building_value"])
+                                             setComponentTableName(item["value_columns"][0]["name_"+row+"_building_value"])
+
+                                         }}>
+                                             <ListItemButton>
+                                                 <Typography>building_value: </Typography>
+                                                 <ListItemText primary={item["value_columns"][0]["name_"+row+"_building_value"]} />
+                                             </ListItemButton>
+                                         </ListItem>
+                                         <ListItem disablePadding onClick={() => {
+                                             choose_string("room_value: "+item["value_columns"][0]["name_"+row+"_room_value"])
+                                             setComponentTableName([])
+                                             setComponentTableName_1([])
+                                             setComponentTableName_1(["room_value"])
+                                             setComponentTableName(item["value_columns"][0]["name_"+row+"_room_value"])
+                                         }}>
+                                             <ListItemButton>
+                                                 <Typography>room_value: </Typography>
+                                                 <ListItemText primary={item["value_columns"][0]["name_"+row+"_room_value"]} />
+                                             </ListItemButton>
+                                         </ListItem>
+                                         <ListItem disablePadding onClick={() => {
+                                             choose_string("id_transaction: "+item["value_columns"][0]["name_"+row+"_id_transaction"])
+                                             setComponentTableName([])
+                                             setComponentTableName_1([])
+                                             setComponentTableName_1(["id_transaction"])
+                                             setComponentTableName(item["value_columns"][0]["name_"+row+"_id_transaction"])
+                                         }}>
+                                             <ListItemButton>
+                                                 <Typography>id_transaction: </Typography>
+                                                 <ListItemText primary={item["value_columns"][0]["name_"+row+"_id_transaction"]} />
+                                             </ListItemButton>
+                                         </ListItem>
+                                        </>
+                                    }
+                                        
+                                     </>           
+                                 ))}
+                             </List>
+                             <>
+                                {
+                                     ShowSuccessMessage ? <>
+                                        <SnackbarProvider maxSnack={3}>
+                                            <SuccessMessage data={"Сохранено"}/>
+                                        </SnackbarProvider>
+                                    </> : <></>
+                                } 
+                            </>
+                            <>
+                                {
+                                    ShowErrorMessage ? <>
+                                        <SnackbarProvider maxSnack={3}>
+                                            <ErrorMessage data={"Это поле не достпно для редактирования или соханения"}/>
+                                        </SnackbarProvider>
+                                    </> : <></>
+                                }
+                            </>
+                        </>
+                    ))}
                 </>
             )
         }
@@ -1766,6 +2043,198 @@ export const ListFiles = () => {
         }
     };
 
+    const EditScreen = () => {
+        console.log(ComponentTableName)
+
+        const drawerWidth = 240;
+
+        const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })<{
+          open?: boolean;
+        }>(({ theme, open }) => ({
+          flexGrow: 1,
+          padding: theme.spacing(3),
+          transition: theme.transitions.create('margin', {
+            easing: theme.transitions.easing.sharp,
+            duration: theme.transitions.duration.leavingScreen,
+          }),
+          marginLeft: `-${drawerWidth}px`,
+          ...(open && {
+            transition: theme.transitions.create('margin', {
+              easing: theme.transitions.easing.easeOut,
+              duration: theme.transitions.duration.enteringScreen,
+            }),
+            marginLeft: 0,
+          }),
+        }));
+
+        const DrawerHeader = styled('div')(({ theme }) => ({
+            display: 'flex',
+            alignItems: 'center',
+            padding: theme.spacing(0, 1),
+            ...theme.mixins.toolbar,
+            justifyContent: 'flex-end',
+        }));
+
+        const theme = useTheme();
+        const [open_2, setOpen_2] = React.useState(false);
+        const handleDrawerOpen = () => {
+            setOpen_2(true);
+        };
+
+        const handleDrawerClose = () => {
+            setOpen_2(false);
+        };
+
+        const blue = {
+            100: '#DAECFF',
+            200: '#b6daff',
+            400: '#3399FF',
+            500: '#007FFF',
+            600: '#0072E5',
+            900: '#003A75',
+        };
+
+        const grey = {
+            50: '#F3F6F9',
+            100: '#E5EAF2',
+            200: '#DAE2ED',
+            300: '#C7D0DD',
+            400: '#B0B8C4',
+            500: '#9DA8B7',
+            600: '#6B7A90',
+            700: '#434D5B',
+            800: '#303740',
+            900: '#1C2025',
+        };
+
+        const Textarea = styled(BaseTextareaAutosize)(
+            ({ theme }) => `
+            box-sizing: border-box;
+            width: 320px;
+            font-family: 'IBM Plex Sans', sans-serif;
+            font-size: 0.875rem;
+            font-weight: 400;
+            line-height: 1.5;
+            padding: 12px;
+            border-radius: 12px 12px 0 12px;
+            color: ${theme.palette.mode === 'dark' ? grey[300] : grey[900]};
+            background: ${theme.palette.mode === 'dark' ? grey[900] : '#fff'};
+            border: 1px solid ${theme.palette.mode === 'dark' ? grey[700] : grey[200]};
+            box-shadow: 0px 2px 2px ${theme.palette.mode === 'dark' ? grey[900] : grey[50]};
+
+            &:hover {
+              border-color: ${blue[400]};
+            }
+
+            &:focus {
+              outline: 0;
+              border-color: ${blue[400]};
+              box-shadow: 0 0 0 3px ${theme.palette.mode === 'dark' ? blue[600] : blue[200]};
+            }
+
+            // firefox
+            &:focus-visible {
+              outline: 0;
+            }
+            `,
+        );
+
+        return (
+            <Box sx={{ minHeight: 'max-content', flexGrow: 1, maxWidth: '100%' }}>
+                <Box sx={{ display: 'flex' }}>
+                    <CssBaseline />
+                    <Button sx={{
+                        "position": "absolute",
+                        "top": "82px",
+                        "left": "122px"
+                    }} onClick={handleDrawerOpen} variant="contained">Перевыбрать колонку</Button>
+                    <Drawer
+                        variant="persistent"
+                        anchor="left"
+                        open={open_2}
+                    >
+                        <DrawerHeader sx={{"margin-top": "57px"}}>
+                          <IconButton onClick={handleDrawerClose}>
+                            {theme.direction === 'ltr' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
+                          </IconButton>
+                        </DrawerHeader>
+                        <List>
+                            <TreeView
+                            aria-label="file system navigator"
+                            defaultCollapseIcon={<ExpandMoreIcon />}
+                            defaultExpandIcon={<ChevronRightIcon />}
+                            >
+                                <TreeItem nodeId="5" label={contentFile.map((item: any) => (<Box key={item.id}>{item["name_file"]}</Box>))}>
+                                    <TreeItem nodeId="6" label={click_card_data.map((item:any) => (<Box key={item.id}>{item["table"]["TableName"]}</Box>))}>
+                                        {click_card_data.map((item:any) => (
+                                            <>
+                                                {arr_count_head_xml.map((item_1: any) => (
+                                                    <TreeItem nodeId={item_1+6} onClick={(event) => {
+                                                        console.log(event.currentTarget.textContent)
+                                                        setComponentTableName_1([event.currentTarget.textContent === null ? "" : event.currentTarget.textContent])
+                                                        if (event.currentTarget.textContent !== null) {
+                                                            {arr_count_columns_xml.map((row:any) => {
+                                                                console.log(row)
+                                                                {click_card_data.map((item:any) => {
+                                                                    if (event.currentTarget.textContent === "OrgFullName") {
+                                                                        setComponentTableName(item["value_columns"][0]["name_"+row+"_org_full_name_value"])
+                                                                    }
+
+                                                                    else if (event.currentTarget.textContent === "OrgOGRN") {
+                                                                        setComponentTableName(item["value_columns"][0]["name_"+row+"_org_ogrn_value"])
+                                                                    }
+
+                                                                    else if (event.currentTarget.textContent === "OrgINN") {
+                                                                        setComponentTableName(item["value_columns"][0]["name_"+row+"_org_inn_value"])
+                                                                    }
+
+                                                                    else if (event.currentTarget.textContent === "OrgKPP") {
+                                                                        setComponentTableName(item["value_columns"][0]["name_"+row+"_org_kpp_value"])
+                                                                    }
+
+                                                                    else if (event.currentTarget.textContent === "Region") {
+                                                                        setComponentTableName(item["value_columns"][0]["name_"+row+"_region_value"])
+                                                                    }
+                                                                    
+                                                                    else if (event.currentTarget.textContent === "City") {
+                                                                        setComponentTableName(item["value_columns"][0]["name_"+row+"_city_value"])
+                                                                    }
+                                                                    
+                                                                    else if (event.currentTarget.textContent === "Street") {
+                                                                        setComponentTableName(item["value_columns"][0]["name_"+row+"_street_value"])
+                                                                    }
+                                                                    
+                                                                    else if (event.currentTarget.textContent === "Building") {
+                                                                        setComponentTableName(item["value_columns"][0]["name_"+row+"_building_value"])
+                                                                    }
+                                                                    
+                                                                    else if (event.currentTarget.textContent === "Room") {
+                                                                        setComponentTableName(item["value_columns"][0]["name_"+row+"_room_value"])
+                                                                    }
+                                                                })}
+                                                            })}
+                                                        }
+                                                    }} label={item["table"]["columns"]["column_"+item_1]["name"] !== "IdTransaction" ? item["table"]["columns"]["column_"+item_1]["name"] : ""}/>
+                                                ))}
+                                            </>
+                                        ))}
+                                    </TreeItem>
+                                </TreeItem>
+                            </TreeView>
+                        </List>
+                    </Drawer>
+                    <Main open={open_2} sx={{marginLeft: "-25px"}}>
+                        <Typography variant="h4">{ComponentTableName_1}</Typography>
+                        <Textarea sx={{
+                            marginTop: "10px",
+                            width: "100%"
+                        }} aria-label="empty textarea" placeholder="Empty" defaultValue={ComponentTableName}/>
+                    </Main>
+                </Box>
+            </Box>
+        );
+    }
+
     const Accordion = styled((props: AccordionProps) => {
         return <MuiAccordion disableGutters elevation={0} square {...props} />
     })(({ theme }) => ({
@@ -1837,55 +2306,49 @@ export const ListFiles = () => {
     }
 
     const [activeStep, setActiveStep] = React.useState(0);
-  const [completed, setCompleted] = React.useState<{
-    [k: number]: boolean;
-  }>({});
+    
+    const [completed, setCompleted] = React.useState<{[k: number]: boolean;}>({});
+    
+    const totalSteps = () => {
+        return steps.length;
+    };
 
-  const totalSteps = () => {
-    return steps.length;
-  };
+    const completedSteps = () => {
+        return Object.keys(completed).length;
+    };
 
-  const completedSteps = () => {
-    return Object.keys(completed).length;
-  };
+    const isLastStep = () => {
+        return activeStep === totalSteps() - 1;
+    };
 
-  const isLastStep = () => {
-    return activeStep === totalSteps() - 1;
-  };
+    const allStepsCompleted = () => {
+        return completedSteps() === totalSteps();
+    };
 
-  const allStepsCompleted = () => {
-    return completedSteps() === totalSteps();
-  };
+    const handleNext = () => {
+        const newActiveStep = isLastStep() && !allStepsCompleted() ? steps.findIndex((step, i) => !(i in completed)) : activeStep + 1;
+        setActiveStep(newActiveStep);
+    };
 
-  const handleNext = () => {
-    const newActiveStep =
-      isLastStep() && !allStepsCompleted()
-        ? // It's the last step, but not all steps have been completed,
-          // find the first step that has been completed
-          steps.findIndex((step, i) => !(i in completed))
-        : activeStep + 1;
-    setActiveStep(newActiveStep);
-  };
+    const handleBack = () => {
+        setActiveStep((prevActiveStep) => prevActiveStep - 1);
+    };
 
-  const handleBack = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep - 1);
-  };
+    const handleStep = (step: number) => () => {
+        setActiveStep(step);
+    };
 
-  const handleStep = (step: number) => () => {
-    setActiveStep(step);
-  };
+    const handleComplete = () => {
+        const newCompleted = completed;
+        newCompleted[activeStep] = true;
+        setCompleted(newCompleted);
+        handleNext();
+    };
 
-  const handleComplete = () => {
-    const newCompleted = completed;
-    newCompleted[activeStep] = true;
-    setCompleted(newCompleted);
-    handleNext();
-  };
-
-  const handleReset = () => {
-    setActiveStep(0);
-    setCompleted({});
-  };
+    const handleReset = () => {
+        setActiveStep(0);
+        setCompleted({});
+    };
     
     return (
         <>
@@ -2162,7 +2625,7 @@ export const ListFiles = () => {
                                                 {actions.map((action) => (
                                                     <SpeedDialAction
                                                         sx={{
-                                                            "matgin-bottom": '55px'
+                                                            "margin-bottom": '55px'
                                                         }}
                                                         key={action.name}
                                                         icon={action.icon}
@@ -2477,7 +2940,7 @@ export const ListFiles = () => {
                                                                                 )}
                                                                                 </div>
                                                                                    </> : <>
-                                                                                       Гайд закрыт
+                                                                                       <ChooseStringEditXMLTable data={0}/>
                                                                                    </> 
                                                                                 }
                                                                             </Box> : <>

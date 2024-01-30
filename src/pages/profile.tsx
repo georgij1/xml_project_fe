@@ -15,11 +15,9 @@ import BusinessIcon from '@mui/icons-material/Business';
 import {Logout} from "../components/message/Logout";
 import InfoIcon from '@mui/icons-material/Info';
 import { styled } from '@mui/material/styles';
-import IconButton from '@mui/material/IconButton';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import FolderIcon from '@mui/icons-material/Folder';
-import DeleteIcon from '@mui/icons-material/Delete';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ModeEditIcon from '@mui/icons-material/ModeEdit';
 

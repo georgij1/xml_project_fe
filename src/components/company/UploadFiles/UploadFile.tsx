@@ -22,7 +22,6 @@ export const UploadFile: React.FunctionComponent = () => {
     const [classes, setClasses] = useState<string>('')
     const [classes_type_false_file, setClassesTypeFalseFile] = useState<string>('')
     const [ChooseFile, setChooseFile] = useState<string>('')
-    const [CancelBtn, setCancelBtn] = useState<string>('none')
 
     interface File {
         name: string
@@ -58,8 +57,6 @@ export const UploadFile: React.FunctionComponent = () => {
                 setClasses('flex')
                 setNameFile(data_file.name)
                 setChooseFile('none')
-                setCancelBtn('')
-                setCancelBtn('flex')
                 setSize(data_file.size)
                 setType(data_file.type)
 

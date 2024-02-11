@@ -31,15 +31,18 @@ import {
 } from "@mui/material";
 import DeleteIcon from '@mui/icons-material/Delete';
 import {
-    CloudUpload, FolderZip, 
-    NoteAdd, OpenInBrowser,
+    CloudUpload, 
+    FolderZip, 
+    NoteAdd, 
+    OpenInBrowser,
     Close,
     Edit,
     Print,
     FileCopy,
     TableChart,
     Code,
-    Add, Delete
+    Add, 
+    Delete
 } from "@mui/icons-material";
 import Modal from '@mui/material/Modal';
 import Button from '@mui/material/Button';
@@ -83,493 +86,92 @@ import { TreeItem } from '@mui/x-tree-view/TreeItem';
 import Drawer from '@mui/material/Drawer';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import { TextareaAutosize as BaseTextareaAutosize } from '@mui/base/TextareaAutosize';
+import { rows } from "../../../data/objects/CreateDataTable";
+import { steps } from "../../../data/objects/steps_array";
+import { headCells } from "../../../data/objects/HeadCells";
+import { numTables } from "../../../data/objects/numTables";
+import { descendingComparator } from "../../../data/function/DescendingComparator";
+import { getComparator } from "../../../data/function/GetComparator";
+import { stableSort } from "../../../data/function/StableSort";
+import { EnhancedTableHead } from "../../../data/function/EnhancedTableHead";
+import { EnhancedTableProps } from "../../../data/interface/EnhancedTableProps";
+import { options } from "../../../data/objects/EnhancedTableToolbarOptions";
+import { numSettings } from "../../../data/objects/numSettings";
+import { GetPdfFile } from "../../../data/api/file/GetPdfFile";
+import { GetXmlFile } from "../../../data/api/file/GetXmlFile";
+import { GetWordFile } from "../../../data/api/file/GetWordFile";
+import { handleClick_start } from "../../../data/objects/handleClick";
+import { handleMenuItemClick } from "../../../data/objects/handleMenuItemClick";
+import { handleToggle } from "../../../data/objects/handleToggle";
+import { handleRequestSort } from "../../../data/objects/handleRequestSort";
+import { GetPacketDocumentZip } from "../../../data/api/file/GetPacketDocumentZip";
+import { GetWordFile_1 } from "../../../data/api/file/GetWordFile_1";
+import { DeleteArrayFiles } from "../../../data/api/file/DeleteArrayFiles";
+import { DeleteFile } from "../../../data/api/file/DeleteFile";
+import { ShowChoosedFileFiles } from "../../../data/mui_elements/ShowChoosedFileFiles";
+import { NoBodyChoosedFile } from "../../../data/mui_elements/NoBodyChoosedFile";
+import { CollectPacketDocument } from "../../../data/mui_elements/CollectPacketDocument";
+import { handleClose } from "../../../data/objects/handleClose";
+import { handleSelectAllClick } from "../../../data/objects/handleSelectAllClick";
+import { DeleteButton } from "../../../data/mui_elements/DeleteButton";
+import { CollectPacketArrayDocument } from "../../../data/mui_elements/CollectPacketArrayDocument";
+import { OpenInBrowserMUI } from "../../../data/mui_elements/OpenInBrowser";
+import { DeleteArrayFilesMUI } from "../../../data/mui_elements/DeleteArrayFiles";
+import { MenuListTypeFiles } from "../../../data/mui_elements/MenuListTypeFiles";
+import { ChoosedOneElement } from "../../../data/CustomsElements/ChoosedOneElement";
+import { EnhancedTableToolbar } from "../../../data/CustomsElements/EnhancedTableToolbar";
+import { handleClick } from "../../../data/objects/handleClick_1";
+import { handleChangePage } from "../../../data/objects/handleChangePage_1";
+import { handleChangeRowsPerPage } from "../../../data/objects/handleChangeRowsPerPage";
+import { isSelected } from "../../../data/objects/IsSelected";
+import { emptyRows } from "../../../data/objects/EmptyRows";
+import { handleClosePDF } from "../../../data/objects/handleClosePDF";
+import { handleCloseXMLFile } from "../../../data/objects/handleCloseXMLFile";
+import { handleCloseWordFile } from "../../../data/objects/handleCloseWordFile";
+import { handleAlignment } from "../../../data/objects/HandleAlignment";
+import { 
+    numColumns,
+    numHead,
+    numValues
+} from "../../../data/objects/AllVariables";
+import { watch_guide } from "../../../data/objects/watch_guide"
+import { RowProps } from "../../../data/Type/RowProps"
+import { click_card_table_xml } from "../../../data/api/file/click_card_table_xml"
+import { StyleSettingsCell } from "../../../data/objects/StyleSettingsCell"
+import { Settings_cell } from "../../../data/CustomsElements/Settings_cell"
 
 export const ListFiles = () => {
-    const rows = [
-        createData(1, 'test', 'test', 'test'),
-    ];
-
-    const steps = ['Выбирите строку', 'Выбирите способ', 'Нажмите жёлтую галочку'];
-    
-    function createData(
-        id: number,
-        name: string,
-        author: string,
-        time_stamp: string
-    ): Data {
-        return {
-            id,
-            name,
-            author,
-            time_stamp
-        };
-    }
-
-    function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
-        if (b[orderBy] < a[orderBy]) {
-            return -1;
-        }
-        if (b[orderBy] > a[orderBy]) {
-            return 1;
-        }
-        return 0;
-    }
-    
-    function getComparator<Key extends keyof any>(
-        order: Order,
-        orderBy: Key,
-    ): (
-        a: { [key in Key]: number | string },
-        b: { [key in Key]: number | string },
-    ) => number {
-        return order === 'desc'
-            ? (a, b) => descendingComparator(a, b, orderBy)
-            : (a, b) => -descendingComparator(a, b, orderBy);
-    }
-    
-    function stableSort<T>(array: readonly T[], comparator: (a: T, b: T) => number) {
-        const stabilizedThis = array.map((el, index) => [el, index] as [T, number]);
-        stabilizedThis.sort((a, b) => {
-            const order = comparator(a[0], b[0]);
-            if (order !== 0) {
-                return order;
-            }
-            return a[1] - b[1];
-        });
-        return stabilizedThis.map((el) => el[0]);
-    }
-    
-    const headCells: readonly HeadCell[] = [
-        {
-            id: 'name',
-            numeric: false,
-            disablePadding: true,
-            label: 'Имя файла',
-        },
-        {
-            id: 'author',
-            numeric: true,
-            disablePadding: false,
-            label: 'Автор',
-        },
-        {
-            id: 'time_stamp',
-            numeric: true,
-            disablePadding: false,
-            label: 'Время',
-        }
-    ];
-    
-    interface EnhancedTableProps {
-        numSelected: number;
-        onRequestSort: (event: React.MouseEvent<unknown>, property: keyof Data) => void;
-        onSelectAllClick: (event: React.ChangeEvent<HTMLInputElement>) => void;
-        order: Order;
-        orderBy: string;
-        rowCount: number;
-    }
-
-    const [contentFile, setContentFile] = useState([])
-    
-    function EnhancedTableHead(props: EnhancedTableProps) {
-        const { onSelectAllClick, numSelected, rowCount} = props;
-        
-        return (
-            <TableHead>
-                    <TableRow>
-                        {
-                            foundFile === true ?
-                                <TableCell padding="checkbox">
-                                    <Checkbox
-                                        color="primary"
-                                        indeterminate={numSelected > 0 && numSelected < rowCount}
-                                        checked={rowCount > 0 && numSelected === rowCount}
-                                        onChange={onSelectAllClick}
-                                        inputProps={{
-                                            'aria-label': 'select all desserts',
-                                        }}
-                                    />
-                                </TableCell>
-                            : <></>
-                        }
-                        {foundFile === true ? <>
-                            {headCells.map((headCell) => (
-                                <TableCell key={headCell.label}>{headCell.label}</TableCell>
-                            ))}
-                        </> : <>{null}</>}
-                    </TableRow>
-                </TableHead>
-        );
-    }
-
+    const [contentFile, setContentFile] = useState([]);
     const [arr_count_tables_xml, setArr_count_tables_xml]:any = React.useState([]);
     const [isLoadingXMLTables, setIsLoadingXMLTables]:any = React.useState<boolean>(true);
-    
-    const EnhancedTableToolbar = (props: Readonly<EnhancedTableToolbarProps>) => {
-        const { numSelected } = props;
-        const options = ['Просмотр', 'Просмотреть как PDF', 'Просмотреть как XML', 'Просмотреть как Word файл'];    
-        const [open, setOpen_1] = React.useState(false);
-        const anchorRef = React.useRef<HTMLDivElement>(null);
-        const [selectedIndex, setSelectedIndex] = React.useState(1);
-        let numTables:any[] = [];
-        
-        const handleClick = () => {
-            console.info(`You clicked ${options[selectedIndex]}`);
-            if (options[selectedIndex] === "Просмотреть как PDF") {
-                setOpenPDFFile(true)
-                selected.map((id) => {
-                    fetch(deploy_api+port_server+`/file/read/PDF/${localStorage.getItem('NameCompany')}/${id}`, {
-                        method: 'GET',
-                        headers: {
-                            "Accept": "application/json",
-                            "Authorization": `Bearer ${localStorage.getItem('auth_token')}`,
-                            'Content-Type': 'application/json',
-                            'Connection': 'keep-alive',
-                            'Accept-Encoding': 'gzip, deflate, br',
-                            'Cache-Control': 'no-cache'
-                        }
-                    })
-                        .then((response) => response.json())
-                        .then((data) => {
-                            setContentFile(data)
-                            setIsLoading(false)
-                        })
-                        .catch((error) => console.log(error))
-                })
-            }
-
-            else if (options[selectedIndex] === "Просмотреть как XML") {
-                setOpenXMLFile(true)
-                selected.map((id) => {
-                    fetch(test_api+port_server+`/file/read/XML/${localStorage.getItem('NameCompany')}/${id}`, {
-                        method: 'GET',
-                        headers: {
-                            "Accept": "application/json",
-                            "Authorization": `Bearer ${localStorage.getItem('auth_token')}`,
-                            'Content-Type': 'application/json',
-                            'Connection': 'keep-alive',
-                            'Accept-Encoding': 'gzip, deflate, br',
-                            'Cache-Control': 'no-cache'
-                        }
-                    })
-                        .then((response) => response.json())
-                        .then((data) => {
-                            console.log(data)
-                            setContentFile(data)
-                            setIsLoading(false)
-                            for (let i = 1; i <= data[0]["count_tables"]; i++) {
-                                numTables.push(i)
-                            }
-                            setArr_count_tables_xml(numTables)
-                            setIsLoadingXMLTables(false)
-                        })
-                        .catch((error) => console.log(error))
-                })
-            }
-
-            else if (options[selectedIndex] === "Просмотреть как Word файл") {
-                setOpenWordFile(true)
-                selected.map((id) => {
-                    fetch(deploy_api+port_server+`/file/read/${localStorage.getItem('NameCompany')}/${id}`, {
-                        method: 'GET',
-                        headers: {
-                            "Accept": "application/json",
-                            "Authorization": `Bearer ${localStorage.getItem('auth_token')}`,
-                            'Content-Type': 'application/json',
-                            'Connection': 'keep-alive',
-                            'Accept-Encoding': 'gzip, deflate, br',
-                            'Cache-Control': 'no-cache'
-                        }
-                    })
-                        .then((response) => response.json())
-                        .then((data) => {
-                            setContentFile(data)
-                            setIsLoading(false)
-                        })
-                        .catch((error) => console.log(error))
-                })
-            }
-        };
-
-        const handleMenuItemClick = (
-            index: number,
-        ) => {
-            setSelectedIndex(index);
-            setOpen_1(false);
-        };
-
-        const handleToggle = () => {
-            setOpen_1((prevOpen) => !prevOpen);
-        };
-
-        const handleClose = (event: Event) => {
-            if (anchorRef.current?.contains(event.target as HTMLElement)) {return;}
-            setOpen_1(false);
-        };
-
-        return (
-            <Toolbar
-                sx={{
-                    pl: { sm: 2 },
-                    pr: { xs: 1, sm: 1 },
-                    ...(numSelected > 0 && {
-                        bgcolor: (theme) =>
-                            alpha(theme.palette.primary.main, theme.palette.action.activatedOpacity),
-                    }),
-                }}
-            >
-                {numSelected > 0 && foundFile === true ? 
-                    (<Typography
-                        sx={{ flex: '1 1 100%' }}
-                        color="inherit"
-                        variant="subtitle1"
-                        component="div"
-                    >
-                        {numSelected === 1 ? <>
-                            1 выбран
-                        </> : <>
-                            {numSelected} выбрано
-                        </>
-                        }
-                    </Typography>)
-                : 
-                     
-                        <Typography
-                            sx={{ flex: '1 1 100%' }}
-                            variant="h6"
-                            id="tableTitle"
-                            component="div"
-                        >
-                            Файлы
-                        </Typography>
-                }
-                {numSelected > 0 ? (
-                    <> {numSelected === 1 ? <>
-                        <Tooltip title="Собрать пакет документов" onClick={() => {
-                            console.info('create packet of document')
-                        }}><IconButton><FolderZip /></IconButton>
-                        </Tooltip>
-                        <Tooltip title="Открыть в браузере" onClick={() => {
-                            selected.map((id) => {
-                                setOpen(true)
-                                fetch(deploy_api+port_server+`/file/read/${localStorage.getItem('NameCompany')}/${id}`, {
-                                    method: 'GET',
-                                    headers: {
-                                        "Accept": "application/json",
-                                        "Authorization": `Bearer ${localStorage.getItem('auth_token')}`,
-                                        'Content-Type': 'application/json',
-                                        'Connection': 'keep-alive',
-                                        'Accept-Encoding': 'gzip, deflate, br',
-                                        'Cache-Control': 'no-cache'
-                                    }
-                                })
-                                    .then((response) => response.json())
-                                    .then((data) => {
-                                        setContentFile(data)
-                                        setIsLoading(false)
-                                    })
-                                    .catch((error) => console.log(error))
-                            })
-                        }}>
-                            <IconButton>
-                                <OpenInBrowser />
-                            </IconButton>
-                        </Tooltip>
-    
-                        <IconButton>
-                            <React.Fragment>
-                                <ButtonGroup variant="contained" ref={anchorRef} aria-label="split button">
-                                    <Button onClick={handleClick} style={{textTransform:'none'}}>{options[selectedIndex]}</Button>
-                                    <Button
-                                    size="small"
-                                    aria-controls={open ? 'split-button-menu' : undefined}
-                                    aria-expanded={open ? 'true' : undefined}
-                                    aria-label="select merge strategy"
-                                    aria-haspopup="menu"
-                                    onClick={handleToggle}
-                                    >
-                                    <ArrowDropDownIcon />
-                                    </Button>
-                                </ButtonGroup>
-                                <Popper
-                                    sx={{
-                                    zIndex: 1,
-                                    }}
-                                    open={open}
-                                    anchorEl={anchorRef.current}
-                                    role={undefined}
-                                    transition
-                                    disablePortal
-                                >
-                                    {({ TransitionProps, placement }) => (
-                                    <Grow
-                                        {...TransitionProps}
-                                        style={{
-                                        transformOrigin:
-                                            placement === 'bottom' ? 'center top' : 'center bottom',
-                                        }}
-                                    >
-                                        <Paper>
-                                        <ClickAwayListener onClickAway={handleClose}>
-                                            <MenuList id="split-button-menu" autoFocusItem>
-                                            {options.map((option, index) => (
-                                                <MenuItem
-                                                    key={option}
-                                                    disabled={index===0}
-                                                    selected={index === selectedIndex}
-                                                    onClick={(event) => handleMenuItemClick(index)}
-                                                >
-                                                {option}
-                                                </MenuItem>
-                                            ))}
-                                            </MenuList>
-                                        </ClickAwayListener>
-                                        </Paper>
-                                    </Grow>
-                                    )}
-                                </Popper>
-                            </React.Fragment>
-                        </IconButton>
-                        <Tooltip title="Удалить" onClick={() => {
-                            selected.map(select => {
-                                fetch(deploy_api+port_server+`/file/delete/file/${localStorage.getItem('NameCompany')}/${select}`, {
-                                    method: 'DELETE',
-                                    headers: {
-                                        "Accept": "*/*",
-                                        "Authorization": `Bearer ${localStorage.getItem('auth_token')}`,
-                                        'Content-Type': 'multipart/form-data; boundary=<calculated when request is sent>',
-                                        'Connection': 'keep-alive',
-                                        'Accept-Encoding': 'gzip, deflate, br',
-                                        'Cache-Control': 'no-cache'
-                                    }
-                                })
-                                .then((resp) => {
-                                    if (typeof resp.status === "string") {
-                                        if (resp.status === "200") {
-                                            window.location.reload()
-                                        }
-                                    }
-
-                                    else if (typeof resp.status === "number") {
-                                        if (resp.status === 200) {
-                                            window.location.reload()
-                                        }
-                                    }
-
-                                    else {
-                                        console.log("Возможно произошло изменение на сервире и фронт его пока ещё не подтянул")
-                                    }
-                                })
-                                .catch((error) => {
-                                    console.log(error)
-                                })
-                            })
-                        }}>
-                            <IconButton>
-                                <DeleteIcon />
-                            </IconButton>
-                        </Tooltip>
-                    </> : <>
-                        <Tooltip title="Собрать пакет документов" onClick={() => {
-                            console.info('create packet of document')
-                        }}>
-                            <IconButton>
-                                <FolderZip />
-                            </IconButton>
-                        </Tooltip>
-                        <Tooltip title="Удалить" onClick={() => {
-                            console.info('delete')
-                        }}>
-                            <IconButton>
-                                <DeleteIcon />
-                            </IconButton>
-                        </Tooltip>
-                    </>}
-                    </>
-                ) : (
-                    <>    
-                        <Tooltip title="Создать" onClick={() => {window.open(`/home/company/create/file`, '_self')}}>
-                            <IconButton>
-                                <NoteAdd />
-                            </IconButton>
-                        </Tooltip>
-
-                        <Tooltip title="Загрузить" onClick={() => {window.open(`/home/company/upload/file`, '_self')}}>
-                            <IconButton>
-                                <CloudUpload />
-                            </IconButton>
-                        </Tooltip>
-                    </>
-                )}
-            </Toolbar>
-        );
-    }
-
-    const [files, setFiles] = useState([])
-
-    const [foundFile, setFoundFile] = useState<boolean>(false)
-
+    const [Arr_count_tables_xml_settings, setArr_count_tables_xml_settings]:any = React.useState([]);
+    const [files, setFiles] = useState([]);
+    const [foundFile, setFoundFile] = useState<boolean>(false);
     const [isLoadingElementMain, setIsLoadingElementMain] = React.useState<boolean>(true);
-
-    useEffect(() => {
-        GetFileList(setFiles, setFoundFile, setIsLoadingElementMain)
-    }, [])
-
     const [order, setOrder] = React.useState<Order>('asc');
     const [orderBy, setOrderBy] = React.useState<keyof Data>('author');
     const [selected, setSelected] = React.useState<readonly number[]>([]);
     const [page, setPage] = React.useState(0);
     const [isLoading, setIsLoading] = React.useState(true);
     const [rowsPerPage, setRowsPerPage] = React.useState(5);
+    const [open, setOpen] = React.useState(false);
+    const [openPDFFile, setOpenPDFFile] = React.useState(false);
+    const [openXMLFile, setOpenXMLFile] = React.useState(false);
+    const [openWordFile, setOpenWordFile] = React.useState(false);
+    const [OpenChooseString, setOpenChooseString] = React.useState(false);
+    const [coppy, setCoppy] = React.useState(false);
+    const [alignment, setAlignment] = React.useState<string | null>('left');
+    const [visiualType, setVisiualType] = React.useState(true);
+    const [visiulCard, setVisiualCard] = React.useState(true);
+    const [click_card_data, setClickCardData] = React.useState([]);
+    const [arr_count_columns_xml, setArr_count_columns_xml]:any = React.useState([]);
+    const [arr_count_head_xml, setArr_count_head_xml]:any = React.useState([]);
+    const [dataCellTable, setDataCellTable] = React.useState([{ value: 'Данных нет' }]);
+    const [watchGuide, setWatchGuide] = React.useState(false);
 
-    const handleRequestSort = (
-        event: React.MouseEvent<unknown>,
-        property: keyof Data,
-    ) => {
-        const isAsc = orderBy === property && order === 'asc';
-        setOrder(isAsc ? 'desc' : 'asc');
-        setOrderBy(property);
-    };
-
-    const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
-        if (event.target.checked) {
-            const newSelected = files.map((n) => n["id_file"]);
-            setSelected(newSelected);
-            return;
-        }
-        setSelected([]);
-    };
-
-    const handleClick = (event: React.MouseEvent<unknown>, id: number) => {
-        const selectedIndex = selected.indexOf(id);
-        let newSelected: readonly number[] = [];
-
-        if (selectedIndex === -1) {
-            newSelected = newSelected.concat(selected, id);
-        } else if (selectedIndex === 0) {
-            newSelected = newSelected.concat(selected.slice(1));
-        } else if (selectedIndex === selected.length - 1) {
-            newSelected = newSelected.concat(selected.slice(0, -1));
-        } else if (selectedIndex > 0) {
-            newSelected = newSelected.concat(
-                selected.slice(0, selectedIndex),
-                selected.slice(selectedIndex + 1),
-            );
-        }
-        setSelected(newSelected);
-    };
-
-    const handleChangePage = (event: unknown, newPage: number) => setPage(newPage);
-
-    const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setRowsPerPage(parseInt(event.target.value, 10));
-        setPage(0);
-    };
-
-    const isSelected = (id: number) => selected.indexOf(id) !== -1;
-
-    const emptyRows =
-        page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
+    useEffect(() => {
+        GetFileList(setFiles, setFoundFile, setIsLoadingElementMain)
+    }, [])
 
     const visibleRows = React.useMemo(
         () =>
@@ -579,43 +181,6 @@ export const ListFiles = () => {
             ),
         [order, orderBy, page, rowsPerPage],
     );
-
-    const [open, setOpen] = React.useState(false);
-    const [openPDFFile, setOpenPDFFile] = React.useState(false);
-    const [openXMLFile, setOpenXMLFile] = React.useState(false);
-    const [openWordFile, setOpenWordFile] = React.useState(false);
-    
-    const handleClose = () => {
-        setIsLoading(true)
-        setOpen(false)
-        setContentFile([])
-    }
-    
-    const handleClosePDF = () => {
-        setOpenPDFFile(false)
-        setContentFile([])
-    }
-
-    const handleCloseXMLFile = () => {
-        setOpenXMLFile(false)
-        setIsLoading(true)
-        setContentFile([])
-        setVisiualCard(true)
-        setClickCardData([])
-        setArr_count_head_xml([])
-        setArr_count_columns_xml([])
-        setOpenChooseString(false)
-        setComponentTableName_1([])
-        setComponentTableName([])
-        setCloseListItemTables(false)
-
-    }
-
-    const handleCloseWordFile = () => {
-        setOpenWordFile(false)
-        setIsLoading(true)
-        setContentFile([])
-    }
 
     const prefersDarkMode = useMediaQuery('(prefers-color-scheme: ' + localStorage.getItem("dark_theme") + ')');
 
@@ -631,148 +196,10 @@ export const ListFiles = () => {
 
     const actions = [
         { icon: <FileCopy />, name: 'Скопировать' },
-        { icon: <Print />, name: 'Печать' },
+        { icon: <Print />, name: 'Печать' }
     ];
 
-    const [coppy, setCoppy] = React.useState(false);
-    const [alignment, setAlignment] = React.useState<string | null>('left');
-    const [visiualType, setVisiualType] = React.useState(true);
-    const [visiulCard, setVisiualCard] = React.useState(true);
-    const [click_card_data, setClickCardData] = React.useState([]);
-
-    const handleAlignment = (
-        event: React.MouseEvent<HTMLElement>,
-        newAlignment: string | null,
-      ) => {
-        setAlignment(newAlignment);
-    };
-
-    let numColumns:any[] = []
-    let numHead:any[] = []
-    let [arr_count_columns_xml, setArr_count_columns_xml]:any = React.useState([]);
-    let [arr_count_head_xml, setArr_count_head_xml]:any = React.useState([]);
-    let numValues:any[] = []
-    const addDataCellTable = () => setDataCellTable([...dataCellTable, {value: 'Данных нет'}]);
-    const [dataCellTable, setDataCellTable] = React.useState([{ value: 'Данных нет' }]);
-    const [watchGuide, setWatchGuide] = React.useState(false)
-
-    const watch_guide = () => {
-        if (watchGuide === true) {
-            setWatchGuide(false)
-        }
-
-        else {
-            setWatchGuide(true)
-        }
-    }
-
-    const click_card_table_xml = (event: React.MouseEvent<HTMLElement>) => {
-        const element = event.currentTarget;
-        if (element !== null) {
-            const e = element.querySelector('.MuiTypography-h5');
-            if (e !== null) {
-                selected.map((id:any) => {
-                    fetch(test_api+port_server+`/file/xml/tables/${e.textContent}/${localStorage.getItem('NameCompany')}/${id}`, {
-                        method: 'GET',
-                        headers: {
-                            "Accept": "application/json",
-                            "Authorization": `Bearer ${localStorage.getItem('auth_token')}`,
-                            'Content-Type': 'application/json',
-                            'Connection': 'keep-alive',
-                            'Accept-Encoding': 'gzip, deflate, br',
-                            'Cache-Control': 'no-cache'
-                        }
-                    })
-                        .then((response) => response.json())
-                        .then((data) => {
-                            setVisiualCard(false)
-                            setClickCardData(data)
-                            console.log(data)
-                            for (let i = 1; i <= data[0]["count_column_table"]; i++) {
-                                numHead.push(i)
-                            }
-                            setArr_count_head_xml(numHead)
-                            for (let i = 0; i < data[0]["value_columns"][1]; i++) {
-                                numColumns.push(i)
-                            }
-                            setArr_count_columns_xml(numColumns)
-                            for (let i = 0; i < data[0]["value_columns"][1]; i++) {
-                                numValues.push(i)
-                            }
-                            setDataCellTable([])
-                        })
-                        .catch((error) => console.log(error))
-                })
-            }
-            else {
-                console.log('e is null')
-            }
-        }
-        else {
-            console.log('element is null')
-        }
-    }
-
-    type RowProps = {
-        item: any;
-    };
-
-    const remove_data_table_xml = () => {
-        console.log("remove_data_table_xml")
-        setDataCellTable([])
-    }
-
-    const edit_cell_table_xml = () => {
-        console.log("edit_cell_table_xml")
-        setOpenChooseString(true)
-    }
-
-    const StyleSettingsCell = {
-        "display": "flex",
-        "gap": "10px"
-    }
-
-    const [OpenChooseString, setOpenChooseString] = React.useState(false)
-
-    const Settings_cell = () => {
-        return (
-            <Box style={StyleSettingsCell}>
-                <Tooltip title="Добавить">
-                    <Fab sx={{
-                        marginTop: "10px",
-                        borderRadius: '10px',
-                        gap: '5px'
-                    }} size="medium" color="info" aria-label="add" onClick={addDataCellTable}>
-                        <Add />
-                    </Fab>    
-                </Tooltip>
-                <Tooltip title="Изменить">
-                    <Fab sx={{
-                        marginTop: "10px",
-                        borderRadius: '10px',
-                        gap: '5px'
-                    }} size="medium" color="info" aria-label="edit" onClick={edit_cell_table_xml}>
-                        <Edit />
-                    </Fab>    
-                </Tooltip>
-                <Tooltip title="Удалить">
-                    <Fab sx={{
-                        marginTop: "10px",
-                        borderRadius: '10px',
-                        gap: '5px'
-                    }} size="medium" color="info" aria-label="add" onClick={remove_data_table_xml}>
-                        <Delete />
-                    </Fab>
-                </Tooltip>
-            </Box>
-        )
-    }
-
     const Parent = (props:any) => {
-        console.log(props)
-        console.log(dataCellTable)
-
-
         return (
             <>
                 <Child data={props} />
@@ -1197,6 +624,7 @@ export const ListFiles = () => {
             formData.append('Textarea', TextareaContent)
             console.log(formData.get("Textarea"))
             console.log(formData.get("h4"))
+            console.log(formData)
         }
     }
 
@@ -2367,7 +1795,27 @@ export const ListFiles = () => {
                         <ThemeProvider theme={theme}>
                         <CssBaseline />
                         <Paper sx={{ width: '100%', mb: 2, boxShadow: 'none' }}>
-                            <EnhancedTableToolbar numSelected={selected.length} />
+                            <EnhancedTableToolbar 
+                                numSelected={selected.length} 
+                                setOpen={setOpen}
+                                setOpenWordFile={setOpenWordFile}
+                                test_api={test_api}
+                                port_server={port_server}
+                                deploy_api={deploy_api}
+                                setContentFile={setContentFile}
+                                selected={selected}
+                                setIsLoadingXMLTables={setIsLoadingXMLTables}
+                                setArr_count_tables_xml_settings={setArr_count_tables_xml_settings}
+                                setArr_count_tables_xml={setArr_count_tables_xml}
+                                numSettings={numSettings}
+                                numTables={numTables}
+                                Arr_count_tables_xml_settings={Arr_count_tables_xml_settings}
+                                setIsLoading={setIsLoading}
+                                setOpenXMLFile={setOpenXMLFile}
+                                setOpenPDFFile={setOpenPDFFile}
+                                options={options}
+                                foundFile={foundFile}
+                            />
                             <TableContainer>
                                 <Table
                                     sx={{ minWidth: 750, boxShadow: 'none' }}
@@ -2378,9 +1826,10 @@ export const ListFiles = () => {
                                         numSelected={selected.length}
                                         order={order}
                                         orderBy={orderBy}
-                                        onSelectAllClick={handleSelectAllClick}
-                                        onRequestSort={handleRequestSort}
+                                        onSelectAllClick={(event: any) => handleSelectAllClick(setSelected, files, event)}
+                                        onRequestSort={(event: any, property: any) => handleRequestSort(event, property, setOrder, setOrderBy, order, orderBy)}
                                         rowCount={files.length}
+                                        foundFileEnhancedTableHead={foundFile}
                                     />
                                     {
                                         foundFile === true ?
@@ -2392,7 +1841,7 @@ export const ListFiles = () => {
                                                     files.map((file) => (
                                                         <TableRow
                                                             hover
-                                                            onClick={(event) => handleClick(event, parseInt(file["id_file"]))}
+                                                            onClick={(event) => handleClick(event, parseInt(file["id_file"]), selected, setSelected)}
                                                             aria-checked={file["id_file"]}
                                                             tabIndex={-1}
                                                             key={parseInt(file["id_file"])}
@@ -2400,7 +1849,7 @@ export const ListFiles = () => {
                                                             sx={{ cursor: 'pointer' }}
                                                         >
                                                             <TableCell padding="checkbox">
-                                                                <Checkbox color="primary" checked={isSelected(file["id_file"])} inputProps={{'aria-labelledby': labelId}}/>
+                                                                <Checkbox color="primary" checked={isSelected(file["id_file"], selected)} inputProps={{'aria-labelledby': labelId}}/>
                                                             </TableCell>
                                                             <TableCell component="th" scope="row" padding="none" style={{textAlign:"start"}}>{file["file_name"]}</TableCell>
                                                             <TableCell align="right" style={{textAlign:"start"}}>{file["author"]}</TableCell>
@@ -2426,7 +1875,7 @@ export const ListFiles = () => {
                                                                     files.map((file) => (
                                                                         <TableRow
                                                                         hover
-                                                                        onClick={(event) => handleClick(event, parseInt(file["id_file"]))}
+                                                                        onClick={(event) => handleClick(event, parseInt(file["id_file"]), selected, setSelected)}
                                                                         aria-checked={file["id_file"]}
                                                                         tabIndex={-1}
                                                                         key={parseInt(file["id_file"])}
@@ -2434,7 +1883,7 @@ export const ListFiles = () => {
                                                                         sx={{ cursor: 'pointer' }}
                                                                         >
                                                                             <TableCell padding="checkbox">
-                                                                                <Checkbox color="primary" checked={isSelected(file["id_file"])} inputProps={{'aria-labelledby': labelId}}/>
+                                                                                <Checkbox color="primary" checked={isSelected(file["id_file"], selected)} inputProps={{'aria-labelledby': labelId}}/>
                                                                             </TableCell>
                                                                             <TableCell component="th" scope="row" padding="none" style={{textAlign:"start"}}>{file["file_name"]}</TableCell>
                                                                             <TableCell align="right" style={{textAlign:"start"}}>{file["author"]}</TableCell>
@@ -2451,7 +1900,7 @@ export const ListFiles = () => {
                                             {foundFile ?
                                                 <TableRow
                                                     style={{
-                                                        height: 33 * emptyRows,
+                                                        height: 33 * emptyRows(page, rowsPerPage, rows),
                                                     }}
                                                 >
                                                     <TableCell colSpan={6} />
@@ -2488,8 +1937,8 @@ export const ListFiles = () => {
                                         count={rows.length}
                                         rowsPerPage={rowsPerPage}
                                         page={page}
-                                        onPageChange={handleChangePage}
-                                        onRowsPerPageChange={handleChangeRowsPerPage}
+                                        onPageChange={(event: any, newPage: any) => handleChangePage(event, newPage, setPage)}
+                                        onRowsPerPageChange={(event: any) => handleChangeRowsPerPage(event, setRowsPerPage, setPage)}
                                         labelRowsPerPage="Строк на странице:"
                                         labelDisplayedRows={({ from, to, count }) => `${from}–${to} из ${count}`}
                                     />
@@ -2498,7 +1947,7 @@ export const ListFiles = () => {
                         </Paper>
                         <Modal
                         open={open}
-                        onClose={handleClose}
+                        onClose={() => handleClose(setIsLoading, setOpen, setContentFile)}
                         aria-labelledby="modal-modal-title"
                         aria-describedby="modal-modal-description">
                         <Box sx={style}>
@@ -2573,9 +2022,7 @@ export const ListFiles = () => {
                                                 aria-label="close"
                                                 color="inherit"
                                                 size="medium"
-                                                onClick={() => {
-                                                    handleClose();
-                                                }}
+                                                onClick={() => handleClose(setIsLoading, setOpen, setContentFile)}
                                             >
                                                 <Close fontSize="inherit" />
                                             </IconButton>
@@ -2598,7 +2045,20 @@ export const ListFiles = () => {
 
                         <Modal
                         open={openPDFFile}
-                        onClose={handleClosePDF}
+                        onClose={
+                            () => handleClosePDF(
+                                setOpenPDFFile,
+                                setContentFile,
+                                setVisiualCard,
+                                setClickCardData,
+                                setArr_count_head_xml,
+                                setArr_count_columns_xml,
+                                setOpenChooseString,
+                                setComponentTableName_1,
+                                setComponentTableName,
+                                setCloseListItemTables
+                            )
+                        }
                         aria-labelledby="modal-modal-title"
                         aria-describedby="modal-modal-description">
                         <Box sx={style}>
@@ -2692,7 +2152,18 @@ export const ListFiles = () => {
                                                 color="inherit"
                                                 size="medium"
                                                 onClick={() => {
-                                                    handleClosePDF();
+                                                    handleClosePDF(
+                                                        setOpenPDFFile,
+                                                        setContentFile,
+                                                        setVisiualCard,
+                                                        setClickCardData,
+                                                        setArr_count_head_xml,
+                                                        setArr_count_columns_xml,
+                                                        setOpenChooseString,
+                                                        setComponentTableName_1,
+                                                        setComponentTableName,
+                                                        setCloseListItemTables
+                                                    );
                                                 }}
                                             >
                                                 <Close fontSize="inherit" />
@@ -2720,7 +2191,21 @@ export const ListFiles = () => {
 
                         <Modal
                         open={openXMLFile}
-                        onClose={handleCloseXMLFile}
+                        onClose={
+                            () => handleCloseXMLFile(
+                                setOpenXMLFile,
+                                setIsLoading,
+                                setContentFile,
+                                setVisiualCard,
+                                setClickCardData,
+                                setArr_count_head_xml,
+                                setArr_count_columns_xml,
+                                setOpenChooseString,
+                                setComponentTableName_1,
+                                setComponentTableName,
+                                setCloseListItemTables
+                            )
+                        }
                         aria-labelledby="modal-modal-title"
                         aria-describedby="modal-modal-description"
                         style={{ 
@@ -2742,7 +2227,19 @@ export const ListFiles = () => {
                                         size="medium"
                                         sx={{ mr: 2 }}
                                         onClick={() => {
-                                            handleCloseXMLFile();
+                                            handleCloseXMLFile(
+                                                setOpenXMLFile,
+                                                setIsLoading,
+                                                setContentFile,
+                                                setVisiualCard,
+                                                setClickCardData,
+                                                setArr_count_head_xml,
+                                                setArr_count_columns_xml,
+                                                setOpenChooseString,
+                                                setComponentTableName_1,
+                                                setComponentTableName,
+                                                setCloseListItemTables
+                                            );
                                         }}
                                         >
                                             <Close fontSize="inherit" />
@@ -2770,7 +2267,7 @@ export const ListFiles = () => {
                                     <ToggleButtonGroup
                                             value={alignment}
                                             exclusive
-                                            onChange={handleAlignment}
+                                            onChange={(event: React.MouseEvent<HTMLElement>, newAlignment: string | null) => handleAlignment(event, newAlignment, setAlignment)}
                                             aria-label="text alignment"
                                             >
                                                 <ToggleButton value="left" aria-label="left aligned">
@@ -2850,20 +2347,37 @@ export const ListFiles = () => {
                                                                                 </Box>        
                                                                             </> : <>
                                                                                 <Card key={item_1.id} onClick={(event) => {
-                                                                                    click_card_table_xml(event)
+                                                                                    click_card_table_xml(
+                                                                                        event,
+                                                                                        setDataCellTable,
+                                                                                        numValues,
+                                                                                        numColumns,
+                                                                                        setArr_count_columns_xml,
+                                                                                        numHead,
+                                                                                        setArr_count_head_xml,
+                                                                                        setClickCardData,
+                                                                                        setVisiualCard,
+                                                                                        port_server,
+                                                                                        test_api,
+                                                                                        selected
+                                                                                    )
                                                                                 }}>
                                                                                     <CardActionArea>
                                                                                         <CardContent>
                                                                                             {contentFile.map((item: any) => (
                                                                                                 <>
                                                                                                     <Typography gutterBottom variant="h5" component="div">
-                                                                                                    {item["tables"]["table_"+item_1]["name"]}
+                                                                                                        {item["tables"]["table_"+item_1]["name"]}
                                                                                                     </Typography>
                                                                                                     <Typography variant="body2" color="text.secondary">
-                                                                                                        {item["tables"]["table_"+item_1]["content"]}
+                                                                                                        {
+                                                                                                            item["tables"]["table_"+item_1]["content"] === "Пустой" ? <>Нажмите чтобы посмотреть подробнее</> : <>
+                                                                                                                {item["tables"]["table_"+item_1]["content"]}
+                                                                                                            </>
+                                                                                                        }
                                                                                                     </Typography>
                                                                                                 </>
-                                                                                                ))} 
+                                                                                            ))} 
                                                                                         </CardContent>
                                                                                     </CardActionArea>
                                                                                 </Card>        
@@ -2879,7 +2393,7 @@ export const ListFiles = () => {
                                                                     {
                                                                         visiualType && click_card_data !== null ? <>
                                                                             {OpenChooseString ? <Box sx={{ width: '100%' }}>
-                                                                                <Button variant="contained" onClick={() => {watch_guide()}}>Информация</Button>
+                                                                                <Button variant="contained" onClick={() => {watch_guide(watchGuide, setWatchGuide)}}>Информация</Button>
                                                                                 {
                                                                                    watchGuide ? <>
                                                                                        <Stepper nonLinear activeStep={activeStep}>
@@ -2968,7 +2482,7 @@ export const ListFiles = () => {
                                                                                             </TableBody>
                                                                                         </Table>                                                            
                                                                                     </TableContainer>
-                                                                                    <Settings_cell/>
+                                                                                    <Settings_cell setDataCellTable={setDataCellTable} dataCellTable, setOpenChooseString/>
                                                                                 <div>
                                                                                 <Typography variant="h3" sx={{
                                                                                     padding: "10px"
@@ -3060,7 +2574,21 @@ export const ListFiles = () => {
 
                         <Modal
                         open={openWordFile}
-                        onClose={handleCloseWordFile}
+                        onClose={
+                            () => handleCloseWordFile(
+                                setOpenWordFile,
+                                setIsLoading,
+                                setContentFile,
+                                setVisiualCard,
+                                setClickCardData,
+                                setArr_count_head_xml,
+                                setArr_count_columns_xml,
+                                setOpenChooseString,
+                                setComponentTableName_1,
+                                setComponentTableName,
+                                setCloseListItemTables
+                            )
+                        }
                         aria-labelledby="modal-modal-title"
                         aria-describedby="modal-modal-description">
                         <Box sx={style}>
@@ -3149,7 +2677,19 @@ export const ListFiles = () => {
                                                 color="inherit"
                                                 size="medium"
                                                 onClick={() => {
-                                                    handleCloseWordFile();
+                                                    handleCloseWordFile(
+                                                        setOpenWordFile,
+                                                        setIsLoading,
+                                                        setContentFile,
+                                                        setVisiualCard,
+                                                        setClickCardData,
+                                                        setArr_count_head_xml,
+                                                        setArr_count_columns_xml,
+                                                        setOpenChooseString,
+                                                        setComponentTableName_1,
+                                                        setComponentTableName,
+                                                        setCloseListItemTables
+                                                    )
                                                 }}
                                             >
                                                 <Close fontSize="inherit" />

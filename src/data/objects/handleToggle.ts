@@ -1,0 +1,1 @@
+export const handleToggle = (setOpen_1: any) => setOpen_1((prevOpen: any) => !prevOpen);

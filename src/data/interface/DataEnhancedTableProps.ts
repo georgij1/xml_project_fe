@@ -8,4 +8,5 @@ export interface EnhancedTableProps {
     order: Order;
     orderBy: string;
     rowCount: number;
+    foundFileEnhancedTableHead: boolean;
 }

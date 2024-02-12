@@ -11,6 +11,7 @@ import {
 import { remove_data_table_xml } from "../objects/remove_data_table_xml";
 import { edit_cell_table_xml } from "../objects/edit_cell_table_xml";
 import { addDataCellTable } from "../objects/addDataCellTable";
+import { StyleSettingsCell } from "../objects/StyleSettingsCell";
 
 interface PropsSettings_cell {
 	setDataCellTable: any;

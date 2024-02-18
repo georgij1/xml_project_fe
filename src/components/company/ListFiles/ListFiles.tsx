@@ -22,8 +22,6 @@ import {
     TableHead, 
     TablePagination,
     TableRow,
-    ToggleButton,
-    ToggleButtonGroup,
     Toolbar,
     Typography
 } from "@mui/material";
@@ -32,8 +30,6 @@ import {
     Edit,
     Print,
     FileCopy,
-    TableChart,
-    Code
 } from "@mui/icons-material";
 import Modal from '@mui/material/Modal';
 import Button from '@mui/material/Button';
@@ -76,7 +72,6 @@ import { emptyRows } from "../../../data/objects/EmptyRows";
 import { handleClosePDF } from "../../../data/objects/handleClosePDF";
 import { handleCloseXMLFile } from "../../../data/objects/handleCloseXMLFile";
 import { handleCloseWordFile } from "../../../data/objects/handleCloseWordFile";
-import { handleAlignment } from "../../../data/objects/HandleAlignment";
 import { 
     numColumns,
     numHead,
@@ -123,8 +118,6 @@ export const ListFiles = () => {
     const [openWordFile, setOpenWordFile] = React.useState(false);
     const [OpenChooseString, setOpenChooseString] = React.useState(false);
     const [coppy, setCoppy] = React.useState(false);
-    const [alignment, setAlignment] = React.useState<string | null>('left');
-    const [visiualType, setVisiualType] = React.useState(true);
     const [visiulCard, setVisiualCard] = React.useState(true);
     const [click_card_data, setClickCardData] = React.useState([]);
     const [arr_count_columns_xml, setArr_count_columns_xml] = React.useState([]);
@@ -205,6 +198,14 @@ export const ListFiles = () => {
       padding: theme.spacing(2),
       borderTop: '1px solid rgba(0, 0, 0, .125)',
     }));
+
+    // handleChangeXMLAccordion
+
+    const [expanded_1, setExpanded_1] = React.useState<string | false>(false);
+
+    const handleChangeXMLAccordion = (panel: string) => (event: React.SyntheticEvent, isExpanded: boolean) => {
+      setExpanded_1(isExpanded ? panel : false);
+    };
 
     return (
         <>
@@ -473,20 +474,7 @@ export const ListFiles = () => {
 
                         <Modal
                         open={openPDFFile}
-                        onClose={
-                            () => handleClosePDF(
-                                setOpenPDFFile,
-                                setContentFile,
-                                setVisiualCard,
-                                setClickCardData,
-                                setArr_count_head_xml,
-                                setArr_count_columns_xml,
-                                setOpenChooseString,
-                                setComponentTableName_1,
-                                setComponentTableName,
-                                setCloseListItemTables
-                            )
-                        }
+                        onClose={() => handleClosePDF()}
                         aria-labelledby="modal-modal-title"
                         aria-describedby="modal-modal-description">
                         <Box sx={style}>
@@ -579,20 +567,7 @@ export const ListFiles = () => {
                                                 aria-label="close"
                                                 color="inherit"
                                                 size="medium"
-                                                onClick={() => {
-                                                    handleClosePDF(
-                                                        setOpenPDFFile,
-                                                        setContentFile,
-                                                        setVisiualCard,
-                                                        setClickCardData,
-                                                        setArr_count_head_xml,
-                                                        setArr_count_columns_xml,
-                                                        setOpenChooseString,
-                                                        setComponentTableName_1,
-                                                        setComponentTableName,
-                                                        setCloseListItemTables
-                                                    );
-                                                }}
+                                                onClick={() => handleClosePDF()}
                                             >
                                                 <Close fontSize="inherit" />
                                             </IconButton>
@@ -619,21 +594,7 @@ export const ListFiles = () => {
 
                         <Modal
                         open={openXMLFile}
-                        onClose={
-                            () => handleCloseXMLFile(
-                                setOpenXMLFile,
-                                setIsLoading,
-                                setContentFile,
-                                setVisiualCard,
-                                setClickCardData,
-                                setArr_count_head_xml,
-                                setArr_count_columns_xml,
-                                setOpenChooseString,
-                                setComponentTableName_1,
-                                setComponentTableName,
-                                setCloseListItemTables
-                            )
-                        }
+                        onClose={() => handleCloseXMLFile()}
                         aria-labelledby="modal-modal-title"
                         aria-describedby="modal-modal-description"
                         style={{ 
@@ -654,21 +615,7 @@ export const ListFiles = () => {
                                         color="inherit"
                                         size="medium"
                                         sx={{ mr: 2 }}
-                                        onClick={() => {
-                                            handleCloseXMLFile(
-                                                setOpenXMLFile,
-                                                setIsLoading,
-                                                setContentFile,
-                                                setVisiualCard,
-                                                setClickCardData,
-                                                setArr_count_head_xml,
-                                                setArr_count_columns_xml,
-                                                setOpenChooseString,
-                                                setComponentTableName_1,
-                                                setComponentTableName,
-                                                setCloseListItemTables
-                                            );
-                                        }}
+                                        onClick={() => handleCloseXMLFile()}
                                         >
                                             <Close fontSize="inherit" />
                                         </IconButton>
@@ -692,20 +639,6 @@ export const ListFiles = () => {
                                     overflow: 'auto',
                                     paddingTop: '6%'
                                 }}>
-                                    <ToggleButtonGroup
-                                            value={alignment}
-                                            exclusive
-                                            onChange={(event: React.MouseEvent<HTMLElement>, newAlignment: string | null) => handleAlignment(event, newAlignment, setAlignment)}
-                                            aria-label="text alignment"
-                                            >
-                                                <ToggleButton value="left" aria-label="left aligned">
-                                                    <TableChart onClick={() => {setVisiualType(true)}} />
-                                                </ToggleButton>
-                                                <ToggleButton value="center" aria-label="centered">
-                                                    <Code onClick={() => {setVisiualType(false)}} />
-                                                </ToggleButton>
-                                            </ToggleButtonGroup> 
-                                
                                     <Typography id="modal-modal-description" sx={{ mt: 2, width: '100%', owerflow: 'auto' }}>
                                         {
                                             isLoading?
@@ -761,65 +694,98 @@ export const ListFiles = () => {
                                                             "grid-template-columns": "repeat(1, 1fr)",
                                                             "gap": "20px"
                                                         }}>
-                                                            {
-                                                                arr_count_tables_xml.map((item_1: any) => (
-                                                                    <>
-                                                                        {
-                                                                            isLoadingXMLTables ? <>
-                                                                                <Box sx={{
-                                                                                    position: 'absolute',
-                                                                                    left: '50vW',
-                                                                                    top: '50vh'
-                                                                                }}>
-                                                                                   <CircularProgress /> 
-                                                                                </Box>        
-                                                                            </> : <>
-                                                                                <Card key={item_1.id} onClick={(event) => {
-                                                                                    click_card_table_xml(
-                                                                                        event,
-                                                                                        setDataCellTable,
-                                                                                        numValues,
-                                                                                        numColumns,
-                                                                                        setArr_count_columns_xml,
-                                                                                        numHead,
-                                                                                        setArr_count_head_xml,
-                                                                                        setClickCardData,
-                                                                                        setVisiualCard,
-                                                                                        port_server,
-                                                                                        test_api,
-                                                                                        selected
-                                                                                    )
-                                                                                }}>
-                                                                                    <CardActionArea>
-                                                                                        <CardContent>
-                                                                                            {contentFile.map((item: any) => (
-                                                                                                <>
-                                                                                                    <Typography gutterBottom variant="h5" component="div">
-                                                                                                        {item["tables"]["table_"+item_1]["name"]}
-                                                                                                    </Typography>
-                                                                                                    <Typography variant="body2" color="text.secondary">
-                                                                                                        {
-                                                                                                            item["tables"]["table_"+item_1]["content"] === "Пустой" ? <>Нажмите чтобы посмотреть подробнее</> : <>
-                                                                                                                {item["tables"]["table_"+item_1]["content"]}
-                                                                                                            </>
-                                                                                                        }
-                                                                                                    </Typography>
-                                                                                                </>
-                                                                                            ))} 
-                                                                                        </CardContent>
-                                                                                    </CardActionArea>
-                                                                                </Card>        
-                                                                            </>
-                                                                        } 
-                                                                    </>
-                                                                ))
-                                                            }
+                                                            <Accordion sx={{
+                                                                borderRadius: "10px",
+                                                                background: "floralwhite"
+                                                            }} expanded={expanded_1 === 'xml_tables'} onChange={handleChangeXMLAccordion('xml_tables')}>
+                                                                <AccordionSummary aria-controls="panel1d-content" id="panel1d-header">
+                                                                    <Typography>Таблицы</Typography> 
+                                                                </AccordionSummary>
+                                                                <AccordionDetails sx={{
+                                                                    display: "flex",
+                                                                    flexDirection: "column",
+                                                                    gap: "20px"
+                                                                }}>
+                                                                {
+                                                                    arr_count_tables_xml.map((item_1: any) => (
+                                                                        <>
+                                                                            {
+                                                                                isLoadingXMLTables ? 
+                                                                                    <Box sx={{
+                                                                                        position: 'absolute',
+                                                                                        left: '50vW',
+                                                                                        top: '50vh'
+                                                                                    }}>
+                                                                                    <CircularProgress /> 
+                                                                                    </Box>        
+                                                                                :
+                                                                                    <Card key={item_1.id} onClick={(event) => {
+                                                                                        click_card_table_xml(
+                                                                                            event,
+                                                                                            setDataCellTable,
+                                                                                            numValues,
+                                                                                            numColumns,
+                                                                                            setArr_count_columns_xml,
+                                                                                            numHead,
+                                                                                            setArr_count_head_xml,
+                                                                                            setClickCardData,
+                                                                                            setVisiualCard,
+                                                                                            port_server,
+                                                                                            test_api,
+                                                                                            selected
+                                                                                        )
+                                                                                    }}>
+                                                                                        <CardActionArea>
+                                                                                            <CardContent>
+                                                                                                {contentFile.map((item: any) => (
+                                                                                                    <>
+                                                                                                        <Typography gutterBottom variant="h5" component="div">
+                                                                                                            {item["tables"]["table_"+item_1]["name"]}
+                                                                                                        </Typography>
+                                                                                                        <Typography variant="body2" color="text.secondary">
+                                                                                                            {
+                                                                                                                item["tables"]["table_"+item_1]["content"] === "Пустой" ? <>Нажмите чтобы посмотреть подробнее</> : <>
+                                                                                                                    {item["tables"]["table_"+item_1]["content"]}
+                                                                                                                </>
+                                                                                                            }
+                                                                                                        </Typography>
+                                                                                                    </>
+                                                                                                ))} 
+                                                                                            </CardContent>
+                                                                                        </CardActionArea>
+                                                                                    </Card>
+                                                                                
+                                                                            }
+                                                                        </>
+                                                                        
+                                                                    ))
+                                                                }
+                                                                </AccordionDetails>
+                                                            </Accordion>
+                                                            
+                                                            <Accordion sx={{
+                                                                borderRadius: "10px",
+                                                                background: "floralwhite"
+                                                            }} expanded={expanded_1 === 'code_xml_file'} onChange={handleChangeXMLAccordion('code_xml_file')}>
+                                                                <AccordionSummary aria-controls="panel1d-content" id="panel1d-header">
+                                                                    {contentFile.map((item: any) => (
+                                                                       <Typography key={item.id}>Код {item["name_file"]}</Typography> 
+                                                                    ))}
+                                                                </AccordionSummary>
+                                                                <AccordionDetails>
+                                                                    <Typography>
+                                                                        {contentFile.map((item: any) => (
+                                                                            <Typography key={item.id}>{item["content_file"]}</Typography>
+                                                                        ))}
+                                                                    </Typography>
+                                                                </AccordionDetails>
+                                                            </Accordion>
                                                         </Box>
                                                     :<>
                                                         {
                                                             visiulCard && click_card_data.length === 0 ? <></> : <>
                                                                     {
-                                                                        visiualType && click_card_data !== null ? <>
+                                                                        click_card_data !== null ? <>
                                                                             {OpenChooseString ? <Box sx={{ width: '100%' }}>
                                                                                 <Button variant="contained" onClick={() => {watch_guide(watchGuide, setWatchGuide)}}>Информация</Button>
                                                                                 {
@@ -941,17 +907,26 @@ export const ListFiles = () => {
                                                                                             </TableHead>
                                                                                             <TableBody className="table_body">
                                                                                                 <Row key={item.id} item={item} arr_count_columns_xml={arr_count_columns_xml} />
-                                                                                                <Parent data={item["table"]["TableName"]} dataCellTable={dataCellTable}/>
+                                                                                                <Parent data={item["table"]["TableName"]} dataCellTable={dataCellTable} selected={selected}/>
                                                                                             </TableBody>
                                                                                         </Table>                                                            
                                                                                     </TableContainer>
-                                                                                    <Settings_cell setDataCellTable={setDataCellTable} dataCellTable={dataCellTable} setOpenChooseString={setOpenChooseString}/>
+                                                                                    {selected.map((item_1: any) => (
+                                                                                        <Settings_cell 
+                                                                                            key={item_1.id} 
+                                                                                            idFile={item_1} 
+                                                                                            NameTable={item["table"]["TableName"]} 
+                                                                                            setDataCellTable={setDataCellTable} 
+                                                                                            dataCellTable={dataCellTable} 
+                                                                                            setOpenChooseString={setOpenChooseString}
+                                                                                        />
+                                                                                    ))}
                                                                                 <div>
                                                                                 <Typography variant="h3" sx={{
                                                                                     padding: "10px"
                                                                                 }}>Помощь</Typography>
 
-                                                                                <Accordion expanded={expanded === 'panel2'} onChange={(newExpanded: any) => handleChange('panel1', newExpanded, setExpanded)}>
+                                                                                <Accordion expanded={expanded === 'panel2'} onChange={(newExpanded: any) => handleChange('panel2', newExpanded, setExpanded)}>
                                                                                     <AccordionSummary aria-controls="panel1d-content" id="panel1d-header">
                                                                                     <Typography>Ваши возможности на этой странице</Typography>
                                                                                     </AccordionSummary>
@@ -964,7 +939,7 @@ export const ListFiles = () => {
                                                                                     </AccordionDetails>
                                                                                 </Accordion>
                                                                                 
-                                                                                <Accordion expanded={expanded === 'panel3'} onChange={(newExpanded: any) => handleChange('panel1', newExpanded, setExpanded)}>
+                                                                                <Accordion expanded={expanded === 'panel3'} onChange={(newExpanded: any) => handleChange('panel3', newExpanded, setExpanded)}>
                                                                                     <AccordionSummary aria-controls="panel1d-content" id="panel1d-header">
                                                                                     <Typography>Что означает кнопка с двумя стрелочками?</Typography>
                                                                                     </AccordionSummary>
@@ -975,7 +950,7 @@ export const ListFiles = () => {
                                                                                     </AccordionDetails>
                                                                                 </Accordion>
 
-                                                                                <Accordion expanded={expanded === 'panel4'} onChange={(newExpanded: any) => handleChange('panel1', newExpanded, setExpanded)}>
+                                                                                <Accordion expanded={expanded === 'panel4'} onChange={(newExpanded: any) => handleChange('panel4', newExpanded, setExpanded)}>
                                                                                     <AccordionSummary aria-controls="panel1d-content" id="panel1d-header">
                                                                                     <Typography>Что означает кнопка удалить?</Typography>
                                                                                     </AccordionSummary>
@@ -1008,21 +983,8 @@ export const ListFiles = () => {
                                                                         </>
                                                                     ))}
                                                                             </>}
-                                                                        </> : <>
-                                                                            <blockquote>
-                                                                                <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-                                                                                    {
-                                                                                        contentFile.length > 0 && visiualType ? <></> : <>
-                                                                                            {contentFile.map((item: any) => (
-                                                                                                <Typography key={item.id} id="modal-modal-description" sx={{ mt: 2 }}>
-                                                                                                    {item["content_file"]}
-                                                                                                </Typography>       
-                                                                                            ))}
-                                                                                        </>
-                                                                                    }
-                                                                                </Typography>
-                                                                            </blockquote>
-                                                                        </>
+                                                                        </> :
+                                                                            <></>
                                                                     }
                                                                 </>
                                                         }
@@ -1037,21 +999,7 @@ export const ListFiles = () => {
 
                         <Modal
                         open={openWordFile}
-                        onClose={
-                            () => handleCloseWordFile(
-                                setOpenWordFile,
-                                setIsLoading,
-                                setContentFile,
-                                setVisiualCard,
-                                setClickCardData,
-                                setArr_count_head_xml,
-                                setArr_count_columns_xml,
-                                setOpenChooseString,
-                                setComponentTableName_1,
-                                setComponentTableName,
-                                setCloseListItemTables
-                            )
-                        }
+                        onClose={() => handleCloseWordFile()}
                         aria-labelledby="modal-modal-title"
                         aria-describedby="modal-modal-description">
                         <Box sx={style}>
@@ -1139,21 +1087,7 @@ export const ListFiles = () => {
                                                 aria-label="close"
                                                 color="inherit"
                                                 size="medium"
-                                                onClick={() => {
-                                                    handleCloseWordFile(
-                                                        setOpenWordFile,
-                                                        setIsLoading,
-                                                        setContentFile,
-                                                        setVisiualCard,
-                                                        setClickCardData,
-                                                        setArr_count_head_xml,
-                                                        setArr_count_columns_xml,
-                                                        setOpenChooseString,
-                                                        setComponentTableName_1,
-                                                        setComponentTableName,
-                                                        setCloseListItemTables
-                                                    )
-                                                }}
+                                                onClick={() => handleCloseWordFile()}
                                             >
                                                 <Close fontSize="inherit" />
                                             </IconButton>

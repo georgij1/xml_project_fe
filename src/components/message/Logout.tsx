@@ -8,7 +8,7 @@ export const Logout = () => {
         "right": "10px",
         "background": "grey",
         "color": "#FFF",
-        "z-index": "100",
+        "z-index": "99999999",
         "padding": "10px",
         "border-radius": "10px",
         "cursor": "default"

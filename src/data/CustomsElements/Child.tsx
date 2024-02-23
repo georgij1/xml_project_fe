@@ -5,7 +5,15 @@ import {
     TextField,
     Skeleton,
     Chip,
-    Tooltip
+    Tooltip,
+    List,
+    ListItem,
+    IconButton,
+    ListItemButton,
+    ListItemIcon,
+    ListItemText,
+    Checkbox,
+    Alert
 } from "@mui/material";
 import { 
     EditEmptyFields
@@ -20,7 +28,7 @@ import AccordionSummary from '@mui/material/AccordionSummary';
 import { deploy_api, port_server, test_api } from "../ServerVariable";
 import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
-import { CalendarToday, Grade, Grading, Notes, TextFields } from "@mui/icons-material";
+import { CalendarToday, Comment, Grade, Grading, Notes, TextFields } from "@mui/icons-material";
 
 interface PropsChild {
     data: any;
@@ -75,7 +83,6 @@ export const Child = (
                     console.log(data)
                     setValueContextFile(data)
                     setPreloadContextFile(false)
-                    
                 })
                 .catch((error) => {
                     console.log(error)
@@ -86,7 +93,7 @@ export const Child = (
     const [pagePagination, setPagePagination] = React.useState<number>(0);
     const handleChangePagination = (event: React.ChangeEvent<unknown>, value: number) => setPagePagination(value);
     const showSplitWords = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-    const [countSelectedSplitWords, setCountSelectedSplitWords] = React.useState<number>(1);
+    const [countSelectedSplitWords, setCountSelectedSplitWords] = React.useState<number>(0);
     const [dataCreateTable, setDataCreateTable] = React.useState([]);
     const [chooseSplitWords, setChooseSplitWords] = React.useState([{
         "org_full_name": [dataCreateTable],
@@ -103,36 +110,64 @@ export const Child = (
     const save_data = (
         eventOrgFullName: any
     ) => {
-        console.log(eventOrgFullName.textContent)
         setCountSelectedSplitWords(countSelectedSplitWords+1)
-        console.log(countSelectedSplitWords)
-        if (dataCreateTable.length === 0) {
-            setDataCreateTable(eventOrgFullName.textContent)    
+        if (dataCreateTable.length === 0 || dataCreateTable.length === 1) {
+            setDataCreateTable(eventOrgFullName.textContent)
+            setChooseSplitWords([{
+                "org_full_name": [eventOrgFullName.textContent],
+                "org_ogrn": "",
+                "org_inn": "",
+                "org_kpp": "",
+                "region": "",
+                "city": "",
+                "street": "",
+                "building": "",
+                "room": ""
+            }])
         }
 
         else {
             setDataCreateTable(dataCreateTable.concat(eventOrgFullName.textContent))
+            setChooseSplitWords([{
+                "org_full_name": [dataCreateTable.concat(eventOrgFullName.textContent)],
+                "org_ogrn": "",
+                "org_inn": "",
+                "org_kpp": "",
+                "region": "",
+                "city": "",
+                "street": "",
+                "building": "",
+                "room": ""
+            }])
         }
 
-        ChooseSplitWords()
-    }
-
-    const ChooseSplitWords = () => {
-        setChooseSplitWords([{
-            "org_full_name": [dataCreateTable],
-            "org_ogrn": "",
-            "org_inn": "",
-            "org_kpp": "",
-            "region": "",
-            "city": "",
-            "street": "",
-            "building": "",
-            "room": ""
-        }])
+        console.log(chooseSplitWords)
     }
 
     const ChooseContentFromFile = () => {
         console.log(chooseSplitWords)
+
+        const [checked, setChecked] = React.useState([0]);
+
+        const handleToggle = (
+            value: number, 
+            valueContextFile: any
+        ) => () => {
+            const currentIndex = checked.indexOf(value);
+            const newChecked = [...checked];
+
+            if (currentIndex === -1) {
+            newChecked.push(value);
+            } else {
+            newChecked.splice(currentIndex, 1);
+            }
+
+            setChecked(newChecked);
+
+        //    save_data(valueContextFile[value])
+
+            console.log(valueContextFile)
+        };
 
         return (
             <>
@@ -167,7 +202,7 @@ export const Child = (
                                     </>
                                 }
                                 {
-                                    Object.keys(dataCreateTable).length !== 0 ? <>
+                                    Object.keys(chooseSplitWords[0]["org_full_name"]).length !== 0 ? <>
                                         {
                                             chooseSplitWords.map((item: any) => (
                                                 <Chip label={item["org_full_name"]} size="small" />       
@@ -183,30 +218,66 @@ export const Child = (
                                         width: "73vW"
                                     }} onClick={() => {
                                         setDataCreateTable([])
+                                        setChooseSplitWords([{
+                                            "org_full_name": [dataCreateTable],
+                                            "org_ogrn": "",
+                                            "org_inn": "",
+                                            "org_kpp": "",
+                                            "region": "",
+                                            "city": "",
+                                            "street": "",
+                                            "building": "",
+                                            "room": ""
+                                        }])
                                         setCountSelectedSplitWords(0)
                                     }}>Удалить список</Button> 
-                                    : 
-                                    <></>
+                                :
+                                    <Alert sx={{
+                                        marginTop: "10px"
+                                    }} severity="warning">Выбирите эллемент из файла</Alert>
                             }
                         </Box>
                         <Stack spacing={2}>
-                            {
-                                showSplitWords.map((item: number) => (
-                                    <Typography onClick={(event: any) => {
-                                        save_data(event.currentTarget)
-                                    }} sx={{
-                                        cursor: "pointer",
-                                        ":hover": {
-                                            background: "#f5f5f5"
-                                        }
-                                    }}>{valueContextFile.join('').split(/,/g)[pagePagination+item]}</Typography>
-                                ))
-                            }
-                            <Typography>Страница: {pagePagination}</Typography>
-                            <Pagination count={valueContextFile.length - 10} color="primary" page={pagePagination} onChange={handleChangePagination} />
+                            <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
+                                {showSplitWords.map((value) => {
+                                    const labelId = `checkbox-list-label-${value}`;
+
+                                    return (
+                                        <ListItem
+                                            sx={{
+                                                width: "80vW"
+                                            }}
+                                            key={value}
+                                            disablePadding
+                                        >
+                                            <ListItemButton role={undefined} onClick={handleToggle(value, valueContextFile)} dense>
+                                                <ListItemIcon>
+                                                    <Checkbox
+                                                        edge="start"
+                                                        checked={checked.indexOf(value) !== -1}
+                                                        tabIndex={-1}
+                                                        disableRipple
+                                                        inputProps={{ 'aria-labelledby': labelId }}
+                                                        />
+                                                    </ListItemIcon>
+                                                    <ListItemText id={labelId} primary={valueContextFile.join('').split(/,/g)[pagePagination+value]} />
+                                                </ListItemButton>
+                                            </ListItem>
+                                    );
+                                })}
+                            </List>
+                            
+                            <Box sx={{
+                                display: "flex",
+                                alignItems: "center"
+                            }}>
+                                <Pagination count={valueContextFile.length - 10} color="primary" page={pagePagination} onChange={handleChangePagination} />
+                                <Typography>Страница: {pagePagination}</Typography>
+                            </Box>
                         </Stack>
                     </> 
                 }
+                <Box sx={{ height: '10px' }}></Box>
             </>
         )
     }
@@ -298,735 +369,753 @@ export const Child = (
                                                 style={{
                                                     "position": "absolute",
                                                     "zIndex": "99999",
-                                                    "width": "90%",
-                                                    "textAlign": "center",
-                                                    "background": "aquamarine",
-                                                    "height": "88vh",
+                                                    "width": "100%",
+                                                    "background": "aliceblue",
+                                                    "height": "100%",
                                                     "margin": "auto",
-                                                    "marginLeft": "50px",
                                                     "borderRadius": "10px",
                                                     "padding": "10px",
-                                                    "overflow": "scroll",
-                                                    "top": "10%"
+                                                    "overflowY": "scroll",
+                                                    "top": "0"
                                                 }}
                                             >
                                                 <Box>
-                                                    <Button onClick={() => {
-                                                        setOpen(false)
-                                                        setShowEditor(false)
-                                                    }} sx={{
-                                                        "position": "absolute",
-                                                        "left": "21px",
-                                                        "zIndex": "9",
-                                                        "top": "10px"	
-                                                    }} variant="contained">Закрыть</Button>
-                                                    <div className="hieght"></div>
-                                                    <Accordion sx={{
-                                                        "marginTop": "60px"
-                                                    }} expanded={expanded === 'OrgFullName'} onChange={handleChange('OrgFullName')}>
-                                                        <AccordionSummary
-                                                            expandIcon={<ExpandMoreIcon />}
-                                                            aria-controls="panel1bh-content"
-                                                            id="panel1bh-header"
-                                                        >
-                                                            <Typography id="modal-modal-description">OrgFullName</Typography>
-                                                        </AccordionSummary>
-                                                        <AccordionDetails>
-                                                            {
-                                                                fieldNormalShow ? <>
-                                                                    <TextField
-                                                                        id="outlined-password-input"
-                                                                        label="OrgFullName"
-                                                                        type="text"
-                                                                        autoComplete="current-password"
-                                                                        fullWidth
-                                                                    />    
-                                                                </> : <></>
-                                                            }
-                                                            {
-                                                                fieldBigHieghtShow ? <>
-                                                                    <TextField
-                                                                        id="outlined-multiline-static"
-                                                                        label="OrgFullName"
-                                                                        multiline
-                                                                        rows={4}
-                                                                        fullWidth
-                                                                        autoComplete="current-password"
-                                                                    /> 
-                                                                </> : <></>
-                                                            }
-                                                            {
-                                                                fieldDateShow ? <>
-                                                                    <TextField
-                                                                        id="outlined-password-input"
-                                                                        type="date"
-                                                                        autoComplete="current-password"
-                                                                        fullWidth
-                                                                    />
-                                                                </> : <></>
-                                                            }
-                                                            {
-                                                                chooseContextFile ? <>
-                                                                    <ChooseContentFromFile/>
-                                                                </> : <></>
-                                                            }
-                                                            <Box sx={{
-                                                                "marginTop": "10px",
-                                                                "display": "flex",
-                                                                "justifyContent": "space-between"
-                                                            }}>
-                                                                <Tooltip title="Загрузить данные из файла">
-                                                                    <Button variant="contained" onClick={() => {
-                                                                        console.log('choose data from the file')
-                                                                        GetContentFile(selected)
-                                                                        setFieldDateShow(false)
-                                                                        setFieldBigHieghtShow(false)
-                                                                        setFieldNormalShow(false)
-                                                                        setChooseContextFile(true)
-                                                                        setPreloadContextFile(true)
-                                                                    }}>
-                                                                            <Grading/>
-                                                                    </Button>
-                                                                </Tooltip>
-                                                                <Tooltip title="Саморасширяемое поле ввода (по высоте)">
-                                                                    <Button variant="contained" onClick={() => {
-                                                                        console.log('input textarea')
-                                                                        setFieldDateShow(false)
-                                                                        setFieldBigHieghtShow(true)
-                                                                        setFieldNormalShow(false)
-                                                                        setChooseContextFile(false)
-                                                                    }}>
-                                                                            <TextFields/>
-                                                                    </Button>
-                                                                </Tooltip>
-                                                                <Tooltip title="Поле ввода с датой">
-                                                                    <Button variant="contained" onClick={() => {
-                                                                        console.log('input with data')
-                                                                        setFieldDateShow(true)
-                                                                        setFieldBigHieghtShow(false)
-                                                                        setFieldNormalShow(false)
-                                                                        setChooseContextFile(false)
-                                                                    }}>
-                                                                            <CalendarToday/>
-                                                                        
-                                                                    </Button>
-                                                                </Tooltip>
-                                                                <Tooltip title="Обычное поле ввода">
-                                                                    <Button variant="contained" onClick={() => {
-                                                                        console.log('input with data')
-                                                                        setFieldDateShow(false)
-                                                                        setFieldBigHieghtShow(false)
-                                                                        setFieldNormalShow(true)
-                                                                        setChooseContextFile(false)
-                                                                    }} sx={{
-                                                                        "height": "35px"
-                                                                    }}>
-                                                                            <Notes/>
-                                                                    </Button>
-                                                                </Tooltip>
-                                                            </Box>
-                                                        </AccordionDetails>
-                                                    </Accordion>
-                                                    <Accordion expanded={expanded === 'OrgOGRN'} onChange={handleChange('OrgOGRN')}>
-                                                        <AccordionSummary
-                                                            expandIcon={<ExpandMoreIcon />}
-                                                            aria-controls="panel1bh-content"
-                                                            id="panel1bh-header"
-                                                        >
-                                                            <Typography id="modal-modal-description">OrgOGRN</Typography>
-                                                        </AccordionSummary>
-                                                        <AccordionDetails>
-                                                            <TextField
-                                                                id="outlined-password-input"
-                                                                label="OrgOGRN"
-                                                                type="password"
-                                                                autoComplete="current-password"
-                                                                sx={{
-                                                                    width: "82vW"
-                                                                }}
-                                                            />
-                                                            <Box sx={{
-                                                                "marginTop": "10px",
-                                                                "display": "flex",
-                                                                "justifyContent": "space-between"
-                                                            }}>
-                                                                <Tooltip title="Загрузить данные из файла">
-                                                                    <Button variant="contained" onClick={() => {
-                                                                        console.log('choose data from the file')
-                                                                        GetContentFile(selected)
-                                                                        setFieldDateShow(false)
-                                                                        setFieldBigHieghtShow(false)
-                                                                        setFieldNormalShow(false)
-                                                                        setChooseContextFile(true)
-                                                                        setPreloadContextFile(true)
-                                                                    }}>
-                                                                            <Grading/>
-                                                                    </Button>
-                                                                </Tooltip>
-                                                                <Tooltip title="Саморасширяемое поле ввода (по высоте)">
-                                                                    <Button variant="contained" onClick={() => {
-                                                                        console.log('input textarea')
-                                                                        setFieldDateShow(false)
-                                                                        setFieldBigHieghtShow(true)
-                                                                        setFieldNormalShow(false)
-                                                                        setChooseContextFile(false)
-                                                                    }}>
-                                                                            <TextFields/>
-                                                                    </Button>
-                                                                </Tooltip>
-                                                                <Tooltip title="Поле ввода с датой">
-                                                                    <Button variant="contained" onClick={() => {
-                                                                        console.log('input with data')
-                                                                        setFieldDateShow(true)
-                                                                        setFieldBigHieghtShow(false)
-                                                                        setFieldNormalShow(false)
-                                                                        setChooseContextFile(false)
-                                                                    }}>
-                                                                            <CalendarToday/>
-                                                                        
-                                                                    </Button>
-                                                                </Tooltip>
-                                                                <Tooltip title="Обычное поле ввода">
-                                                                    <Button variant="contained" onClick={() => {
-                                                                        console.log('input with data')
-                                                                        setFieldDateShow(false)
-                                                                        setFieldBigHieghtShow(false)
-                                                                        setFieldNormalShow(true)
-                                                                        setChooseContextFile(false)
-                                                                    }} sx={{
-                                                                        "height": "35px"
-                                                                    }}>
-                                                                            <Notes/>
-                                                                    </Button>
-                                                                </Tooltip>
-                                                            </Box>
-                                                        </AccordionDetails>
-                                                    </Accordion>
-                                                    <Accordion expanded={expanded === 'OrgINN'} onChange={handleChange('OrgINN')}>
-                                                        <AccordionSummary
-                                                            expandIcon={<ExpandMoreIcon />}
-                                                            aria-controls="panel1bh-content"
-                                                            id="panel1bh-header"
-                                                        >
-                                                            <Typography id="modal-modal-description">OrgINN</Typography>
-                                                        </AccordionSummary>
-                                                        <AccordionDetails>
-                                                            <TextField
-                                                                id="outlined-password-input"
-                                                                label="OrgINN"
-                                                                type="password"
-                                                                autoComplete="current-password"
-                                                                sx={{
-                                                                    width: "82vW"
-                                                                }}
-                                                            />
-                                                            <Box sx={{
-                                                                "marginTop": "10px",
-                                                                "display": "flex",
-                                                                "justifyContent": "space-between"
-                                                            }}>
-                                                                <Tooltip title="Загрузить данные из файла">
-                                                                    <Button variant="contained" onClick={() => {
-                                                                        console.log('choose data from the file')
-                                                                        GetContentFile(selected)
-                                                                        setFieldDateShow(false)
-                                                                        setFieldBigHieghtShow(false)
-                                                                        setFieldNormalShow(false)
-                                                                        setChooseContextFile(true)
-                                                                        setPreloadContextFile(true)
-                                                                    }}>
-                                                                            <Grading/>
-                                                                    </Button>
-                                                                </Tooltip>
-                                                                <Tooltip title="Саморасширяемое поле ввода (по высоте)">
-                                                                    <Button variant="contained" onClick={() => {
-                                                                        console.log('input textarea')
-                                                                        setFieldDateShow(false)
-                                                                        setFieldBigHieghtShow(true)
-                                                                        setFieldNormalShow(false)
-                                                                        setChooseContextFile(false)
-                                                                    }}>
-                                                                            <TextFields/>
-                                                                    </Button>
-                                                                </Tooltip>
-                                                                <Tooltip title="Поле ввода с датой">
-                                                                    <Button variant="contained" onClick={() => {
-                                                                        console.log('input with data')
-                                                                        setFieldDateShow(true)
-                                                                        setFieldBigHieghtShow(false)
-                                                                        setFieldNormalShow(false)
-                                                                        setChooseContextFile(false)
-                                                                    }}>
-                                                                            <CalendarToday/>
-                                                                        
-                                                                    </Button>
-                                                                </Tooltip>
-                                                                <Tooltip title="Обычное поле ввода">
-                                                                    <Button variant="contained" onClick={() => {
-                                                                        console.log('input with data')
-                                                                        setFieldDateShow(false)
-                                                                        setFieldBigHieghtShow(false)
-                                                                        setFieldNormalShow(true)
-                                                                        setChooseContextFile(false)
-                                                                    }} sx={{
-                                                                        "height": "35px"
-                                                                    }}>
-                                                                            <Notes/>
-                                                                    </Button>
-                                                                </Tooltip>
-                                                            </Box>
-                                                        </AccordionDetails>
-                                                    </Accordion>
-                                                    <Accordion expanded={expanded === 'OrgKPP'} onChange={handleChange('OrgKPP')}>
-                                                        <AccordionSummary
-                                                            expandIcon={<ExpandMoreIcon />}
-                                                            aria-controls="panel1bh-content"
-                                                            id="panel1bh-header"
-                                                        >
-                                                            <Typography id="modal-modal-description">OrgKPP</Typography>
-                                                        </AccordionSummary>
-                                                        <AccordionDetails>
-                                                            <TextField
-                                                                id="outlined-password-input"
-                                                                label="OrgKPP"
-                                                                type="password"
-                                                                autoComplete="current-password"
-                                                                sx={{
-                                                                    width: "82vW"
-                                                                }}
-                                                            />
-                                                            <Box sx={{
-                                                                "marginTop": "10px",
-                                                                "display": "flex",
-                                                                "justifyContent": "space-between"
-                                                            }}>
-                                                                <Tooltip title="Загрузить данные из файла">
-                                                                    <Button variant="contained" onClick={() => {
-                                                                        console.log('choose data from the file')
-                                                                        GetContentFile(selected)
-                                                                        setFieldDateShow(false)
-                                                                        setFieldBigHieghtShow(false)
-                                                                        setFieldNormalShow(false)
-                                                                        setChooseContextFile(true)
-                                                                        setPreloadContextFile(true)
-                                                                    }}>
-                                                                            <Grading/>
-                                                                    </Button>
-                                                                </Tooltip>
-                                                                <Tooltip title="Саморасширяемое поле ввода (по высоте)">
-                                                                    <Button variant="contained" onClick={() => {
-                                                                        console.log('input textarea')
-                                                                        setFieldDateShow(false)
-                                                                        setFieldBigHieghtShow(true)
-                                                                        setFieldNormalShow(false)
-                                                                        setChooseContextFile(false)
-                                                                    }}>
-                                                                            <TextFields/>
-                                                                    </Button>
-                                                                </Tooltip>
-                                                                <Tooltip title="Поле ввода с датой">
-                                                                    <Button variant="contained" onClick={() => {
-                                                                        console.log('input with data')
-                                                                        setFieldDateShow(true)
-                                                                        setFieldBigHieghtShow(false)
-                                                                        setFieldNormalShow(false)
-                                                                        setChooseContextFile(false)
-                                                                    }}>
-                                                                            <CalendarToday/>
-                                                                        
-                                                                    </Button>
-                                                                </Tooltip>
-                                                                <Tooltip title="Обычное поле ввода">
-                                                                    <Button variant="contained" onClick={() => {
-                                                                        console.log('input with data')
-                                                                        setFieldDateShow(false)
-                                                                        setFieldBigHieghtShow(false)
-                                                                        setFieldNormalShow(true)
-                                                                        setChooseContextFile(false)
-                                                                    }} sx={{
-                                                                        "height": "35px"
-                                                                    }}>
-                                                                            <Notes/>
-                                                                    </Button>
-                                                                </Tooltip>
-                                                            </Box>
-                                                        </AccordionDetails>
-                                                    </Accordion>
-                                                    <Accordion expanded={expanded === 'Region'} onChange={handleChange('Region')}>
-                                                        <AccordionSummary
-                                                            expandIcon={<ExpandMoreIcon />}
-                                                            aria-controls="panel1bh-content"
-                                                            id="panel1bh-header"
-                                                        >
-                                                            <Typography id="modal-modal-description">Region</Typography>
-                                                        </AccordionSummary>
-                                                        <AccordionDetails>
-                                                            <TextField
-                                                                id="outlined-password-input"
-                                                                label="Region"
-                                                                type="password"
-                                                                autoComplete="current-password"
-                                                                sx={{
-                                                                    width: "82vW"
-                                                                }}
-                                                            />
-                                                            <Box sx={{
-                                                                "marginTop": "10px",
-                                                                "display": "flex",
-                                                                "justifyContent": "space-between"
-                                                            }}>
-                                                                <Tooltip title="Загрузить данные из файла">
-                                                                    <Button variant="contained" onClick={() => {
-                                                                        console.log('choose data from the file')
-                                                                        GetContentFile(selected)
-                                                                        setFieldDateShow(false)
-                                                                        setFieldBigHieghtShow(false)
-                                                                        setFieldNormalShow(false)
-                                                                        setChooseContextFile(true)
-                                                                        setPreloadContextFile(true)
-                                                                    }}>
-                                                                            <Grading/>
-                                                                    </Button>
-                                                                </Tooltip>
-                                                                <Tooltip title="Саморасширяемое поле ввода (по высоте)">
-                                                                    <Button variant="contained" onClick={() => {
-                                                                        console.log('input textarea')
-                                                                        setFieldDateShow(false)
-                                                                        setFieldBigHieghtShow(true)
-                                                                        setFieldNormalShow(false)
-                                                                        setChooseContextFile(false)
-                                                                    }}>
-                                                                            <TextFields/>
-                                                                    </Button>
-                                                                </Tooltip>
-                                                                <Tooltip title="Поле ввода с датой">
-                                                                    <Button variant="contained" onClick={() => {
-                                                                        console.log('input with data')
-                                                                        setFieldDateShow(true)
-                                                                        setFieldBigHieghtShow(false)
-                                                                        setFieldNormalShow(false)
-                                                                        setChooseContextFile(false)
-                                                                    }}>
-                                                                            <CalendarToday/>
-                                                                        
-                                                                    </Button>
-                                                                </Tooltip>
-                                                                <Tooltip title="Обычное поле ввода">
-                                                                    <Button variant="contained" onClick={() => {
-                                                                        console.log('input with data')
-                                                                        setFieldDateShow(false)
-                                                                        setFieldBigHieghtShow(false)
-                                                                        setFieldNormalShow(true)
-                                                                        setChooseContextFile(false)
-                                                                    }} sx={{
-                                                                        "height": "35px"
-                                                                    }}>
-                                                                            <Notes/>
-                                                                    </Button>
-                                                                </Tooltip>
-                                                            </Box>
-                                                        </AccordionDetails>
-                                                    </Accordion>
-                                                    <Accordion expanded={expanded === 'City'} onChange={handleChange('City')}>
-                                                        <AccordionSummary
-                                                            expandIcon={<ExpandMoreIcon />}
-                                                            aria-controls="panel1bh-content"
-                                                            id="panel1bh-header"
-                                                        >
-                                                            <Typography id="modal-modal-description">City</Typography>
-                                                        </AccordionSummary>
-                                                        <AccordionDetails>
-                                                            <TextField
-                                                                id="outlined-password-input"
-                                                                label="City"
-                                                                type="password"
-                                                                autoComplete="current-password"
-                                                                sx={{
-                                                                    width: "82vW"
-                                                                }}
-                                                            />
-                                                            <Box sx={{
-                                                                "marginTop": "10px",
-                                                                "display": "flex",
-                                                                "justifyContent": "space-between"
-                                                            }}>
-                                                                <Tooltip title="Загрузить данные из файла">
-                                                                    <Button variant="contained" onClick={() => {
-                                                                        console.log('choose data from the file')
-                                                                        GetContentFile(selected)
-                                                                        setFieldDateShow(false)
-                                                                        setFieldBigHieghtShow(false)
-                                                                        setFieldNormalShow(false)
-                                                                        setChooseContextFile(true)
-                                                                        setPreloadContextFile(true)
-                                                                    }}>
-                                                                            <Grading/>
-                                                                    </Button>
-                                                                </Tooltip>
-                                                                <Tooltip title="Саморасширяемое поле ввода (по высоте)">
-                                                                    <Button variant="contained" onClick={() => {
-                                                                        console.log('input textarea')
-                                                                        setFieldDateShow(false)
-                                                                        setFieldBigHieghtShow(true)
-                                                                        setFieldNormalShow(false)
-                                                                        setChooseContextFile(false)
-                                                                    }}>
-                                                                            <TextFields/>
-                                                                    </Button>
-                                                                </Tooltip>
-                                                                <Tooltip title="Поле ввода с датой">
-                                                                    <Button variant="contained" onClick={() => {
-                                                                        console.log('input with data')
-                                                                        setFieldDateShow(true)
-                                                                        setFieldBigHieghtShow(false)
-                                                                        setFieldNormalShow(false)
-                                                                        setChooseContextFile(false)
-                                                                    }}>
-                                                                            <CalendarToday/>
-                                                                        
-                                                                    </Button>
-                                                                </Tooltip>
-                                                                <Tooltip title="Обычное поле ввода">
-                                                                    <Button variant="contained" onClick={() => {
-                                                                        console.log('input with data')
-                                                                        setFieldDateShow(false)
-                                                                        setFieldBigHieghtShow(false)
-                                                                        setFieldNormalShow(true)
-                                                                        setChooseContextFile(false)
-                                                                    }} sx={{
-                                                                        "height": "35px"
-                                                                    }}>
-                                                                            <Notes/>
-                                                                    </Button>
-                                                                </Tooltip>
-                                                            </Box>
-                                                        </AccordionDetails>
-                                                    </Accordion>
-                                                    <Accordion expanded={expanded === 'Street'} onChange={handleChange('Street')}>
-                                                        <AccordionSummary
-                                                            expandIcon={<ExpandMoreIcon />}
-                                                            aria-controls="panel1bh-content"
-                                                            id="panel1bh-header"
-                                                        >
-                                                            <Typography id="modal-modal-description">Street</Typography>
-                                                        </AccordionSummary>
-                                                        <AccordionDetails>
-                                                            <TextField
-                                                                id="outlined-password-input"
-                                                                label="Street"
-                                                                type="password"
-                                                                autoComplete="current-password"
-                                                                sx={{
-                                                                    width: "82vW"
-                                                                }}
-                                                            />
-                                                            <Box sx={{
-                                                                "marginTop": "10px",
-                                                                "display": "flex",
-                                                                "justifyContent": "space-between"
-                                                            }}>
-                                                                <Tooltip title="Загрузить данные из файла">
-                                                                    <Button variant="contained" onClick={() => {
-                                                                        console.log('choose data from the file')
-                                                                        GetContentFile(selected)
-                                                                        setFieldDateShow(false)
-                                                                        setFieldBigHieghtShow(false)
-                                                                        setFieldNormalShow(false)
-                                                                        setChooseContextFile(true)
-                                                                        setPreloadContextFile(true)
-                                                                    }}>
-                                                                            <Grading/>
-                                                                    </Button>
-                                                                </Tooltip>
-                                                                <Tooltip title="Саморасширяемое поле ввода (по высоте)">
-                                                                    <Button variant="contained" onClick={() => {
-                                                                        console.log('input textarea')
-                                                                        setFieldDateShow(false)
-                                                                        setFieldBigHieghtShow(true)
-                                                                        setFieldNormalShow(false)
-                                                                        setChooseContextFile(false)
-                                                                    }}>
-                                                                            <TextFields/>
-                                                                    </Button>
-                                                                </Tooltip>
-                                                                <Tooltip title="Поле ввода с датой">
-                                                                    <Button variant="contained" onClick={() => {
-                                                                        console.log('input with data')
-                                                                        setFieldDateShow(true)
-                                                                        setFieldBigHieghtShow(false)
-                                                                        setFieldNormalShow(false)
-                                                                        setChooseContextFile(false)
-                                                                    }}>
-                                                                            <CalendarToday/>
-                                                                        
-                                                                    </Button>
-                                                                </Tooltip>
-                                                                <Tooltip title="Обычное поле ввода">
-                                                                    <Button variant="contained" onClick={() => {
-                                                                        console.log('input with data')
-                                                                        setFieldDateShow(false)
-                                                                        setFieldBigHieghtShow(false)
-                                                                        setFieldNormalShow(true)
-                                                                        setChooseContextFile(false)
-                                                                    }} sx={{
-                                                                        "height": "35px"
-                                                                    }}>
-                                                                            <Notes/>
-                                                                    </Button>
-                                                                </Tooltip>
-                                                            </Box>
-                                                        </AccordionDetails>
-                                                    </Accordion>
-                                                    <Accordion expanded={expanded === 'Building'} onChange={handleChange('Building')}>
-                                                        <AccordionSummary
-                                                            expandIcon={<ExpandMoreIcon />}
-                                                            aria-controls="panel1bh-content"
-                                                            id="panel1bh-header"
-                                                        >
-                                                            <Typography id="modal-modal-description">Building</Typography>
-                                                        </AccordionSummary>
-                                                        <AccordionDetails>
-                                                            <TextField
-                                                                id="outlined-password-input"
-                                                                label="Building"
-                                                                type="password"
-                                                                autoComplete="current-password"
-                                                                sx={{
-                                                                    width: "82vW"
-                                                                }}
-                                                            />
-                                                            <Box sx={{
-                                                                "marginTop": "10px",
-                                                                "display": "flex",
-                                                                "justifyContent": "space-between"
-                                                            }}>
-                                                                <Tooltip title="Загрузить данные из файла">
-                                                                    <Button variant="contained" onClick={() => {
-                                                                        console.log('choose data from the file')
-                                                                        GetContentFile(selected)
-                                                                        setFieldDateShow(false)
-                                                                        setFieldBigHieghtShow(false)
-                                                                        setFieldNormalShow(false)
-                                                                        setChooseContextFile(true)
-                                                                        setPreloadContextFile(true)
-                                                                    }}>
-                                                                            <Grading/>
-                                                                    </Button>
-                                                                </Tooltip>
-                                                                <Tooltip title="Саморасширяемое поле ввода (по высоте)">
-                                                                    <Button variant="contained" onClick={() => {
-                                                                        console.log('input textarea')
-                                                                        setFieldDateShow(false)
-                                                                        setFieldBigHieghtShow(true)
-                                                                        setFieldNormalShow(false)
-                                                                        setChooseContextFile(false)
-                                                                    }}>
-                                                                            <TextFields/>
-                                                                    </Button>
-                                                                </Tooltip>
-                                                                <Tooltip title="Поле ввода с датой">
-                                                                    <Button variant="contained" onClick={() => {
-                                                                        console.log('input with data')
-                                                                        setFieldDateShow(true)
-                                                                        setFieldBigHieghtShow(false)
-                                                                        setFieldNormalShow(false)
-                                                                        setChooseContextFile(false)
-                                                                    }}>
-                                                                            <CalendarToday/>
-                                                                        
-                                                                    </Button>
-                                                                </Tooltip>
-                                                                <Tooltip title="Обычное поле ввода">
-                                                                    <Button variant="contained" onClick={() => {
-                                                                        console.log('input with data')
-                                                                        setFieldDateShow(false)
-                                                                        setFieldBigHieghtShow(false)
-                                                                        setFieldNormalShow(true)
-                                                                        setChooseContextFile(false)
-                                                                    }} sx={{
-                                                                        "height": "35px"
-                                                                    }}>
-                                                                            <Notes/>
-                                                                    </Button>
-                                                                </Tooltip>
-                                                            </Box>
-                                                        </AccordionDetails>
-                                                    </Accordion>
-                                                    <Accordion expanded={expanded === 'Room'} onChange={handleChange('Room')}>
-                                                        <AccordionSummary
-                                                            expandIcon={<ExpandMoreIcon />}
-                                                            aria-controls="panel1bh-content"
-                                                            id="panel1bh-header"
-                                                        >
-                                                            <Typography id="modal-modal-description">Room</Typography>
-                                                        </AccordionSummary>
-                                                        <AccordionDetails>
-                                                            <TextField
-                                                                id="outlined-password-input"
-                                                                label="Room"
-                                                                type="password"
-                                                                autoComplete="current-password"
-                                                                sx={{
-                                                                    width: "82vW"
-                                                                }}
-                                                            />
-                                                            <Box sx={{
-                                                                "marginTop": "10px",
-                                                                "display": "flex",
-                                                                "justifyContent": "space-between"
-                                                            }}>
-                                                                <Tooltip title="Загрузить данные из файла">
-                                                                    <Button variant="contained" onClick={() => {
-                                                                        console.log('choose data from the file')
-                                                                        GetContentFile(selected)
-                                                                        setFieldDateShow(false)
-                                                                        setFieldBigHieghtShow(false)
-                                                                        setFieldNormalShow(false)
-                                                                        setChooseContextFile(true)
-                                                                        setPreloadContextFile(true)
-                                                                    }}>
-                                                                            <Grading/>
-                                                                    </Button>
-                                                                </Tooltip>
-                                                                <Tooltip title="Саморасширяемое поле ввода (по высоте)">
-                                                                    <Button variant="contained" onClick={() => {
-                                                                        console.log('input textarea')
-                                                                        setFieldDateShow(false)
-                                                                        setFieldBigHieghtShow(true)
-                                                                        setFieldNormalShow(false)
-                                                                        setChooseContextFile(false)
-                                                                    }}>
-                                                                            <TextFields/>
-                                                                    </Button>
-                                                                </Tooltip>
-                                                                <Tooltip title="Поле ввода с датой">
-                                                                    <Button variant="contained" onClick={() => {
-                                                                        console.log('input with data')
-                                                                        setFieldDateShow(true)
-                                                                        setFieldBigHieghtShow(false)
-                                                                        setFieldNormalShow(false)
-                                                                        setChooseContextFile(false)
-                                                                    }}>
-                                                                            <CalendarToday/>
-                                                                        
-                                                                    </Button>
-                                                                </Tooltip>
-                                                                <Tooltip title="Обычное поле ввода">
-                                                                    <Button variant="contained" onClick={() => {
-                                                                        console.log('input with data')
-                                                                        setFieldDateShow(false)
-                                                                        setFieldBigHieghtShow(false)
-                                                                        setFieldNormalShow(true)
-                                                                        setChooseContextFile(false)
-                                                                    }} sx={{
-                                                                        "height": "35px"
-                                                                    }}>
-                                                                            <Notes/>
-                                                                    </Button>
-                                                                </Tooltip>
-                                                            </Box>
-                                                        </AccordionDetails>
-                                                    </Accordion>
+                                                    <Box sx={{display: "flex"}}>
+                                                        <Button onClick={() => {
+                                                            setOpen(false)
+                                                            setShowEditor(false)
+                                                        }} variant="contained">Закрыть</Button>
+                                                    </Box>
+                                                    <Box sx={{
+                                                        display: "flex",
+                                                        gap: "10px",
+                                                        flexDirection: "column",
+                                                        marginTop: "10px"
+                                                    }}>
+                                                        <Accordion sx={{
+                                                            borderRadius: "10px"
+                                                        }} expanded={expanded === 'OrgFullName'} onChange={handleChange('OrgFullName')}>
+                                                            <AccordionSummary
+                                                                expandIcon={<ExpandMoreIcon />}
+                                                                aria-controls="panel1bh-content"
+                                                                id="panel1bh-header"
+                                                            >
+                                                                <Typography id="modal-modal-description">OrgFullName</Typography>
+                                                            </AccordionSummary>
+                                                            <AccordionDetails>
+                                                                {
+                                                                    fieldNormalShow ? <>
+                                                                        <TextField
+                                                                            id="outlined-password-input"
+                                                                            label="OrgFullName"
+                                                                            type="text"
+                                                                            autoComplete="current-password"
+                                                                            fullWidth
+                                                                        />    
+                                                                    </> : <></>
+                                                                }
+                                                                {
+                                                                    fieldBigHieghtShow ? <>
+                                                                        <TextField
+                                                                            id="outlined-multiline-static"
+                                                                            label="OrgFullName"
+                                                                            multiline
+                                                                            rows={4}
+                                                                            fullWidth
+                                                                            autoComplete="current-password"
+                                                                        /> 
+                                                                    </> : <></>
+                                                                }
+                                                                {
+                                                                    fieldDateShow ? <>
+                                                                        <TextField
+                                                                            id="outlined-password-input"
+                                                                            type="date"
+                                                                            autoComplete="current-password"
+                                                                            fullWidth
+                                                                        />
+                                                                    </> : <></>
+                                                                }
+                                                                {
+                                                                    chooseContextFile ? <>
+                                                                        <ChooseContentFromFile/>
+                                                                    </> : <></>
+                                                                }
+                                                                <Box sx={{
+                                                                    "marginTop": "10px",
+                                                                    "display": "flex",
+                                                                    "justifyContent": "space-between"
+                                                                }}>
+                                                                    <Tooltip title="Загрузить данные из файла">
+                                                                        <Button variant="contained" onClick={() => {
+                                                                            console.log('choose data from the file')
+                                                                            GetContentFile(selected)
+                                                                            setFieldDateShow(false)
+                                                                            setFieldBigHieghtShow(false)
+                                                                            setFieldNormalShow(false)
+                                                                            setChooseContextFile(true)
+                                                                            setPreloadContextFile(true)
+                                                                        }}>
+                                                                                <Grading/>
+                                                                        </Button>
+                                                                    </Tooltip>
+                                                                    <Tooltip title="Саморасширяемое поле ввода (по высоте)">
+                                                                        <Button variant="contained" onClick={() => {
+                                                                            console.log('input textarea')
+                                                                            setFieldDateShow(false)
+                                                                            setFieldBigHieghtShow(true)
+                                                                            setFieldNormalShow(false)
+                                                                            setChooseContextFile(false)
+                                                                        }}>
+                                                                                <TextFields/>
+                                                                        </Button>
+                                                                    </Tooltip>
+                                                                    <Tooltip title="Поле ввода с датой">
+                                                                        <Button variant="contained" onClick={() => {
+                                                                            console.log('input with data')
+                                                                            setFieldDateShow(true)
+                                                                            setFieldBigHieghtShow(false)
+                                                                            setFieldNormalShow(false)
+                                                                            setChooseContextFile(false)
+                                                                        }}>
+                                                                                <CalendarToday/>
+                                                                            
+                                                                        </Button>
+                                                                    </Tooltip>
+                                                                    <Tooltip title="Обычное поле ввода">
+                                                                        <Button variant="contained" onClick={() => {
+                                                                            console.log('input with data')
+                                                                            setFieldDateShow(false)
+                                                                            setFieldBigHieghtShow(false)
+                                                                            setFieldNormalShow(true)
+                                                                            setChooseContextFile(false)
+                                                                        }} sx={{
+                                                                            "height": "35px"
+                                                                        }}>
+                                                                                <Notes/>
+                                                                        </Button>
+                                                                    </Tooltip>
+                                                                </Box>
+                                                            </AccordionDetails>
+                                                        </Accordion>
+                                                        <Accordion sx={{
+                                                            borderRadius: "10px"
+                                                        }} expanded={expanded === 'OrgOGRN'} onChange={handleChange('OrgOGRN')}>
+                                                            <AccordionSummary
+                                                                expandIcon={<ExpandMoreIcon />}
+                                                                aria-controls="panel1bh-content"
+                                                                id="panel1bh-header"
+                                                            >
+                                                                <Typography id="modal-modal-description">OrgOGRN</Typography>
+                                                            </AccordionSummary>
+                                                            <AccordionDetails>
+                                                                <TextField
+                                                                    id="outlined-password-input"
+                                                                    label="OrgOGRN"
+                                                                    type="password"
+                                                                    autoComplete="current-password"
+                                                                    sx={{
+                                                                        width: "82vW"
+                                                                    }}
+                                                                />
+                                                                <Box sx={{
+                                                                    "marginTop": "10px",
+                                                                    "display": "flex",
+                                                                    "justifyContent": "space-between"
+                                                                }}>
+                                                                    <Tooltip title="Загрузить данные из файла">
+                                                                        <Button variant="contained" onClick={() => {
+                                                                            console.log('choose data from the file')
+                                                                            GetContentFile(selected)
+                                                                            setFieldDateShow(false)
+                                                                            setFieldBigHieghtShow(false)
+                                                                            setFieldNormalShow(false)
+                                                                            setChooseContextFile(true)
+                                                                            setPreloadContextFile(true)
+                                                                        }}>
+                                                                                <Grading/>
+                                                                        </Button>
+                                                                    </Tooltip>
+                                                                    <Tooltip title="Саморасширяемое поле ввода (по высоте)">
+                                                                        <Button variant="contained" onClick={() => {
+                                                                            console.log('input textarea')
+                                                                            setFieldDateShow(false)
+                                                                            setFieldBigHieghtShow(true)
+                                                                            setFieldNormalShow(false)
+                                                                            setChooseContextFile(false)
+                                                                        }}>
+                                                                                <TextFields/>
+                                                                        </Button>
+                                                                    </Tooltip>
+                                                                    <Tooltip title="Поле ввода с датой">
+                                                                        <Button variant="contained" onClick={() => {
+                                                                            console.log('input with data')
+                                                                            setFieldDateShow(true)
+                                                                            setFieldBigHieghtShow(false)
+                                                                            setFieldNormalShow(false)
+                                                                            setChooseContextFile(false)
+                                                                        }}>
+                                                                                <CalendarToday/>
+                                                                            
+                                                                        </Button>
+                                                                    </Tooltip>
+                                                                    <Tooltip title="Обычное поле ввода">
+                                                                        <Button variant="contained" onClick={() => {
+                                                                            console.log('input with data')
+                                                                            setFieldDateShow(false)
+                                                                            setFieldBigHieghtShow(false)
+                                                                            setFieldNormalShow(true)
+                                                                            setChooseContextFile(false)
+                                                                        }} sx={{
+                                                                            "height": "35px"
+                                                                        }}>
+                                                                                <Notes/>
+                                                                        </Button>
+                                                                    </Tooltip>
+                                                                </Box>
+                                                            </AccordionDetails>
+                                                        </Accordion>
+                                                        <Accordion sx={{
+                                                            borderRadius: "10px"
+                                                        }} expanded={expanded === 'OrgINN'} onChange={handleChange('OrgINN')}>
+                                                            <AccordionSummary
+                                                                expandIcon={<ExpandMoreIcon />}
+                                                                aria-controls="panel1bh-content"
+                                                                id="panel1bh-header"
+                                                            >
+                                                                <Typography id="modal-modal-description">OrgINN</Typography>
+                                                            </AccordionSummary>
+                                                            <AccordionDetails>
+                                                                <TextField
+                                                                    id="outlined-password-input"
+                                                                    label="OrgINN"
+                                                                    type="password"
+                                                                    autoComplete="current-password"
+                                                                    sx={{
+                                                                        width: "82vW"
+                                                                    }}
+                                                                />
+                                                                <Box sx={{
+                                                                    "marginTop": "10px",
+                                                                    "display": "flex",
+                                                                    "justifyContent": "space-between"
+                                                                }}>
+                                                                    <Tooltip title="Загрузить данные из файла">
+                                                                        <Button variant="contained" onClick={() => {
+                                                                            console.log('choose data from the file')
+                                                                            GetContentFile(selected)
+                                                                            setFieldDateShow(false)
+                                                                            setFieldBigHieghtShow(false)
+                                                                            setFieldNormalShow(false)
+                                                                            setChooseContextFile(true)
+                                                                            setPreloadContextFile(true)
+                                                                        }}>
+                                                                                <Grading/>
+                                                                        </Button>
+                                                                    </Tooltip>
+                                                                    <Tooltip title="Саморасширяемое поле ввода (по высоте)">
+                                                                        <Button variant="contained" onClick={() => {
+                                                                            console.log('input textarea')
+                                                                            setFieldDateShow(false)
+                                                                            setFieldBigHieghtShow(true)
+                                                                            setFieldNormalShow(false)
+                                                                            setChooseContextFile(false)
+                                                                        }}>
+                                                                                <TextFields/>
+                                                                        </Button>
+                                                                    </Tooltip>
+                                                                    <Tooltip title="Поле ввода с датой">
+                                                                        <Button variant="contained" onClick={() => {
+                                                                            console.log('input with data')
+                                                                            setFieldDateShow(true)
+                                                                            setFieldBigHieghtShow(false)
+                                                                            setFieldNormalShow(false)
+                                                                            setChooseContextFile(false)
+                                                                        }}>
+                                                                                <CalendarToday/>
+                                                                            
+                                                                        </Button>
+                                                                    </Tooltip>
+                                                                    <Tooltip title="Обычное поле ввода">
+                                                                        <Button variant="contained" onClick={() => {
+                                                                            console.log('input with data')
+                                                                            setFieldDateShow(false)
+                                                                            setFieldBigHieghtShow(false)
+                                                                            setFieldNormalShow(true)
+                                                                            setChooseContextFile(false)
+                                                                        }} sx={{
+                                                                            "height": "35px"
+                                                                        }}>
+                                                                                <Notes/>
+                                                                        </Button>
+                                                                    </Tooltip>
+                                                                </Box>
+                                                            </AccordionDetails>
+                                                        </Accordion>
+                                                        <Accordion sx={{
+                                                            borderRadius: "10px"
+                                                        }} expanded={expanded === 'OrgKPP'} onChange={handleChange('OrgKPP')}>
+                                                            <AccordionSummary
+                                                                expandIcon={<ExpandMoreIcon />}
+                                                                aria-controls="panel1bh-content"
+                                                                id="panel1bh-header"
+                                                            >
+                                                                <Typography id="modal-modal-description">OrgKPP</Typography>
+                                                            </AccordionSummary>
+                                                            <AccordionDetails>
+                                                                <TextField
+                                                                    id="outlined-password-input"
+                                                                    label="OrgKPP"
+                                                                    type="password"
+                                                                    autoComplete="current-password"
+                                                                    sx={{
+                                                                        width: "82vW"
+                                                                    }}
+                                                                />
+                                                                <Box sx={{
+                                                                    "marginTop": "10px",
+                                                                    "display": "flex",
+                                                                    "justifyContent": "space-between"
+                                                                }}>
+                                                                    <Tooltip title="Загрузить данные из файла">
+                                                                        <Button variant="contained" onClick={() => {
+                                                                            console.log('choose data from the file')
+                                                                            GetContentFile(selected)
+                                                                            setFieldDateShow(false)
+                                                                            setFieldBigHieghtShow(false)
+                                                                            setFieldNormalShow(false)
+                                                                            setChooseContextFile(true)
+                                                                            setPreloadContextFile(true)
+                                                                        }}>
+                                                                                <Grading/>
+                                                                        </Button>
+                                                                    </Tooltip>
+                                                                    <Tooltip title="Саморасширяемое поле ввода (по высоте)">
+                                                                        <Button variant="contained" onClick={() => {
+                                                                            console.log('input textarea')
+                                                                            setFieldDateShow(false)
+                                                                            setFieldBigHieghtShow(true)
+                                                                            setFieldNormalShow(false)
+                                                                            setChooseContextFile(false)
+                                                                        }}>
+                                                                                <TextFields/>
+                                                                        </Button>
+                                                                    </Tooltip>
+                                                                    <Tooltip title="Поле ввода с датой">
+                                                                        <Button variant="contained" onClick={() => {
+                                                                            console.log('input with data')
+                                                                            setFieldDateShow(true)
+                                                                            setFieldBigHieghtShow(false)
+                                                                            setFieldNormalShow(false)
+                                                                            setChooseContextFile(false)
+                                                                        }}>
+                                                                                <CalendarToday/>
+                                                                            
+                                                                        </Button>
+                                                                    </Tooltip>
+                                                                    <Tooltip title="Обычное поле ввода">
+                                                                        <Button variant="contained" onClick={() => {
+                                                                            console.log('input with data')
+                                                                            setFieldDateShow(false)
+                                                                            setFieldBigHieghtShow(false)
+                                                                            setFieldNormalShow(true)
+                                                                            setChooseContextFile(false)
+                                                                        }} sx={{
+                                                                            "height": "35px"
+                                                                        }}>
+                                                                                <Notes/>
+                                                                        </Button>
+                                                                    </Tooltip>
+                                                                </Box>
+                                                            </AccordionDetails>
+                                                        </Accordion>
+                                                        <Accordion sx={{
+                                                            borderRadius: "10px"
+                                                        }} expanded={expanded === 'Region'} onChange={handleChange('Region')}>
+                                                            <AccordionSummary
+                                                                expandIcon={<ExpandMoreIcon />}
+                                                                aria-controls="panel1bh-content"
+                                                                id="panel1bh-header"
+                                                            >
+                                                                <Typography id="modal-modal-description">Region</Typography>
+                                                            </AccordionSummary>
+                                                            <AccordionDetails>
+                                                                <TextField
+                                                                    id="outlined-password-input"
+                                                                    label="Region"
+                                                                    type="password"
+                                                                    autoComplete="current-password"
+                                                                    sx={{
+                                                                        width: "82vW"
+                                                                    }}
+                                                                />
+                                                                <Box sx={{
+                                                                    "marginTop": "10px",
+                                                                    "display": "flex",
+                                                                    "justifyContent": "space-between"
+                                                                }}>
+                                                                    <Tooltip title="Загрузить данные из файла">
+                                                                        <Button variant="contained" onClick={() => {
+                                                                            console.log('choose data from the file')
+                                                                            GetContentFile(selected)
+                                                                            setFieldDateShow(false)
+                                                                            setFieldBigHieghtShow(false)
+                                                                            setFieldNormalShow(false)
+                                                                            setChooseContextFile(true)
+                                                                            setPreloadContextFile(true)
+                                                                        }}>
+                                                                                <Grading/>
+                                                                        </Button>
+                                                                    </Tooltip>
+                                                                    <Tooltip title="Саморасширяемое поле ввода (по высоте)">
+                                                                        <Button variant="contained" onClick={() => {
+                                                                            console.log('input textarea')
+                                                                            setFieldDateShow(false)
+                                                                            setFieldBigHieghtShow(true)
+                                                                            setFieldNormalShow(false)
+                                                                            setChooseContextFile(false)
+                                                                        }}>
+                                                                                <TextFields/>
+                                                                        </Button>
+                                                                    </Tooltip>
+                                                                    <Tooltip title="Поле ввода с датой">
+                                                                        <Button variant="contained" onClick={() => {
+                                                                            console.log('input with data')
+                                                                            setFieldDateShow(true)
+                                                                            setFieldBigHieghtShow(false)
+                                                                            setFieldNormalShow(false)
+                                                                            setChooseContextFile(false)
+                                                                        }}>
+                                                                                <CalendarToday/>
+                                                                            
+                                                                        </Button>
+                                                                    </Tooltip>
+                                                                    <Tooltip title="Обычное поле ввода">
+                                                                        <Button variant="contained" onClick={() => {
+                                                                            console.log('input with data')
+                                                                            setFieldDateShow(false)
+                                                                            setFieldBigHieghtShow(false)
+                                                                            setFieldNormalShow(true)
+                                                                            setChooseContextFile(false)
+                                                                        }} sx={{
+                                                                            "height": "35px"
+                                                                        }}>
+                                                                                <Notes/>
+                                                                        </Button>
+                                                                    </Tooltip>
+                                                                </Box>
+                                                            </AccordionDetails>
+                                                        </Accordion>
+                                                        <Accordion sx={{
+                                                            borderRadius: "10px"
+                                                        }} expanded={expanded === 'City'} onChange={handleChange('City')}>
+                                                            <AccordionSummary
+                                                                expandIcon={<ExpandMoreIcon />}
+                                                                aria-controls="panel1bh-content"
+                                                                id="panel1bh-header"
+                                                            >
+                                                                <Typography id="modal-modal-description">City</Typography>
+                                                            </AccordionSummary>
+                                                            <AccordionDetails>
+                                                                <TextField
+                                                                    id="outlined-password-input"
+                                                                    label="City"
+                                                                    type="password"
+                                                                    autoComplete="current-password"
+                                                                    sx={{
+                                                                        width: "82vW"
+                                                                    }}
+                                                                />
+                                                                <Box sx={{
+                                                                    "marginTop": "10px",
+                                                                    "display": "flex",
+                                                                    "justifyContent": "space-between"
+                                                                }}>
+                                                                    <Tooltip title="Загрузить данные из файла">
+                                                                        <Button variant="contained" onClick={() => {
+                                                                            console.log('choose data from the file')
+                                                                            GetContentFile(selected)
+                                                                            setFieldDateShow(false)
+                                                                            setFieldBigHieghtShow(false)
+                                                                            setFieldNormalShow(false)
+                                                                            setChooseContextFile(true)
+                                                                            setPreloadContextFile(true)
+                                                                        }}>
+                                                                                <Grading/>
+                                                                        </Button>
+                                                                    </Tooltip>
+                                                                    <Tooltip title="Саморасширяемое поле ввода (по высоте)">
+                                                                        <Button variant="contained" onClick={() => {
+                                                                            console.log('input textarea')
+                                                                            setFieldDateShow(false)
+                                                                            setFieldBigHieghtShow(true)
+                                                                            setFieldNormalShow(false)
+                                                                            setChooseContextFile(false)
+                                                                        }}>
+                                                                                <TextFields/>
+                                                                        </Button>
+                                                                    </Tooltip>
+                                                                    <Tooltip title="Поле ввода с датой">
+                                                                        <Button variant="contained" onClick={() => {
+                                                                            console.log('input with data')
+                                                                            setFieldDateShow(true)
+                                                                            setFieldBigHieghtShow(false)
+                                                                            setFieldNormalShow(false)
+                                                                            setChooseContextFile(false)
+                                                                        }}>
+                                                                                <CalendarToday/>
+                                                                            
+                                                                        </Button>
+                                                                    </Tooltip>
+                                                                    <Tooltip title="Обычное поле ввода">
+                                                                        <Button variant="contained" onClick={() => {
+                                                                            console.log('input with data')
+                                                                            setFieldDateShow(false)
+                                                                            setFieldBigHieghtShow(false)
+                                                                            setFieldNormalShow(true)
+                                                                            setChooseContextFile(false)
+                                                                        }} sx={{
+                                                                            "height": "35px"
+                                                                        }}>
+                                                                                <Notes/>
+                                                                        </Button>
+                                                                    </Tooltip>
+                                                                </Box>
+                                                            </AccordionDetails>
+                                                        </Accordion>
+                                                        <Accordion sx={{
+                                                            borderRadius: "10px"
+                                                        }} expanded={expanded === 'Street'} onChange={handleChange('Street')}>
+                                                            <AccordionSummary
+                                                                expandIcon={<ExpandMoreIcon />}
+                                                                aria-controls="panel1bh-content"
+                                                                id="panel1bh-header"
+                                                            >
+                                                                <Typography id="modal-modal-description">Street</Typography>
+                                                            </AccordionSummary>
+                                                            <AccordionDetails>
+                                                                <TextField
+                                                                    id="outlined-password-input"
+                                                                    label="Street"
+                                                                    type="password"
+                                                                    autoComplete="current-password"
+                                                                    sx={{
+                                                                        width: "82vW"
+                                                                    }}
+                                                                />
+                                                                <Box sx={{
+                                                                    "marginTop": "10px",
+                                                                    "display": "flex",
+                                                                    "justifyContent": "space-between"
+                                                                }}>
+                                                                    <Tooltip title="Загрузить данные из файла">
+                                                                        <Button variant="contained" onClick={() => {
+                                                                            console.log('choose data from the file')
+                                                                            GetContentFile(selected)
+                                                                            setFieldDateShow(false)
+                                                                            setFieldBigHieghtShow(false)
+                                                                            setFieldNormalShow(false)
+                                                                            setChooseContextFile(true)
+                                                                            setPreloadContextFile(true)
+                                                                        }}>
+                                                                                <Grading/>
+                                                                        </Button>
+                                                                    </Tooltip>
+                                                                    <Tooltip title="Саморасширяемое поле ввода (по высоте)">
+                                                                        <Button variant="contained" onClick={() => {
+                                                                            console.log('input textarea')
+                                                                            setFieldDateShow(false)
+                                                                            setFieldBigHieghtShow(true)
+                                                                            setFieldNormalShow(false)
+                                                                            setChooseContextFile(false)
+                                                                        }}>
+                                                                                <TextFields/>
+                                                                        </Button>
+                                                                    </Tooltip>
+                                                                    <Tooltip title="Поле ввода с датой">
+                                                                        <Button variant="contained" onClick={() => {
+                                                                            console.log('input with data')
+                                                                            setFieldDateShow(true)
+                                                                            setFieldBigHieghtShow(false)
+                                                                            setFieldNormalShow(false)
+                                                                            setChooseContextFile(false)
+                                                                        }}>
+                                                                                <CalendarToday/>
+                                                                            
+                                                                        </Button>
+                                                                    </Tooltip>
+                                                                    <Tooltip title="Обычное поле ввода">
+                                                                        <Button variant="contained" onClick={() => {
+                                                                            console.log('input with data')
+                                                                            setFieldDateShow(false)
+                                                                            setFieldBigHieghtShow(false)
+                                                                            setFieldNormalShow(true)
+                                                                            setChooseContextFile(false)
+                                                                        }} sx={{
+                                                                            "height": "35px"
+                                                                        }}>
+                                                                                <Notes/>
+                                                                        </Button>
+                                                                    </Tooltip>
+                                                                </Box>
+                                                            </AccordionDetails>
+                                                        </Accordion>
+                                                        <Accordion sx={{
+                                                            borderRadius: "10px"
+                                                        }} expanded={expanded === 'Building'} onChange={handleChange('Building')}>
+                                                            <AccordionSummary
+                                                                expandIcon={<ExpandMoreIcon />}
+                                                                aria-controls="panel1bh-content"
+                                                                id="panel1bh-header"
+                                                            >
+                                                                <Typography id="modal-modal-description">Building</Typography>
+                                                            </AccordionSummary>
+                                                            <AccordionDetails>
+                                                                <TextField
+                                                                    id="outlined-password-input"
+                                                                    label="Building"
+                                                                    type="password"
+                                                                    autoComplete="current-password"
+                                                                    sx={{
+                                                                        width: "82vW"
+                                                                    }}
+                                                                />
+                                                                <Box sx={{
+                                                                    "marginTop": "10px",
+                                                                    "display": "flex",
+                                                                    "justifyContent": "space-between"
+                                                                }}>
+                                                                    <Tooltip title="Загрузить данные из файла">
+                                                                        <Button variant="contained" onClick={() => {
+                                                                            console.log('choose data from the file')
+                                                                            GetContentFile(selected)
+                                                                            setFieldDateShow(false)
+                                                                            setFieldBigHieghtShow(false)
+                                                                            setFieldNormalShow(false)
+                                                                            setChooseContextFile(true)
+                                                                            setPreloadContextFile(true)
+                                                                        }}>
+                                                                                <Grading/>
+                                                                        </Button>
+                                                                    </Tooltip>
+                                                                    <Tooltip title="Саморасширяемое поле ввода (по высоте)">
+                                                                        <Button variant="contained" onClick={() => {
+                                                                            console.log('input textarea')
+                                                                            setFieldDateShow(false)
+                                                                            setFieldBigHieghtShow(true)
+                                                                            setFieldNormalShow(false)
+                                                                            setChooseContextFile(false)
+                                                                        }}>
+                                                                                <TextFields/>
+                                                                        </Button>
+                                                                    </Tooltip>
+                                                                    <Tooltip title="Поле ввода с датой">
+                                                                        <Button variant="contained" onClick={() => {
+                                                                            console.log('input with data')
+                                                                            setFieldDateShow(true)
+                                                                            setFieldBigHieghtShow(false)
+                                                                            setFieldNormalShow(false)
+                                                                            setChooseContextFile(false)
+                                                                        }}>
+                                                                                <CalendarToday/>
+                                                                            
+                                                                        </Button>
+                                                                    </Tooltip>
+                                                                    <Tooltip title="Обычное поле ввода">
+                                                                        <Button variant="contained" onClick={() => {
+                                                                            console.log('input with data')
+                                                                            setFieldDateShow(false)
+                                                                            setFieldBigHieghtShow(false)
+                                                                            setFieldNormalShow(true)
+                                                                            setChooseContextFile(false)
+                                                                        }} sx={{
+                                                                            "height": "35px"
+                                                                        }}>
+                                                                                <Notes/>
+                                                                        </Button>
+                                                                    </Tooltip>
+                                                                </Box>
+                                                            </AccordionDetails>
+                                                        </Accordion>
+                                                        <Accordion sx={{
+                                                            borderRadius: "10px"
+                                                        }} expanded={expanded === 'Room'} onChange={handleChange('Room')}>
+                                                            <AccordionSummary
+                                                                expandIcon={<ExpandMoreIcon />}
+                                                                aria-controls="panel1bh-content"
+                                                                id="panel1bh-header"
+                                                            >
+                                                                <Typography id="modal-modal-description">Room</Typography>
+                                                            </AccordionSummary>
+                                                            <AccordionDetails>
+                                                                <TextField
+                                                                    id="outlined-password-input"
+                                                                    label="Room"
+                                                                    type="password"
+                                                                    autoComplete="current-password"
+                                                                    sx={{
+                                                                        width: "82vW"
+                                                                    }}
+                                                                />
+                                                                <Box sx={{
+                                                                    "marginTop": "10px",
+                                                                    "display": "flex",
+                                                                    "justifyContent": "space-between"
+                                                                }}>
+                                                                    <Tooltip title="Загрузить данные из файла">
+                                                                        <Button variant="contained" onClick={() => {
+                                                                            console.log('choose data from the file')
+                                                                            GetContentFile(selected)
+                                                                            setFieldDateShow(false)
+                                                                            setFieldBigHieghtShow(false)
+                                                                            setFieldNormalShow(false)
+                                                                            setChooseContextFile(true)
+                                                                            setPreloadContextFile(true)
+                                                                        }}>
+                                                                                <Grading/>
+                                                                        </Button>
+                                                                    </Tooltip>
+                                                                    <Tooltip title="Саморасширяемое поле ввода (по высоте)">
+                                                                        <Button variant="contained" onClick={() => {
+                                                                            console.log('input textarea')
+                                                                            setFieldDateShow(false)
+                                                                            setFieldBigHieghtShow(true)
+                                                                            setFieldNormalShow(false)
+                                                                            setChooseContextFile(false)
+                                                                        }}>
+                                                                                <TextFields/>
+                                                                        </Button>
+                                                                    </Tooltip>
+                                                                    <Tooltip title="Поле ввода с датой">
+                                                                        <Button variant="contained" onClick={() => {
+                                                                            console.log('input with data')
+                                                                            setFieldDateShow(true)
+                                                                            setFieldBigHieghtShow(false)
+                                                                            setFieldNormalShow(false)
+                                                                            setChooseContextFile(false)
+                                                                        }}>
+                                                                                <CalendarToday/>
+                                                                            
+                                                                        </Button>
+                                                                    </Tooltip>
+                                                                    <Tooltip title="Обычное поле ввода">
+                                                                        <Button variant="contained" onClick={() => {
+                                                                            console.log('input with data')
+                                                                            setFieldDateShow(false)
+                                                                            setFieldBigHieghtShow(false)
+                                                                            setFieldNormalShow(true)
+                                                                            setChooseContextFile(false)
+                                                                        }} sx={{
+                                                                            "height": "35px"
+                                                                        }}>
+                                                                                <Notes/>
+                                                                        </Button>
+                                                                    </Tooltip>
+                                                                </Box>
+                                                            </AccordionDetails>
+                                                        </Accordion>
+                                                    </Box>
+                                                    
                                                     <Button variant="contained" sx={{
                                                         marginLeft: 0,
                                                         position: "absolute",

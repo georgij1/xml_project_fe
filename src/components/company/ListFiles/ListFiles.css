@@ -14,10 +14,16 @@
     margin-top: 15px;
 }
 
-.hieght {
-    height: 30px;
-}
-
 div[role="tooltip"] {
     z-index: 9999999999;
+}
+
+.css-178cqt3-MuiButtonBase-root-MuiListItemButton-root:hover {
+    border-radius: 10px;
+}
+
+.css-w91adl-MuiPaper-root-MuiAccordion-root:before,
+.css-qzmcqv-MuiPaper-root-MuiAccordion-root:before,
+.css-bz4dnt-MuiCollapse-root {
+    display: none;
 }

@@ -6,6 +6,7 @@
     "@emotion/react": "^11.11.3",
     "@emotion/styled": "^11.11.0",
     "@fontsource/roboto": "^5.0.8",
+    "@mdx-js/rollup": "^3.0.1",
     "@mui/icons-material": "^5.14.14",
     "@mui/joy": "^5.0.0-beta.24",
     "@mui/material": "^5.14.14",
@@ -18,6 +19,7 @@
     "@testing-library/user-event": "^13.5.0",
     "@types/jest": "^27.5.2",
     "@types/node": "^16.18.53",
+    "@vitejs/plugin-react": "^4.2.1",
     "clean-webpack-plugin": "^4.0.0",
     "docx": "^8.2.3",
     "file-saver": "^2.0.5",
@@ -39,14 +41,16 @@
     "react-spinners": "^0.13.8",
     "sort-by": "^1.2.0",
     "styled-components": "^6.1.0",
+    "vite": "^5.1.4",
+    "vite-plugin-svgr": "^4.2.0",
+    "vite-tsconfig-paths": "^5.1.4",
     "web-vitals": "^2.1.4",
     "webpack-notifier": "^1.15.0"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "webpack --config webpack.config.tsx",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "start": "vite",
+    "build": "tsc && vite build",
+    "serve": "vite preview"
   },
   "eslintConfig": {
     "extends": [
@@ -79,6 +83,7 @@
     "stylus": "^0.60.0",
     "stylus-loader": "^7.1.3",
     "typescript": "^5.2.2",
+    "vite": "^5.1.4",
     "webpack": "^5.88.2",
     "webpack-cli": "^5.1.4"
   }

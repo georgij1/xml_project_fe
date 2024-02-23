@@ -67,7 +67,7 @@ export const EnhancedTableToolbar = (
                 }),
             }}
         >
-            {numSelected > 0 && foundFile === true ? <ShowChoosedFileFiles data={numSelected}/> : <NoBodyChoosedFile/>}
+            {numSelected > 0 && foundFile === true && numSelected !== "" ? <ShowChoosedFileFiles numSelected={numSelected}/> : <NoBodyChoosedFile/>}
             {numSelected > 0 ? 
                 <> {numSelected === 1 ? <>
                     <ChoosedOneElement 

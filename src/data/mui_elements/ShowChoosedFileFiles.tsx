@@ -1,10 +1,14 @@
 import {Typography} from "@mui/material";
 
-export const ShowChoosedFileFiles = (
-	props: any
-) => {
-	const { numSelected } = props
+interface ShowChoosedFileFilesProps {
+	numSelected: number
+}
 
+export const ShowChoosedFileFiles = (
+	{
+		numSelected
+	}: ShowChoosedFileFilesProps
+) => {
 	return (
 		<Typography
 	        sx={{ flex: '1 1 100%' }}
@@ -12,7 +16,7 @@ export const ShowChoosedFileFiles = (
 	        variant="subtitle1"
 	        component="div"
 	    >
-	        {numSelected === 1 ? <>1 выбран</> : <>{numSelected} выбрано</>}
+	        {numSelected === (1 || 0) ? <>1 выбран</> : <>{numSelected} выбрано</>}
 	    </Typography>
 	)
 }
